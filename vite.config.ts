@@ -4,7 +4,7 @@ import tailwindcss from '@tailwindcss/vite'
 import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
-  base: '/undercover/',
+  base: '/',
   plugins: [
     react(),
     tailwindcss(),
@@ -19,8 +19,8 @@ export default defineConfig({
         background_color: '#0f0a1e',
         display: 'standalone',
         orientation: 'portrait',
-        scope: '/undercover/',
-        start_url: '/undercover/',
+        scope: '/',
+        start_url: '/',
         icons: [
           {
             src: '/icons/icon-192.png',
