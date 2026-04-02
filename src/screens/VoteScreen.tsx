@@ -91,7 +91,7 @@ export default function VoteScreen() {
 
       {/* Progress bar */}
       <div className="flex flex-col gap-2">
-        <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
+        <div className="h-2 bg-white/5 rounded-full border border-white/5 overflow-hidden">
           <div
             className={`h-full rounded-full transition-all duration-300 ${
               allVoted ? 'bg-rose-500' : 'bg-indigo-500'
@@ -129,7 +129,7 @@ export default function VoteScreen() {
 
       {/* Tie info */}
       {tieBreak && (
-        <p className="text-amber-400 text-sm bg-amber-900/30 rounded-xl px-4 py-2">
+        <p className="text-amber-400 text-sm glass rounded-xl px-4 py-2" style={{ borderColor: 'rgba(251, 191, 36, 0.2)' }}>
           Pareggio tra {tiePlayers!.map(p => p.name).join(' e ')}. Votate di nuovo.
         </p>
       )}
@@ -149,8 +149,8 @@ export default function VoteScreen() {
         disabled={!allVoted}
         className={`w-full py-5 rounded-2xl font-bold text-lg transition-all ${
           allVoted
-            ? 'bg-rose-600 hover:bg-rose-500 active:bg-rose-700 text-white shadow-lg shadow-rose-600/30 animate-pulse'
-            : 'bg-slate-700 text-slate-500 cursor-not-allowed'
+            ? 'bg-rose-600 hover:bg-rose-500 active:bg-rose-700 text-white shadow-[0_0_32px_rgba(244,63,94,0.3)]'
+            : 'bg-white/5 text-slate-500 cursor-not-allowed border border-white/5'
         }`}
       >
         {tieBreak ? 'Conferma eliminazione' : 'Elimina il pi\u00f9 votato'}

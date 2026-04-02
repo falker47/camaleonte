@@ -26,7 +26,7 @@ export default function ResultScreen() {
     <div className="flex flex-col flex-1 min-h-0 px-5 py-6 gap-4 overflow-y-auto">
       {/* Winner banner */}
       {isCiviliansWin && (
-        <div className="rounded-3xl px-6 py-6 text-center bg-gradient-to-br from-indigo-700 to-indigo-900">
+        <div className="rounded-3xl px-6 py-6 text-center bg-gradient-to-br from-indigo-700 to-indigo-900 border border-white/10">
           <div className="text-5xl mb-2">🎉</div>
           <h2 className="text-2xl font-black text-white">I Civili vincono!</h2>
           <p className="text-indigo-200 text-sm mt-1">Tutti gli impostori sono stati eliminati.</p>
@@ -34,7 +34,7 @@ export default function ResultScreen() {
       )}
 
       {isPoisoned && (
-        <div className="rounded-3xl px-6 py-6 text-center bg-gradient-to-br from-slate-100 to-slate-300">
+        <div className="rounded-3xl px-6 py-6 text-center bg-gradient-to-br from-slate-100 to-slate-300 border border-white/10">
           <div className="text-5xl mb-2">🕵️</div>
           <h2 className="text-2xl font-black text-slate-900">Mr. White vince!</h2>
           <p className="text-slate-600 text-sm mt-1">
@@ -44,7 +44,7 @@ export default function ResultScreen() {
       )}
 
       {isLastTwo && (
-        <div className="rounded-3xl px-6 py-6 text-center bg-gradient-to-br from-rose-700 to-rose-900">
+        <div className="rounded-3xl px-6 py-6 text-center bg-gradient-to-br from-rose-700 to-rose-900 border border-white/10">
           <div className="text-5xl mb-2">😈</div>
           <h2 className="text-2xl font-black text-white">Gli impostori vincono!</h2>
           <p className="text-rose-200 text-sm mt-1">
@@ -55,14 +55,14 @@ export default function ResultScreen() {
 
       {/* Word reveal */}
       {wordPair && (
-        <div className="bg-slate-800 rounded-2xl px-5 py-4">
+        <div className="glass rounded-2xl px-5 py-4">
           <p className="text-slate-400 text-xs uppercase tracking-wide mb-2">Le parole segrete</p>
           <div className="flex gap-4">
             <div>
               <p className="text-xs text-indigo-400">Civili</p>
               <p className="text-white font-bold">{wordPair.civilian}</p>
             </div>
-            <div className="w-px bg-slate-700" />
+            <div className="w-px bg-white/8" />
             <div>
               <p className="text-xs text-amber-400">Infiltrati</p>
               <p className="text-white font-bold">{wordPair.undercover}</p>
@@ -85,7 +85,7 @@ export default function ResultScreen() {
               <div
                 key={player.id}
                 className={`flex items-center justify-between rounded-2xl px-4 py-3 ${
-                  player.eliminated ? 'bg-slate-800 opacity-50' : 'bg-slate-800'
+                  player.eliminated ? 'glass opacity-50' : 'glass'
                 }`}
               >
                 <div className="flex items-center gap-2 flex-1 min-w-0">
@@ -128,14 +128,14 @@ export default function ResultScreen() {
               Azzera punteggi
             </button>
           </div>
-          <div className="bg-slate-800 rounded-2xl overflow-hidden">
+          <div className="glass rounded-2xl overflow-hidden">
             {leaderboard.map(([name, total], i) => {
               const isFirst = i === 0 && total > 0
               return (
                 <div
                   key={name}
                   className={`flex items-center justify-between px-4 py-3 ${
-                    i < leaderboard.length - 1 ? 'border-b border-slate-700' : ''
+                    i < leaderboard.length - 1 ? 'border-b border-white/8' : ''
                   }`}
                 >
                   <div className="flex items-center gap-3">
@@ -159,7 +159,7 @@ export default function ResultScreen() {
       )}
 
       {/* Points legend */}
-      <div className="bg-slate-900 rounded-xl px-4 py-3">
+      <div className="glass rounded-xl px-4 py-3">
         <p className="text-slate-500 text-xs mb-1.5">Punteggio</p>
         <div className="flex flex-col gap-1 text-xs">
           <span className="text-indigo-400">Civile: 2 pt (se tutti impostori eliminati e MW non indovina)</span>
@@ -171,13 +171,13 @@ export default function ResultScreen() {
       <div className="flex flex-col gap-3">
         <button
           onClick={rematch}
-          className="w-full bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white font-bold py-5 rounded-2xl text-lg transition-colors"
+          className="w-full glass-button font-bold py-5 rounded-2xl text-lg"
         >
           Continua
         </button>
         <button
           onClick={resetGame}
-          className="w-full border-2 border-slate-600 hover:border-slate-400 text-slate-400 hover:text-white font-semibold py-4 rounded-2xl transition-colors"
+          className="w-full glass-button-secondary font-semibold py-4 rounded-2xl"
         >
           Fine partita
         </button>

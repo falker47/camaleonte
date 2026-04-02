@@ -66,13 +66,13 @@ export default function PrivacyReveal({ playerName, word, role, onDone }: Props)
           className={`relative w-full h-full transform-style-3d transition-transform duration-500 ${phase === 'revealed' ? 'rotate-y-180' : ''}`}
         >
           {/* Back — privacy */}
-          <div className="absolute inset-0 backface-hidden rounded-3xl bg-slate-800 border border-slate-600 flex flex-col items-center justify-center gap-3 shadow-2xl">
+          <div className="absolute inset-0 backface-hidden rounded-3xl glass flex flex-col items-center justify-center gap-3 shadow-2xl" style={{ borderColor: 'rgba(255,255,255,0.15)' }}>
             <div className="text-5xl">👁️</div>
             <p className="text-slate-300 text-sm">Tocca per rivelare</p>
           </div>
           {/* Front — word */}
           <div
-            className={`absolute inset-0 backface-hidden rotate-y-180 rounded-3xl bg-gradient-to-br ${roleColor} flex flex-col items-center justify-center gap-3 shadow-2xl px-6`}
+            className={`absolute inset-0 backface-hidden rotate-y-180 rounded-3xl bg-gradient-to-br ${roleColor} border border-white/10 flex flex-col items-center justify-center gap-3 shadow-2xl px-6`}
           >
             {role === 'mrwhite' ? (
               <>
@@ -100,7 +100,7 @@ export default function PrivacyReveal({ playerName, word, role, onDone }: Props)
       {phase === 'revealed' && showHide && (
         <button
           onClick={handleHide}
-          className="w-full max-w-xs bg-slate-700 hover:bg-slate-600 active:bg-slate-500 text-white font-semibold py-4 rounded-2xl transition-colors"
+          className="w-full max-w-xs glass-button-secondary font-semibold py-4 rounded-2xl"
         >
           Ho visto — Nascondi
         </button>
@@ -109,7 +109,7 @@ export default function PrivacyReveal({ playerName, word, role, onDone }: Props)
       {phase === 'hidden' && (
         <button
           onClick={onDone}
-          className="w-full max-w-xs bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white font-semibold py-4 rounded-2xl transition-colors"
+          className="w-full max-w-xs glass-button font-semibold py-4 rounded-2xl"
         >
           Prossimo giocatore →
         </button>

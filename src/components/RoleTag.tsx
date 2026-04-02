@@ -8,15 +8,15 @@ interface Props {
 const CONFIG: Record<Role, { label: string; classes: string }> = {
   civile: {
     label: 'Civile',
-    classes: 'bg-indigo-600 text-white',
+    classes: 'bg-indigo-500/20 border border-indigo-400/30 text-indigo-300',
   },
   infiltrato: {
     label: 'Infiltrato',
-    classes: 'bg-amber-500 text-black',
+    classes: 'bg-amber-500/20 border border-amber-400/30 text-amber-300',
   },
   mrwhite: {
     label: 'Mr. White',
-    classes: 'bg-white text-black',
+    classes: 'bg-white/15 border border-white/20 text-white',
   },
 }
 

@@ -125,7 +125,7 @@ export default function SetupScreen() {
                 onChange={e => updateName(i, e.target.value)}
                 onKeyDown={e => handleKeyDown(i, e)}
                 placeholder={`Giocatore ${i + 1}`}
-                className="flex-1 bg-slate-800 border border-slate-600 text-white placeholder-slate-500 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-indigo-500"
+                className="flex-1 glass-input rounded-xl px-4 py-3 text-sm"
                 style={{ userSelect: 'text', touchAction: 'auto' }}
                 maxLength={20}
               />
@@ -188,7 +188,7 @@ export default function SetupScreen() {
 
       {/* Info box */}
       {validNames.length >= 3 && impostorCount >= 1 && (
-        <div className="bg-slate-800/60 border border-slate-700 rounded-2xl px-4 py-3">
+        <div className="glass rounded-2xl px-4 py-3">
           <div className="flex flex-wrap gap-x-3 gap-y-1 text-sm">
             <span className="text-indigo-400">{civilianCount} Civili</span>
             <span className="text-slate-600">·</span>
@@ -218,8 +218,8 @@ export default function SetupScreen() {
         disabled={!canStart}
         className={`w-full py-5 rounded-2xl font-bold text-lg transition-all mt-auto ${
           canStart
-            ? 'bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white shadow-lg'
-            : 'bg-slate-700 text-slate-500 cursor-not-allowed'
+            ? 'glass-button'
+            : 'bg-white/5 text-slate-500 cursor-not-allowed border border-white/5'
         }`}
       >
         Inizia Partita
@@ -241,7 +241,7 @@ interface RoleCounterProps {
 function RoleCounter({ label, description, value, min, max, color, onChange }: RoleCounterProps) {
   const dotColor = color === 'white' ? 'bg-white' : 'bg-amber-400'
   return (
-    <div className="flex items-center justify-between bg-slate-800 rounded-2xl px-4 py-3">
+    <div className="flex items-center justify-between glass rounded-2xl px-4 py-3">
       <div className="flex items-center gap-3">
         <div className={`w-3 h-3 rounded-full ${dotColor}`} />
         <div>
@@ -252,14 +252,14 @@ function RoleCounter({ label, description, value, min, max, color, onChange }: R
       <div className="flex items-center gap-3">
         <button
           onClick={() => onChange(Math.max(min, value - 1))}
-          className="w-9 h-9 rounded-full bg-slate-700 hover:bg-slate-600 text-white font-bold flex items-center justify-center transition-colors"
+          className="w-9 h-9 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold flex items-center justify-center transition-colors"
         >
           −
         </button>
         <span className="text-white font-bold w-4 text-center">{value}</span>
         <button
           onClick={() => onChange(Math.min(max, value + 1))}
-          className="w-9 h-9 rounded-full bg-slate-700 hover:bg-slate-600 text-white font-bold flex items-center justify-center transition-colors"
+          className="w-9 h-9 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold flex items-center justify-center transition-colors"
         >
           +
         </button>

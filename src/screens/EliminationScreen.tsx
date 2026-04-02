@@ -26,7 +26,7 @@ export default function EliminationScreen() {
       </div>
 
       {isMrWhite && (
-        <div className="bg-slate-800 rounded-2xl px-6 py-4 text-center max-w-xs">
+        <div className="glass rounded-2xl px-6 py-4 text-center max-w-xs" style={{ borderColor: 'rgba(251, 191, 36, 0.2)' }}>
           <p className="text-amber-400 font-semibold">Mr. White eliminato!</p>
           <p className="text-slate-400 text-sm mt-1">
             Potrà tentare di indovinare la parola dei civili per vincere ancora.
@@ -40,7 +40,7 @@ export default function EliminationScreen() {
       )}
 
       {role === 'infiltrato' && (
-        <div className="bg-slate-800 rounded-2xl px-6 py-4 text-center max-w-xs">
+        <div className="glass rounded-2xl px-6 py-4 text-center max-w-xs" style={{ borderColor: 'rgba(251, 191, 36, 0.2)' }}>
           <p className="text-amber-400 font-semibold">Infiltrato scoperto!</p>
           {remainingImpostors > 0 ? (
             <p className="text-slate-400 text-sm mt-1">
@@ -53,7 +53,7 @@ export default function EliminationScreen() {
       )}
 
       {role === 'civile' && (
-        <div className="bg-slate-800 rounded-2xl px-6 py-4 text-center max-w-xs">
+        <div className="glass rounded-2xl px-6 py-4 text-center max-w-xs" style={{ borderColor: 'rgba(244, 63, 94, 0.2)' }}>
           <p className="text-rose-400 font-semibold">Un civile eliminato!</p>
           <p className="text-slate-400 text-sm mt-1">Attenzione, gli impostori guadagnano terreno.</p>
         </div>
@@ -61,7 +61,7 @@ export default function EliminationScreen() {
 
       <button
         onClick={confirmElimination}
-        className="w-full max-w-xs bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white font-bold py-5 rounded-2xl text-lg transition-colors"
+        className="w-full max-w-xs glass-button font-bold py-5 rounded-2xl text-lg"
       >
         {isMrWhite ? 'Vai al tentativo →' : 'Continua →'}
       </button>

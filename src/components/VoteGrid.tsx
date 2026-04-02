@@ -40,20 +40,20 @@ export default function VoteGrid({ players, votes, voterCount, onVote, disabled 
           <button
             key={player.id}
             onClick={() => !disabled && onVote(player.id)}
-            className={`relative overflow-hidden rounded-2xl p-4 text-left transition-all duration-200 min-h-[88px] flex items-center gap-3
+            className={`relative overflow-hidden rounded-2xl p-4 text-left min-h-[88px] flex items-center gap-3
               ${voteCount > 0
                 ? isLeading
-                  ? 'bg-rose-900/80 border-2 border-rose-400 shadow-[0_0_16px_rgba(244,63,94,0.3)]'
-                  : 'bg-rose-900/50 border-2 border-rose-500/50'
-                : 'bg-slate-800/80 border-2 border-slate-600/50 hover:border-slate-400'
+                  ? 'glass border-rose-400/60 shadow-[0_0_20px_rgba(244,63,94,0.25)]'
+                  : 'glass border-rose-500/30'
+                : 'glass hover:border-white/15'
               }
-              ${disabled ? 'opacity-50 cursor-not-allowed' : 'active:scale-95 transition-transform'}
+              ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
             `}
           >
             {/* Vote fill bar — from bottom */}
             {voteCount > 0 && (
               <div
-                className="absolute bottom-0 left-0 right-0 bg-rose-500/20 transition-all duration-500"
+                className="absolute bottom-0 left-0 right-0 bg-rose-500/15 transition-all duration-500"
                 style={{ height: `${pct}%` }}
               />
             )}
@@ -71,7 +71,7 @@ export default function VoteGrid({ players, votes, voterCount, onVote, disabled 
             {/* Vote badge */}
             {voteCount > 0 && (
               <div className={`relative w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${
-                isLeading ? 'bg-rose-500 text-white' : 'bg-rose-700 text-rose-200'
+                isLeading ? 'bg-rose-500 text-white' : 'bg-rose-500/30 text-rose-200'
               }`}>
                 {voteCount}
               </div>

@@ -15,7 +15,7 @@ export default function RoundScreen() {
           <h2 className="text-2xl font-black text-white">Round {round}</h2>
           <p className="text-slate-400 text-sm">Ogni giocatore dà un indizio</p>
         </div>
-        <div className="bg-slate-800 rounded-xl px-3 py-2 text-center">
+        <div className="glass rounded-xl px-3 py-2 text-center">
           <p className="text-white font-bold text-lg">{active.length}</p>
           <p className="text-slate-500 text-xs">attivi</p>
         </div>
@@ -30,7 +30,7 @@ export default function RoundScreen() {
           {active.map((player, i) => (
             <div
               key={player.id}
-              className="flex items-center gap-3 bg-slate-800 rounded-2xl px-4 py-3"
+              className="flex items-center gap-3 glass rounded-2xl px-4 py-3"
             >
               <div className="w-8 h-8 rounded-full bg-indigo-700 flex items-center justify-center text-sm font-bold text-white shrink-0">
                 {i + 1}
@@ -63,7 +63,7 @@ export default function RoundScreen() {
         </p>
         <button
           onClick={() => goTo('vote')}
-          className="w-full bg-rose-600 hover:bg-rose-500 active:bg-rose-700 text-white font-bold py-5 rounded-2xl text-lg transition-colors shadow-lg"
+          className="w-full bg-rose-600 hover:bg-rose-500 active:bg-rose-700 text-white font-bold py-5 rounded-2xl text-lg transition-colors shadow-lg shadow-[0_8px_32px_rgba(244,63,94,0.3)]"
         >
           Vota l'impostore →
         </button>

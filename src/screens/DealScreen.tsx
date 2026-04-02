@@ -35,7 +35,7 @@ export default function DealScreen() {
             className={`h-1.5 rounded-full transition-all ${
               i < dealIndex ? 'bg-indigo-400 w-4' :
               i === dealIndex ? 'bg-white w-6' :
-              'bg-slate-700 w-4'
+              'bg-white/10 w-4'
             }`}
           />
         ))}

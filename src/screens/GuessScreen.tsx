@@ -45,7 +45,7 @@ export default function GuessScreen() {
         </div>
         <button
           onClick={() => setPhase('input')}
-          className="w-full max-w-xs bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-black font-bold py-5 rounded-2xl text-lg transition-colors"
+          className="w-full max-w-xs bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-black font-bold py-5 rounded-2xl text-lg transition-colors shadow-[0_8px_32px_rgba(245,158,11,0.3)]"
         >
           Sono pronto
         </button>
@@ -74,7 +74,7 @@ export default function GuessScreen() {
               onChange={e => setGuess(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && handleSubmit()}
               placeholder="Scrivi la parola..."
-              className="w-full bg-slate-800 border border-slate-600 text-white placeholder-slate-500 rounded-2xl px-4 py-4 pr-14 text-lg text-center focus:outline-none focus:border-indigo-500"
+              className="w-full glass-input rounded-2xl px-4 py-4 pr-14 text-lg text-center"
               style={{ userSelect: 'text', touchAction: 'auto' }}
               autoFocus
               maxLength={40}
@@ -93,8 +93,8 @@ export default function GuessScreen() {
             disabled={guess.trim().length === 0}
             className={`w-full py-5 rounded-2xl font-bold text-lg transition-all ${
               guess.trim().length > 0
-                ? 'bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-black'
-                : 'bg-slate-700 text-slate-500 cursor-not-allowed'
+                ? 'bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-black shadow-[0_8px_32px_rgba(245,158,11,0.3)]'
+                : 'bg-white/5 text-slate-500 cursor-not-allowed border border-white/5'
             }`}
           >
             Rispondo!
@@ -113,12 +113,12 @@ export default function GuessScreen() {
       {isCorrect ? (
         <div className="flex flex-col items-center gap-4 w-full max-w-xs">
           <div className="text-6xl">🎉</div>
-          <div className="bg-emerald-900 border border-emerald-600 rounded-2xl px-6 py-4 text-center w-full">
+          <div className="glass rounded-2xl px-6 py-4 text-center w-full" style={{ borderColor: 'rgba(52, 211, 153, 0.2)' }}>
             <p className="text-emerald-300 font-bold text-lg">Parola indovinata!</p>
             <p className="text-white text-sm mt-1">{eliminatedThisRound?.name} guadagna 6 punti</p>
           </div>
           {!gameOver && (
-            <div className="bg-amber-900/40 border border-amber-700 rounded-2xl px-6 py-4 text-center w-full">
+            <div className="glass rounded-2xl px-6 py-4 text-center w-full" style={{ borderColor: 'rgba(251, 191, 36, 0.2)' }}>
               <p className="text-amber-400 font-semibold">Il gioco continua!</p>
               <p className="text-slate-400 text-sm mt-1">Ci sono ancora impostori tra voi.</p>
             </div>
@@ -127,11 +127,11 @@ export default function GuessScreen() {
       ) : (
         <div className="flex flex-col items-center gap-4 w-full max-w-xs">
           <div className="text-6xl">❌</div>
-          <div className="bg-rose-900 border border-rose-600 rounded-2xl px-6 py-4 text-center w-full">
+          <div className="glass rounded-2xl px-6 py-4 text-center w-full" style={{ borderColor: 'rgba(244, 63, 94, 0.2)' }}>
             <p className="text-rose-300 font-bold text-lg">Risposta sbagliata!</p>
           </div>
           {!gameOver && (
-            <div className="bg-amber-900/40 border border-amber-700 rounded-2xl px-6 py-4 text-center w-full">
+            <div className="glass rounded-2xl px-6 py-4 text-center w-full" style={{ borderColor: 'rgba(251, 191, 36, 0.2)' }}>
               <p className="text-amber-400 font-semibold">Il gioco continua!</p>
               <p className="text-slate-400 text-sm mt-1">Ci sono ancora impostori tra voi.</p>
             </div>
@@ -141,7 +141,7 @@ export default function GuessScreen() {
 
       <button
         onClick={handleContinue}
-        className="w-full max-w-xs bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white font-bold py-5 rounded-2xl text-lg transition-colors"
+        className="w-full max-w-xs glass-button font-bold py-5 rounded-2xl text-lg"
       >
         Continua →
       </button>
