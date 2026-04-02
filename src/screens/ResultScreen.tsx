@@ -31,8 +31,16 @@ export default function ResultScreen() {
 
   const mwPoisoned = mrWhiteCorrectIds.length > 0
   const isCiviliansWin = winner === 'civilians' && !mwPoisoned
-  const isLastTwo = winner === 'last_two'
   const isPoisoned = winner === 'civilians' && mwPoisoned
+
+  // Sub-cases for last_two: who survived?
+  const activePlayers = players.filter(p => !p.eliminated)
+  const hasMwSurvivor = activePlayers.some(p => p.role === 'mrwhite')
+  const hasInfiltratoSurvivor = activePlayers.some(p => p.role === 'infiltrato')
+
+  const isMwSurvived = winner === 'last_two' && hasMwSurvivor && !hasInfiltratoSurvivor
+  const isInfiltratoSurvived = winner === 'last_two' && hasInfiltratoSurvivor && !hasMwSurvivor
+  const isBothSurvived = winner === 'last_two' && hasMwSurvivor && hasInfiltratoSurvivor
 
   // Leaderboard sorted by cumulative score
   const leaderboard = Object.entries(scores)
@@ -50,7 +58,31 @@ export default function ResultScreen() {
           origin="top"
         />
       )}
-      {isLastTwo && (
+      {isMwSurvived && (
+        <>
+          <Particles
+            count={15}
+            colors={['#ffffff', '#e2e8f0', '#cbd5e1']}
+            style="burst"
+            origin="center"
+          />
+          <motion.div
+            className="absolute inset-0 bg-white pointer-events-none z-40"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: [0, 0.15, 0] }}
+            transition={{ duration: 0.6 }}
+          />
+        </>
+      )}
+      {isInfiltratoSurvived && (
+        <Particles
+          count={15}
+          colors={['#fbbf24', '#f59e0b', '#d97706', '#b45309']}
+          style="burst"
+          origin="center"
+        />
+      )}
+      {isBothSurvived && (
         <Particles
           count={15}
           colors={['#ef4444', '#f59e0b', '#dc2626', '#d97706']}
@@ -104,7 +136,37 @@ export default function ResultScreen() {
         </motion.div>
       )}
 
-      {isLastTwo && (
+      {isMwSurvived && (
+        <motion.div
+          className="rounded-3xl px-6 py-6 text-center bg-gradient-to-br from-slate-100 to-slate-300 border border-white/10"
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ type: 'spring', stiffness: 200, damping: 20 }}
+        >
+          <div className="text-5xl mb-2">🕵️</div>
+          <h2 className="text-2xl font-black text-slate-900">Mr. White vince!</h2>
+          <p className="text-slate-600 text-sm mt-1">
+            È sopravvissuto fino alla fine.
+          </p>
+        </motion.div>
+      )}
+
+      {isInfiltratoSurvived && (
+        <motion.div
+          className="rounded-3xl px-6 py-6 text-center bg-gradient-to-br from-amber-600 to-amber-800 border border-white/10"
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ type: 'spring', stiffness: 200, damping: 20 }}
+        >
+          <div className="text-5xl mb-2">🎭</div>
+          <h2 className="text-2xl font-black text-white">L'infiltrato vince!</h2>
+          <p className="text-amber-200 text-sm mt-1">
+            È sopravvissuto fino alla fine.
+          </p>
+        </motion.div>
+      )}
+
+      {isBothSurvived && (
         <motion.div
           className="rounded-3xl px-6 py-6 text-center bg-gradient-to-br from-rose-700 to-rose-900 border border-white/10"
           initial={{ scale: 0.9, opacity: 0 }}
@@ -160,8 +222,11 @@ export default function ResultScreen() {
                   <span className={`font-medium truncate ${player.eliminated ? 'line-through text-slate-500' : 'text-white'}`}>
                     {player.name}
                   </span>
-                  {isInfiltrateSurvivor && isLastTwo && (
+                  {isInfiltrateSurvivor && (isInfiltratoSurvived || isBothSurvived) && (
                     <span className="text-amber-400 text-xs shrink-0">sopravvissuto!</span>
+                  )}
+                  {player.role === 'mrwhite' && !player.eliminated && isMwSurvived && (
+                    <span className="text-white text-xs shrink-0">sopravvissuto!</span>
                   )}
                   {isMwCorrect && (
                     <span className="text-emerald-400 text-xs shrink-0">ha indovinato!</span>
