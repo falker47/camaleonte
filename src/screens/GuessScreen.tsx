@@ -15,6 +15,8 @@ export default function GuessScreen() {
   const [phase, setPhase] = useState<Phase>('privacy')
   const [showGuess, setShowGuess] = useState(false)
 
+  const gameOver = winner !== null
+
   const handleSubmit = () => {
     if (guess.trim().length === 0) return
     submitMrWhiteGuess(guess.trim())
@@ -113,7 +115,6 @@ export default function GuessScreen() {
 
   // Result screen — show correct/wrong, then continue
   const isCorrect = mrWhiteGuessResult === 'correct'
-  const gameOver = winner !== null
 
   return (
     <div className="flex flex-col items-center justify-center flex-1 px-5 py-8 gap-6">

@@ -64,7 +64,7 @@ export default function RoundScreen() {
         </p>
         <motion.button
           onClick={() => goTo('vote')}
-          className="w-full bg-rose-600 hover:bg-rose-500 active:bg-rose-700 text-white font-bold py-5 rounded-2xl text-lg transition-colors shadow-lg shadow-[0_8px_32px_rgba(244,63,94,0.3)]"
+          className="w-full bg-rose-600 hover:bg-rose-500 active:bg-rose-700 text-white font-bold py-5 rounded-2xl text-lg transition-colors shadow-[0_8px_32px_rgba(244,63,94,0.3)]"
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.97 }}
           transition={{ type: "spring", stiffness: 400, damping: 25 }}

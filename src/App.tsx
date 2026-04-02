@@ -1,4 +1,4 @@
-import { Component, type ComponentType, type ReactNode, useRef, useState } from 'react'
+import { Component, type ComponentType, type ReactNode, useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useGameStore } from './store/gameStore'
 import type { Screen } from './store/types'
@@ -156,12 +156,12 @@ function AnimatedScreen() {
   const prevScreen = useRef<Screen | null>(null)
   const ScreenComponent = SCREENS[screen]
 
-  const variants = getTransitionVariants(prevScreen.current, screen)
+  const prevForVariants = prevScreen.current
+  const variants = getTransitionVariants(prevForVariants, screen)
 
-  const currentScreen = screen
-  if (prevScreen.current !== currentScreen) {
-    setTimeout(() => { prevScreen.current = currentScreen }, 0)
-  }
+  useEffect(() => {
+    prevScreen.current = screen
+  }, [screen])
 
   return (
     <AnimatePresence mode="wait">

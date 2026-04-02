@@ -35,7 +35,8 @@ export default function Particles({ count = 20, colors, origin = 'center', style
       angle: randomBetween(0, 360),
       distance: randomBetween(60, 150),
     }))
-  }, [count, colors, origin, style])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [count, colors.join(','), origin, style])
 
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden z-50">
