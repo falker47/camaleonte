@@ -66,7 +66,7 @@ export default function PrivacyReveal({ playerName, word, role, onDone }: Props)
     <div className="flex flex-col items-center gap-6 w-full">
       {/* Card */}
       <div
-        className="relative perspective-1000 w-full max-w-xs cursor-pointer"
+        className={`relative perspective-1000 w-full max-w-xs ${phase === 'waiting' ? 'cursor-pointer' : ''}`}
         style={{ height: '220px' }}
         onClick={handleCardTap}
       >
@@ -77,17 +77,26 @@ export default function PrivacyReveal({ playerName, word, role, onDone }: Props)
           <motion.div
             className="absolute inset-0 backface-hidden rounded-3xl glass flex flex-col items-center justify-center gap-3 shadow-2xl"
             style={{ borderColor: 'rgba(255,255,255,0.15)' }}
-            animate={{
+            animate={phase === 'waiting' ? {
               borderColor: [
                 'rgba(255,255,255,0.08)',
                 'rgba(99,102,241,0.3)',
                 'rgba(255,255,255,0.08)',
               ],
-            }}
+            } : {}}
             transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
           >
-            <div className="text-5xl">👁️</div>
-            <p className="text-slate-300 text-sm">Tocca per rivelare</p>
+            {phase === 'hidden' ? (
+              <>
+                <div className="text-5xl">✓</div>
+                <p className="text-slate-300 text-sm">Parola vista</p>
+              </>
+            ) : (
+              <>
+                <div className="text-5xl">👁️</div>
+                <p className="text-slate-300 text-sm">Tocca per rivelare</p>
+              </>
+            )}
           </motion.div>
           {/* Front — word */}
           <div
