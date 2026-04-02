@@ -17,7 +17,7 @@ export default function SetupScreen() {
   const startGame = useGameStore(s => s.startGame)
   const goTo = useGameStore(s => s.goTo)
 
-  const [names, setNames] = useState<string[]>(['', '', '', ''])
+  const [names, setNames] = useState<string[]>(['', '', ''])
   const [mrWhiteCount, setMrWhiteCount] = useState(config.mrWhiteCount)
   const [infiltratoCount, setInfiltratoCount] = useState(config.infiltratoCount)
   const [manualOverride, setManualOverride] = useState(false)
@@ -192,7 +192,7 @@ export default function SetupScreen() {
           <p className="text-rose-400 text-xs mt-2">Aggiungi almeno 1 impostore</p>
         )}
         {impostorCount > 0 && impostorCount >= validNames.length - 1 && (
-          <p className="text-rose-400 text-xs mt-2">Ci vogliono almeno 2 civili</p>
+          <p className="text-rose-400 text-xs mt-2">Ci vogliono almeno 3 giocatori</p>
         )}
       </div>
 
