@@ -159,16 +159,16 @@ export const useGameStore = create<GameState>((set, get) => ({
 
   submitMrWhiteGuess: (guess) => {
     const { wordPair, players, scores, mrWhiteCorrectIds, eliminatedThisRound } = get()
-    if (!wordPair) return
+    if (!wordPair || !eliminatedThisRound) return
 
     const normalize = (s: string) =>
-      s.trim().toLowerCase().normalize('NFC')
+      s.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
 
     const isCorrect = normalize(guess) === normalize(wordPair.civilian)
 
     if (isCorrect) {
       // Track this MW — points will be awarded by calcFinalScores at game end
-      const mwId = eliminatedThisRound?.id ?? ''
+      const mwId = eliminatedThisRound.id
       const newCorrectIds = [...mrWhiteCorrectIds, mwId]
 
       set({ mrWhiteGuessResult: 'correct', mrWhiteCorrectIds: newCorrectIds })
