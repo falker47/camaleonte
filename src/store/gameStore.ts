@@ -167,13 +167,11 @@ export const useGameStore = create<GameState>((set, get) => ({
     const isCorrect = normalize(guess) === normalize(wordPair.civilian)
 
     if (isCorrect) {
-      // Track this MW and assign 6pt immediately to cumulative scores
+      // Track this MW — points will be awarded by calcFinalScores at game end
       const mwId = eliminatedThisRound?.id ?? ''
       const newCorrectIds = [...mrWhiteCorrectIds, mwId]
-      const mwName = eliminatedThisRound?.name ?? ''
-      const updatedScores = { ...scores, [mwName]: (scores[mwName] ?? 0) + 6 }
 
-      set({ mrWhiteGuessResult: 'correct', mrWhiteCorrectIds: newCorrectIds, scores: updatedScores })
+      set({ mrWhiteGuessResult: 'correct', mrWhiteCorrectIds: newCorrectIds })
 
       // Check if game is over
       const win = checkWinCondition(players)
