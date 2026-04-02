@@ -1,8 +1,13 @@
-import { motion } from 'framer-motion'
+import { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useGameStore } from '../store/gameStore'
+import { usePwaInstall } from '../hooks/usePwaInstall'
+import Tutorial from '../components/Tutorial'
 
 export default function HomeScreen() {
   const goTo = useGameStore(s => s.goTo)
+  const { canInstall, install } = usePwaInstall()
+  const [showTutorial, setShowTutorial] = useState(false)
 
   return (
     <div className="flex flex-col items-center justify-center flex-1 gap-8 px-6 py-12">
@@ -25,12 +30,37 @@ export default function HomeScreen() {
         >
           Nuova Partita
         </motion.button>
+
+        <div className="flex gap-3">
+          <motion.button
+            onClick={() => setShowTutorial(true)}
+            className="glass-button-secondary flex-1 py-3 rounded-2xl text-sm transition-colors"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.97 }}
+            transition={{ type: "spring", stiffness: 400, damping: 25 }}
+          >
+            Come si gioca
+          </motion.button>
+
+          {canInstall && (
+            <motion.button
+              onClick={install}
+              className="glass-button-secondary flex-1 py-3 rounded-2xl text-sm transition-colors"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.97 }}
+              transition={{ type: "spring", stiffness: 400, damping: 25 }}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+            >
+              Installa App
+            </motion.button>
+          )}
+        </div>
       </div>
 
-      <div className="glass rounded-2xl px-4 py-3 text-xs text-center max-w-xs mt-4">
-        <p className="font-semibold text-slate-300 mb-1">Come si gioca</p>
-        <p className="text-slate-400">Ogni giocatore riceve una parola segreta. Mr. White non ha nessuna parola. Descrivete la vostra parola con un solo indizio. Trovate Mr. White prima che lui scopra la vostra parola!</p>
-      </div>
+      <AnimatePresence>
+        {showTutorial && <Tutorial onClose={() => setShowTutorial(false)} />}
+      </AnimatePresence>
     </div>
   )
 }
