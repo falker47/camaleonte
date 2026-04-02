@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion'
 import type { Player } from '../store/types'
 
 interface Props {
@@ -37,7 +38,7 @@ export default function VoteGrid({ players, votes, voterCount, onVote, disabled 
         const avatarColor = AVATAR_COLORS[idx % AVATAR_COLORS.length]
 
         return (
-          <button
+          <motion.button
             key={player.id}
             onClick={() => !disabled && onVote(player.id)}
             className={`relative overflow-hidden rounded-2xl p-4 text-left min-h-[88px] flex items-center gap-3
@@ -49,12 +50,22 @@ export default function VoteGrid({ players, votes, voterCount, onVote, disabled 
               }
               ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
             `}
+            whileTap={disabled ? {} : { scale: 0.95 }}
+            animate={isLeading ? {
+              boxShadow: [
+                '0 0 16px rgba(244,63,94,0.2)',
+                '0 0 24px rgba(244,63,94,0.4)',
+                '0 0 16px rgba(244,63,94,0.2)',
+              ],
+            } : {}}
+            transition={isLeading ? { duration: 1.5, repeat: Infinity } : { type: 'spring', stiffness: 400, damping: 25 }}
           >
             {/* Vote fill bar — from bottom */}
             {voteCount > 0 && (
-              <div
-                className="absolute bottom-0 left-0 right-0 bg-rose-500/15 transition-all duration-500"
-                style={{ height: `${pct}%` }}
+              <motion.div
+                className="absolute bottom-0 left-0 right-0 bg-rose-500/15"
+                animate={{ height: `${pct}%` }}
+                transition={{ type: 'spring', stiffness: 200, damping: 20 }}
               />
             )}
 
@@ -70,13 +81,19 @@ export default function VoteGrid({ players, votes, voterCount, onVote, disabled 
 
             {/* Vote badge */}
             {voteCount > 0 && (
-              <div className={`relative w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${
-                isLeading ? 'bg-rose-500 text-white' : 'bg-rose-500/30 text-rose-200'
-              }`}>
+              <motion.div
+                key={voteCount}
+                className={`relative w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${
+                  isLeading ? 'bg-rose-500 text-white' : 'bg-rose-500/30 text-rose-200'
+                }`}
+                initial={{ scale: 1.3 }}
+                animate={{ scale: 1 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 15 }}
+              >
                 {voteCount}
-              </div>
+              </motion.div>
             )}
-          </button>
+          </motion.button>
         )
       })}
     </div>

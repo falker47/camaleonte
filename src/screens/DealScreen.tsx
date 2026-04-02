@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { motion } from 'framer-motion'
 import { useGameStore } from '../store/gameStore'
 import PrivacyReveal from '../components/PrivacyReveal'
 
@@ -30,13 +31,14 @@ export default function DealScreen() {
       {/* Progress */}
       <div className="flex gap-1.5">
         {players.map((_, i) => (
-          <div
+          <motion.div
             key={i}
-            className={`h-1.5 rounded-full transition-all ${
-              i < dealIndex ? 'bg-indigo-400 w-4' :
-              i === dealIndex ? 'bg-white w-6' :
-              'bg-white/10 w-4'
-            }`}
+            animate={{
+              width: i === dealIndex ? 24 : 16,
+              backgroundColor: i < dealIndex ? '#818cf8' : i === dealIndex ? '#ffffff' : 'rgba(255,255,255,0.1)',
+            }}
+            transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+            className="h-1.5 rounded-full"
           />
         ))}
       </div>

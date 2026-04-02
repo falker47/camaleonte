@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion'
 import { useGameStore } from '../store/gameStore'
 import RoleTag from '../components/RoleTag'
 
@@ -169,18 +170,24 @@ export default function ResultScreen() {
       </div>
 
       <div className="flex flex-col gap-3">
-        <button
+        <motion.button
           onClick={rematch}
           className="w-full glass-button font-bold py-5 rounded-2xl text-lg"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.97 }}
+          transition={{ type: "spring", stiffness: 400, damping: 25 }}
         >
           Continua
-        </button>
-        <button
+        </motion.button>
+        <motion.button
           onClick={resetGame}
           className="w-full glass-button-secondary font-semibold py-4 rounded-2xl"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.97 }}
+          transition={{ type: "spring", stiffness: 400, damping: 25 }}
         >
           Fine partita
-        </button>
+        </motion.button>
       </div>
     </div>
   )

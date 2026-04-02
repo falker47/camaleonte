@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion'
 import { useGameStore } from '../store/gameStore'
 import RoleTag from '../components/RoleTag'
 
@@ -59,12 +60,15 @@ export default function EliminationScreen() {
         </div>
       )}
 
-      <button
+      <motion.button
         onClick={confirmElimination}
         className="w-full max-w-xs glass-button font-bold py-5 rounded-2xl text-lg"
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.97 }}
+        transition={{ type: "spring", stiffness: 400, damping: 25 }}
       >
         {isMrWhite ? 'Vai al tentativo →' : 'Continua →'}
-      </button>
+      </motion.button>
     </div>
   )
 }

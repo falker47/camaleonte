@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useGameStore } from '../store/gameStore'
 
 const SUGGESTED_ROLES: Record<number, [number, number]> = {
@@ -116,30 +117,39 @@ export default function SetupScreen() {
           Giocatori ({validNames.length})
         </h3>
         <div className="flex flex-col gap-2">
-          {names.map((name, i) => (
-            <div key={i} className="flex gap-2">
-              <input
-                ref={el => { inputRefs.current[i] = el }}
-                type="text"
-                value={name}
-                onChange={e => updateName(i, e.target.value)}
-                onKeyDown={e => handleKeyDown(i, e)}
-                placeholder={`Giocatore ${i + 1}`}
-                className="flex-1 glass-input rounded-xl px-4 py-3 text-sm"
-                style={{ userSelect: 'text', touchAction: 'auto' }}
-                maxLength={20}
-              />
-              {names.length > 3 && (
-                <button
-                  onClick={() => removePlayer(i)}
-                  className="text-slate-500 hover:text-rose-400 px-3 py-3 rounded-xl transition-colors"
-                  aria-label="Rimuovi"
-                >
-                  ✕
-                </button>
-              )}
-            </div>
-          ))}
+          <AnimatePresence initial={false}>
+            {names.map((name, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+                className="flex gap-2"
+              >
+                <input
+                  ref={el => { inputRefs.current[i] = el }}
+                  type="text"
+                  value={name}
+                  onChange={e => updateName(i, e.target.value)}
+                  onKeyDown={e => handleKeyDown(i, e)}
+                  placeholder={`Giocatore ${i + 1}`}
+                  className="flex-1 glass-input rounded-xl px-4 py-3 text-sm"
+                  style={{ userSelect: 'text', touchAction: 'auto' }}
+                  maxLength={20}
+                />
+                {names.length > 3 && (
+                  <button
+                    onClick={() => removePlayer(i)}
+                    className="text-slate-500 hover:text-rose-400 px-3 py-3 rounded-xl transition-colors"
+                    aria-label="Rimuovi"
+                  >
+                    ✕
+                  </button>
+                )}
+              </motion.div>
+            ))}
+          </AnimatePresence>
         </div>
         {names.length < 12 && (
           <button
@@ -213,7 +223,7 @@ export default function SetupScreen() {
         </div>
       )}
 
-      <button
+      <motion.button
         onClick={handleStart}
         disabled={!canStart}
         className={`w-full py-5 rounded-2xl font-bold text-lg transition-all mt-auto ${
@@ -221,9 +231,12 @@ export default function SetupScreen() {
             ? 'glass-button'
             : 'bg-white/5 text-slate-500 cursor-not-allowed border border-white/5'
         }`}
+        whileHover={canStart ? { scale: 1.02 } : {}}
+        whileTap={canStart ? { scale: 0.97 } : {}}
+        transition={{ type: "spring", stiffness: 400, damping: 25 }}
       >
         Inizia Partita
-      </button>
+      </motion.button>
     </div>
   )
 }

@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion'
 import { useGameStore } from '../store/gameStore'
 
 export default function RoundScreen() {
@@ -61,12 +62,15 @@ export default function RoundScreen() {
         <p className="text-slate-500 text-xs text-center mb-4">
           Dopo che tutti hanno dato il loro indizio, passate al voto
         </p>
-        <button
+        <motion.button
           onClick={() => goTo('vote')}
           className="w-full bg-rose-600 hover:bg-rose-500 active:bg-rose-700 text-white font-bold py-5 rounded-2xl text-lg transition-colors shadow-lg shadow-[0_8px_32px_rgba(244,63,94,0.3)]"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.97 }}
+          transition={{ type: "spring", stiffness: 400, damping: 25 }}
         >
           Vota l'impostore →
-        </button>
+        </motion.button>
       </div>
     </div>
   )

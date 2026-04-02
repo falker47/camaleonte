@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { motion } from 'framer-motion'
 import { useGameStore } from '../store/gameStore'
 import VoteGrid from '../components/VoteGrid'
 
@@ -92,11 +93,10 @@ export default function VoteScreen() {
       {/* Progress bar */}
       <div className="flex flex-col gap-2">
         <div className="h-2 bg-white/5 rounded-full border border-white/5 overflow-hidden">
-          <div
-            className={`h-full rounded-full transition-all duration-300 ${
-              allVoted ? 'bg-rose-500' : 'bg-indigo-500'
-            }`}
-            style={{ width: `${progress}%` }}
+          <motion.div
+            className={`h-full rounded-full ${allVoted ? 'bg-rose-500' : 'bg-indigo-500'}`}
+            animate={{ width: `${progress}%` }}
+            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
           />
         </div>
         <div className="flex justify-between items-center">
@@ -144,7 +144,7 @@ export default function VoteScreen() {
       />
 
       {/* Confirm button */}
-      <button
+      <motion.button
         onClick={tieBreak ? handleTieConfirm : handleConfirm}
         disabled={!allVoted}
         className={`w-full py-5 rounded-2xl font-bold text-lg transition-all ${
@@ -152,9 +152,19 @@ export default function VoteScreen() {
             ? 'bg-rose-600 hover:bg-rose-500 active:bg-rose-700 text-white shadow-[0_0_32px_rgba(244,63,94,0.3)]'
             : 'bg-white/5 text-slate-500 cursor-not-allowed border border-white/5'
         }`}
+        animate={allVoted ? {
+          boxShadow: [
+            '0 0 20px rgba(244,63,94,0.2)',
+            '0 0 40px rgba(244,63,94,0.4)',
+            '0 0 20px rgba(244,63,94,0.2)',
+          ],
+        } : {}}
+        transition={allVoted ? { duration: 1.5, repeat: Infinity } : {}}
+        whileHover={allVoted ? { scale: 1.02 } : {}}
+        whileTap={allVoted ? { scale: 0.97 } : {}}
       >
         {tieBreak ? 'Conferma eliminazione' : 'Elimina il pi\u00f9 votato'}
-      </button>
+      </motion.button>
     </div>
   )
 }

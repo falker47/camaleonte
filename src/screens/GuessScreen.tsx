@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { motion } from 'framer-motion'
 import { useGameStore } from '../store/gameStore'
 
 type Phase = 'privacy' | 'input' | 'result'
@@ -43,12 +44,15 @@ export default function GuessScreen() {
             Gli altri giocatori non devono guardare lo schermo!
           </p>
         </div>
-        <button
+        <motion.button
           onClick={() => setPhase('input')}
           className="w-full max-w-xs bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-black font-bold py-5 rounded-2xl text-lg transition-colors shadow-[0_8px_32px_rgba(245,158,11,0.3)]"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.97 }}
+          transition={{ type: "spring", stiffness: 400, damping: 25 }}
         >
           Sono pronto
-        </button>
+        </motion.button>
       </div>
     )
   }
@@ -88,7 +92,7 @@ export default function GuessScreen() {
               {showGuess ? '🙈' : '👁️'}
             </button>
           </div>
-          <button
+          <motion.button
             onClick={handleSubmit}
             disabled={guess.trim().length === 0}
             className={`w-full py-5 rounded-2xl font-bold text-lg transition-all ${
@@ -96,9 +100,12 @@ export default function GuessScreen() {
                 ? 'bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-black shadow-[0_8px_32px_rgba(245,158,11,0.3)]'
                 : 'bg-white/5 text-slate-500 cursor-not-allowed border border-white/5'
             }`}
+            whileHover={guess.trim().length > 0 ? { scale: 1.02 } : {}}
+            whileTap={guess.trim().length > 0 ? { scale: 0.97 } : {}}
+            transition={{ type: "spring", stiffness: 400, damping: 25 }}
           >
             Rispondo!
-          </button>
+          </motion.button>
         </div>
       </div>
     )
@@ -139,12 +146,15 @@ export default function GuessScreen() {
         </div>
       )}
 
-      <button
+      <motion.button
         onClick={handleContinue}
         className="w-full max-w-xs glass-button font-bold py-5 rounded-2xl text-lg"
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.97 }}
+        transition={{ type: "spring", stiffness: 400, damping: 25 }}
       >
         Continua →
-      </button>
+      </motion.button>
     </div>
   )
 }

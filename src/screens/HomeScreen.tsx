@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion'
 import { useGameStore } from '../store/gameStore'
 
 export default function HomeScreen() {
@@ -15,12 +16,15 @@ export default function HomeScreen() {
       </div>
 
       <div className="flex flex-col gap-4 w-full max-w-xs">
-        <button
+        <motion.button
           onClick={() => goTo('setup')}
-          className="glass-button w-full font-bold py-5 rounded-2xl text-lg"
+          className="glass-button w-full font-bold py-5 rounded-2xl text-lg transition-colors"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.97 }}
+          transition={{ type: "spring", stiffness: 400, damping: 25 }}
         >
           Nuova Partita
-        </button>
+        </motion.button>
       </div>
 
       <div className="glass rounded-2xl px-4 py-3 text-xs text-center max-w-xs mt-4">
