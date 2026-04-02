@@ -2,11 +2,13 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 const STEPS = [
-  { emoji: '🎭', title: 'Ricevi la parola', text: 'Ogni giocatore riceve una parola segreta. Mr.\u00A0White non ne riceve nessuna!' },
-  { emoji: '💬', title: 'Dai un indizio', text: 'A turno, descrivete la vostra parola con una sola parola o frase breve.' },
-  { emoji: '🤔', title: 'Discutete', text: 'Cercate di capire chi è Mr.\u00A0White osservando gli indizi sospetti.' },
-  { emoji: '🗳️', title: 'Votate', text: 'Votate chi eliminare. Se Mr.\u00A0White viene eliminato, ha un\'ultima chance...' },
-  { emoji: '🏆', title: 'Mr.\u00A0White indovina?', text: 'Se indovina la parola dei Civili, vince lui! Altrimenti vincono i Civili.' },
+  { emoji: '🎭', title: 'I tre ruoli', text: 'Ogni partita ha Civili, Infiltrati e Mr.\u00A0White. I Civili ricevono una parola, gli Infiltrati una simile ma diversa, e Mr.\u00A0White non riceve nulla!' },
+  { emoji: '🔤', title: 'Le parole', text: 'Civili e Infiltrati ricevono parole della stessa categoria (es. Pizza e Focaccia), ma non sanno quale delle due hanno. Mr.\u00A0White deve bluffare senza parola.' },
+  { emoji: '💬', title: 'Dai un indizio', text: 'A turno, ognuno dice una parola o frase breve per descrivere la propria parola. Attenti a non rivelare troppo... e a non tradirvi!' },
+  { emoji: '🗳️', title: 'Votate', text: 'Dopo il giro di indizi, votate chi eliminare. In caso di parità si rivota o si procede con eliminazione casuale.' },
+  { emoji: '🎯', title: 'Obiettivi', text: 'I Civili devono eliminare tutti gli impostori. Infiltrato e Mr.\u00A0White vincono se sopravvivono fino a quando restano solo 2\u00A0giocatori.' },
+  { emoji: '🕵️', title: 'L\'ultima chance', text: 'Se Mr.\u00A0White viene eliminato, può tentare di indovinare la parola dei Civili. Se ci riesce, vince comunque!' },
+  { emoji: '🏆', title: 'Punteggi', text: 'Civile: 2\u00A0pt se vincono. Infiltrato: 5\u00A0pt se sopravvive. Mr.\u00A0White: 6\u00A0pt se sopravvive o indovina la parola.' },
 ]
 
 const swipeThreshold = 50

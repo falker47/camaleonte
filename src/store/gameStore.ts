@@ -222,6 +222,9 @@ export const useGameStore = create<GameState>((set, get) => ({
   },
 
   resetScores: () => {
-    set({ scores: {} })
+    const zeroed = Object.fromEntries(
+      Object.keys(get().scores).map(name => [name, 0])
+    )
+    set({ scores: zeroed })
   },
 }))

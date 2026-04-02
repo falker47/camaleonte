@@ -18,6 +18,19 @@ function AnimatedCounter({ value }: { value: number }) {
   return <span>+{displayValue}</span>
 }
 
+function AnimatedScore({ value }: { value: number }) {
+  const spring = useSpring(value, { stiffness: 50, damping: 20 })
+  const display = useTransform(spring, v => Math.round(v))
+  const [displayValue, setDisplayValue] = useState(value)
+
+  useEffect(() => {
+    spring.set(value)
+    return display.on('change', v => setDisplayValue(v))
+  }, [value, spring, display])
+
+  return <span>{displayValue} pt</span>
+}
+
 export default function ResultScreen() {
   const players = useGameStore(s => s.players)
   const wordPair = useGameStore(s => s.wordPair)
@@ -48,7 +61,7 @@ export default function ResultScreen() {
   // Leaderboard sorted by cumulative score
   const leaderboard = Object.entries(scores)
     .sort(([, a], [, b]) => b - a)
-  const hasScoreHistory = leaderboard.some(([, s]) => s > 0)
+  const hasScoreHistory = leaderboard.length > 0
 
   return (
     <div className="relative flex flex-col flex-1 min-h-0 px-5 py-6 gap-4 overflow-y-auto">
@@ -307,7 +320,7 @@ export default function ResultScreen() {
                   <span className={`font-bold text-sm ${
                     isFirst ? 'text-amber-400' : 'text-white'
                   }`}>
-                    {total} pt
+                    <AnimatedScore value={total} />
                   </span>
                 </motion.div>
               )
