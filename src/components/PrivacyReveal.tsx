@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import type { Role } from '../store/types'
 import Particles from './Particles'
+import { vibrate } from '../utils/vibrate'
 
 interface Props {
   playerName: string
@@ -41,7 +42,7 @@ export default function PrivacyReveal({ playerName, word, role, onDone, isLast }
   // Delay before showing "Ho visto" button
   useEffect(() => {
     if (phase === 'revealed') {
-      const t = setTimeout(() => setShowHide(true), 1200)
+      const t = setTimeout(() => setShowHide(true), 800)
       return () => clearTimeout(t)
     } else {
       setShowHide(false)
@@ -50,6 +51,7 @@ export default function PrivacyReveal({ playerName, word, role, onDone, isLast }
 
   const handleCardTap = () => {
     if (phase === 'waiting') {
+      vibrate(25)
       setPhase('revealed')
       setShowParticles(true)
       setTimeout(() => setShowParticles(false), 1500)
@@ -64,7 +66,15 @@ export default function PrivacyReveal({ playerName, word, role, onDone, isLast }
   const textColor = ROLE_TEXT_COLORS[role]
 
   return (
-    <div className="flex flex-col items-center gap-6 w-full">
+    <AnimatePresence mode="wait">
+    <motion.div
+      key={playerName}
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.95 }}
+      transition={{ duration: 0.25 }}
+      className="flex flex-col items-center gap-6 w-full"
+    >
       {/* Card */}
       <div
         className={`relative perspective-1000 w-full max-w-xs ${phase === 'waiting' ? 'cursor-pointer' : ''}`}
@@ -80,9 +90,9 @@ export default function PrivacyReveal({ playerName, word, role, onDone, isLast }
             style={{ borderColor: 'rgba(255,255,255,0.15)' }}
             animate={phase === 'waiting' ? {
               borderColor: [
-                'rgba(255,255,255,0.08)',
-                'rgba(99,102,241,0.3)',
-                'rgba(255,255,255,0.08)',
+                'rgba(255,255,255,0.12)',
+                'rgba(99,102,241,0.6)',
+                'rgba(255,255,255,0.12)',
               ],
             } : {}}
             transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
@@ -171,6 +181,7 @@ export default function PrivacyReveal({ playerName, word, role, onDone, isLast }
           {isLast ? 'Tutti pronti — Inizia!' : 'Prossimo giocatore →'}
         </motion.button>
       )}
-    </div>
+    </motion.div>
+    </AnimatePresence>
   )
 }

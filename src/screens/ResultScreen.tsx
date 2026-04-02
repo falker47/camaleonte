@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { motion, useSpring, useTransform } from 'framer-motion'
+import { motion, AnimatePresence, useSpring, useTransform } from 'framer-motion'
 import { useGameStore } from '../store/gameStore'
 import RoleTag from '../components/RoleTag'
 import Particles from '../components/Particles'
@@ -28,6 +28,9 @@ export default function ResultScreen() {
   const resetGame = useGameStore(s => s.resetGame)
   const rematch = useGameStore(s => s.rematch)
   const resetScores = useGameStore(s => s.resetScores)
+
+  const [showLegend, setShowLegend] = useState(false)
+  const [confirmReset, setConfirmReset] = useState(false)
 
   const mwPoisoned = mrWhiteCorrectIds.length > 0
   const isCiviliansWin = winner === 'civilians' && !mwPoisoned
@@ -199,6 +202,8 @@ export default function ResultScreen() {
         </div>
       )}
 
+      <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+
       {/* Player list with round points */}
       <div>
         <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">
@@ -246,6 +251,8 @@ export default function ResultScreen() {
         </div>
       </div>
 
+      <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+
       {/* Leaderboard (cumulative) */}
       {hasScoreHistory && (
         <div>
@@ -253,14 +260,32 @@ export default function ResultScreen() {
             <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
               Classifica generale
             </p>
-            <button
-              onClick={resetScores}
-              className="text-xs text-slate-600 hover:text-rose-400 transition-colors"
-            >
-              Azzera punteggi
-            </button>
+            {confirmReset ? (
+              <div className="flex items-center gap-2">
+                <span className="text-rose-400 text-xs">Sicuro?</span>
+                <button
+                  onClick={() => { resetScores(); setConfirmReset(false) }}
+                  className="text-xs text-rose-400 hover:text-rose-300 font-semibold transition-colors"
+                >
+                  Si
+                </button>
+                <button
+                  onClick={() => setConfirmReset(false)}
+                  className="text-xs text-slate-500 hover:text-slate-300 transition-colors"
+                >
+                  No
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => setConfirmReset(true)}
+                className="text-xs text-slate-600 hover:text-rose-400 transition-colors"
+              >
+                Azzera punteggi
+              </button>
+            )}
           </div>
-          <div className="glass rounded-2xl overflow-hidden">
+          <div className="glass-strong rounded-2xl overflow-hidden">
             {leaderboard.map(([name, total], i) => {
               const isFirst = i === 0 && total > 0
               return (
@@ -291,14 +316,37 @@ export default function ResultScreen() {
         </div>
       )}
 
-      {/* Points legend */}
-      <div className="glass rounded-xl px-4 py-3">
-        <p className="text-slate-500 text-xs mb-1.5">Punteggio</p>
-        <div className="flex flex-col gap-1 text-xs">
-          <span className="text-indigo-400">Civile: 2 pt (se tutti impostori eliminati e MW non indovina)</span>
-          <span className="text-white">Mr. White: 6 pt (se indovina la parola o sopravvive)</span>
-          <span className="text-amber-400">Infiltrato: 5 pt (se sopravvive fino alla fine)</span>
-        </div>
+      {/* Points legend (collapsible) */}
+      <div className="glass rounded-xl overflow-hidden">
+        <button
+          onClick={() => setShowLegend(v => !v)}
+          className="w-full flex items-center justify-between px-4 py-3 text-slate-500 text-xs font-semibold"
+        >
+          <span>ℹ Punteggi</span>
+          <motion.span
+            animate={{ rotate: showLegend ? 180 : 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            ▾
+          </motion.span>
+        </button>
+        <AnimatePresence>
+          {showLegend && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="overflow-hidden"
+            >
+              <div className="px-4 pb-3 flex flex-col gap-1 text-xs">
+                <span className="text-indigo-400">Civile: 2 pt (se tutti impostori eliminati e MW non indovina)</span>
+                <span className="text-white">Mr. White: 6 pt (se indovina la parola o sopravvive)</span>
+                <span className="text-amber-400">Infiltrato: 5 pt (se sopravvive fino alla fine)</span>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       <div className="flex flex-col gap-3">

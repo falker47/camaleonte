@@ -50,6 +50,15 @@ export default function SetupScreen() {
     }
   }, [validNames.length, manualOverride])
 
+  // Clamp role counts when players are removed
+  useEffect(() => {
+    const maxTotal = Math.max(0, validNames.length - 2)
+    const clampedMw = Math.min(mrWhiteCount, 2, Math.max(0, maxTotal - infiltratoCount))
+    const clampedInf = Math.min(infiltratoCount, 3, Math.max(0, maxTotal - clampedMw))
+    if (clampedMw !== mrWhiteCount) setMrWhiteCount(clampedMw)
+    if (clampedInf !== infiltratoCount) setInfiltratoCount(clampedInf)
+  }, [validNames.length, mrWhiteCount, infiltratoCount])
+
   const handleMrWhiteChange = (v: number) => {
     setManualOverride(true)
     setMrWhiteCount(v)
@@ -60,9 +69,30 @@ export default function SetupScreen() {
     setInfiltratoCount(v)
   }
 
+  // Dynamic max: always guarantee at least 2 civilians
+  const maxTotalImpostors = Math.max(0, validNames.length - 2)
+  const effectiveMaxMrWhite = Math.min(2, Math.max(0, maxTotalImpostors - infiltratoCount))
+  const effectiveMaxInfiltrato = Math.min(3, Math.max(0, maxTotalImpostors - mrWhiteCount))
+
   const impostorCount = mrWhiteCount + infiltratoCount
   const civilianCount = Math.max(0, validNames.length - impostorCount)
   const hasDuplicates = new Set(validNames.map(n => n.trim().toLowerCase())).size < validNames.length
+
+  // Track which slot indices have duplicate names
+  const duplicateIndices = new Set<number>()
+  if (hasDuplicates) {
+    const seen = new Map<string, number>()
+    slots.forEach((slot, i) => {
+      const key = slot.name.trim().toLowerCase()
+      if (key.length === 0) return
+      if (seen.has(key)) {
+        duplicateIndices.add(seen.get(key)!)
+        duplicateIndices.add(i)
+      } else {
+        seen.set(key, i)
+      }
+    })
+  }
   const canStart =
     validNames.length >= 3 &&
     impostorCount >= 1 &&
@@ -109,7 +139,7 @@ export default function SetupScreen() {
       <div className="flex items-center gap-3">
         <button
           onClick={() => goTo('home')}
-          className="text-slate-400 hover:text-white p-1 transition-colors"
+          className="text-slate-400 hover:text-white p-2 w-10 h-10 glass rounded-full flex items-center justify-center transition-colors"
           aria-label="Indietro"
         >
           ←
@@ -133,17 +163,32 @@ export default function SetupScreen() {
                 transition={{ type: 'spring', stiffness: 300, damping: 25 }}
                 className="flex gap-2"
               >
-                <input
-                  ref={el => { inputRefs.current[i] = el }}
-                  type="text"
-                  value={slot.name}
-                  onChange={e => updateName(i, e.target.value)}
-                  onKeyDown={e => handleKeyDown(i, e)}
-                  placeholder={`Giocatore ${i + 1}`}
-                  className="flex-1 glass-input rounded-xl px-4 py-3 text-sm"
-                  style={{ userSelect: 'text', touchAction: 'auto' }}
-                  maxLength={20}
-                />
+                <div className="w-8 h-8 rounded-full bg-indigo-700 flex items-center justify-center text-sm font-bold text-white shrink-0">
+                  {i + 1}
+                </div>
+                <div className="flex-1 flex flex-col gap-1">
+                  <div className="relative">
+                    <input
+                      ref={el => { inputRefs.current[i] = el }}
+                      type="text"
+                      value={slot.name}
+                      onChange={e => updateName(i, e.target.value)}
+                      onKeyDown={e => handleKeyDown(i, e)}
+                      placeholder={`Giocatore ${i + 1}`}
+                      className={`w-full glass-input rounded-xl px-4 py-3 text-sm ${duplicateIndices.has(i) ? 'border-rose-500/60' : ''}`}
+                      style={{ userSelect: 'text', touchAction: 'auto' }}
+                      maxLength={20}
+                    />
+                    {slot.name.length > 15 && (
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 text-xs pointer-events-none">
+                        {slot.name.length}/20
+                      </span>
+                    )}
+                  </div>
+                  {duplicateIndices.has(i) && (
+                    <p className="text-rose-400 text-xs ml-1">Nome duplicato</p>
+                  )}
+                </div>
                 {slots.length > 3 && (
                   <button
                     onClick={() => removePlayer(i)}
@@ -158,12 +203,17 @@ export default function SetupScreen() {
           </AnimatePresence>
         </div>
         {slots.length < 12 && (
-          <button
-            onClick={addPlayer}
-            className="mt-2 text-indigo-400 hover:text-indigo-300 text-sm py-2 transition-colors"
-          >
-            + Aggiungi giocatore
-          </button>
+          <>
+            <p className="text-slate-600 text-xs mt-1 ml-10">
+              Premi Invio per aggiungere
+            </p>
+            <button
+              onClick={addPlayer}
+              className="mt-2 text-indigo-400 hover:text-indigo-300 text-sm py-2 transition-colors"
+            >
+              + Aggiungi giocatore
+            </button>
+          </>
         )}
       </div>
 
@@ -178,7 +228,7 @@ export default function SetupScreen() {
             description="Non conosce la parola — deve bluffare"
             value={mrWhiteCount}
             min={0}
-            max={2}
+            max={effectiveMaxMrWhite}
             color="white"
             onChange={handleMrWhiteChange}
           />
@@ -187,7 +237,7 @@ export default function SetupScreen() {
             description="Hanno una parola diversa — non lo sanno!"
             value={infiltratoCount}
             min={0}
-            max={3}
+            max={effectiveMaxInfiltrato}
             color="amber"
             onChange={handleInfiltratoChange}
           />
@@ -199,9 +249,6 @@ export default function SetupScreen() {
         )}
         {impostorCount > 0 && validNames.length < 3 && (
           <p className="text-rose-400 text-xs mt-2">Servono almeno 3 giocatori</p>
-        )}
-        {impostorCount > 0 && validNames.length >= 3 && impostorCount >= validNames.length - 1 && (
-          <p className="text-rose-400 text-xs mt-2">Servono almeno 2 civili</p>
         )}
         {hasDuplicates && (
           <p className="text-rose-400 text-xs mt-2">Ci sono nomi duplicati</p>
@@ -277,14 +324,20 @@ function RoleCounter({ label, description, value, min, max, color, onChange }: R
       <div className="flex items-center gap-3">
         <button
           onClick={() => onChange(Math.max(min, value - 1))}
-          className="w-9 h-9 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold flex items-center justify-center transition-colors"
+          disabled={value <= min}
+          className={`w-9 h-9 rounded-full border border-white/10 font-bold flex items-center justify-center transition-colors ${
+            value <= min ? 'bg-white/3 text-slate-600 cursor-not-allowed' : 'bg-white/5 hover:bg-white/10 text-white'
+          }`}
         >
           −
         </button>
         <span className="text-white font-bold w-4 text-center">{value}</span>
         <button
           onClick={() => onChange(Math.min(max, value + 1))}
-          className="w-9 h-9 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold flex items-center justify-center transition-colors"
+          disabled={value >= max}
+          className={`w-9 h-9 rounded-full border border-white/10 font-bold flex items-center justify-center transition-colors ${
+            value >= max ? 'bg-white/3 text-slate-600 cursor-not-allowed' : 'bg-white/5 hover:bg-white/10 text-white'
+          }`}
         >
           +
         </button>

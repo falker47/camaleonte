@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import type { Player } from '../store/types'
+import { AVATAR_COLORS } from '../constants/avatarColors'
 
 interface Props {
   players: Player[]
@@ -8,21 +9,6 @@ interface Props {
   onVote: (targetId: string) => void
   disabled?: boolean
 }
-
-const AVATAR_COLORS = [
-  'from-indigo-500 to-indigo-700',
-  'from-emerald-500 to-emerald-700',
-  'from-amber-500 to-amber-700',
-  'from-rose-500 to-rose-700',
-  'from-cyan-500 to-cyan-700',
-  'from-purple-500 to-purple-700',
-  'from-pink-500 to-pink-700',
-  'from-lime-500 to-lime-700',
-  'from-orange-500 to-orange-700',
-  'from-teal-500 to-teal-700',
-  'from-fuchsia-500 to-fuchsia-700',
-  'from-sky-500 to-sky-700',
-]
 
 export default function VoteGrid({ players, votes, voterCount, onVote, disabled }: Props) {
   const maxVotes = Math.max(0, ...Object.values(votes))
@@ -65,6 +51,17 @@ export default function VoteGrid({ players, votes, voterCount, onVote, disabled 
                 className="absolute bottom-0 left-0 right-0 bg-rose-500/15"
                 animate={{ height: `${pct}%` }}
                 transition={{ type: 'spring', stiffness: 200, damping: 20 }}
+              />
+            )}
+
+            {/* Tap flash */}
+            {voteCount > 0 && (
+              <motion.div
+                key={`flash-${voteCount}`}
+                className="absolute inset-0 rounded-2xl bg-white/10 pointer-events-none"
+                initial={{ opacity: 0.4 }}
+                animate={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
               />
             )}
 

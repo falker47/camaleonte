@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { useGameStore } from '../store/gameStore'
 import RoleTag from '../components/RoleTag'
+import { vibrate } from '../utils/vibrate'
 
 const ROLE_FLASH_COLORS: Record<string, string> = {
   mrwhite: 'rgba(255,255,255,0.15)',
@@ -114,7 +115,7 @@ export default function EliminationScreen() {
       )}
 
       <motion.button
-        onClick={confirmElimination}
+        onClick={() => { vibrate(30); confirmElimination() }}
         className="w-full max-w-xs glass-button font-bold py-5 rounded-2xl text-lg relative z-10"
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.97 }}

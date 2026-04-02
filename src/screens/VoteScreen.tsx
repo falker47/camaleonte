@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { useGameStore } from '../store/gameStore'
 import type { Player } from '../store/types'
 import VoteGrid from '../components/VoteGrid'
+import { vibrate } from '../utils/vibrate'
 
 export default function VoteScreen() {
   const players = useGameStore(s => s.players)
@@ -25,6 +26,7 @@ export default function VoteScreen() {
 
   const handleVote = (targetId: string) => {
     if (votersLeft <= 0) return
+    vibrate()
     setVotes(v => ({ ...v, [targetId]: (v[targetId] ?? 0) + 1 }))
     setVoteHistory(h => [...h, targetId])
   }
@@ -98,7 +100,7 @@ export default function VoteScreen() {
       <div className="flex items-center gap-3">
         <button
           onClick={() => goTo('round')}
-          className="text-slate-400 hover:text-white p-1 transition-colors"
+          className="text-slate-400 hover:text-white p-2 w-10 h-10 glass rounded-full flex items-center justify-center transition-colors"
         >
           ←
         </button>
@@ -164,27 +166,27 @@ export default function VoteScreen() {
             />
           </div>
           <div className="flex justify-between items-center">
-            <p className="text-slate-400 text-xs">
-              {allVoted
-                ? 'Tutti hanno votato!'
-                : `${votersLeft} ${votersLeft === 1 ? 'voto rimasto' : 'voti rimasti'}`
-              }
-            </p>
-            <div className="flex gap-3">
+            <div className="flex items-baseline gap-1">
+              <span className="text-white font-black text-lg">{totalVotesCast}/{voterCount}</span>
+              <span className="text-slate-500 text-xs">
+                {allVoted ? 'tutti votato!' : 'voti'}
+              </span>
+            </div>
+            <div className="flex gap-2">
               {voteHistory.length > 0 && (
                 <button
                   onClick={() => { setVotes({}); setVoteHistory([]) }}
-                  className="text-rose-400 hover:text-rose-300 text-xs font-medium transition-colors"
+                  className="glass rounded-full px-3 py-1.5 text-rose-400 hover:text-rose-300 text-xs font-medium transition-colors"
                 >
-                  Azzera tutto
+                  Azzera
                 </button>
               )}
               {voteHistory.length > 0 && !allVoted && (
                 <button
                   onClick={handleUndo}
-                  className="text-amber-400 hover:text-amber-300 text-xs font-medium transition-colors"
+                  className="glass rounded-full px-3 py-1.5 text-amber-400 hover:text-amber-300 text-xs font-medium flex items-center gap-1.5 transition-colors"
                 >
-                  Annulla ultimo
+                  <span>↩</span> Annulla
                 </button>
               )}
             </div>

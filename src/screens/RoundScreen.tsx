@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { useGameStore } from '../store/gameStore'
+import { AVATAR_COLORS } from '../constants/avatarColors'
 
 export default function RoundScreen() {
   const players = useGameStore(s => s.players)
@@ -33,7 +34,7 @@ export default function RoundScreen() {
               key={player.id}
               className="flex items-center gap-3 glass rounded-2xl px-4 py-3"
             >
-              <div className="w-8 h-8 rounded-full bg-indigo-700 flex items-center justify-center text-sm font-bold text-white shrink-0">
+              <div className={`w-8 h-8 rounded-full bg-gradient-to-br ${AVATAR_COLORS[i % AVATAR_COLORS.length]} flex items-center justify-center text-sm font-bold text-white shrink-0`}>
                 {i + 1}
               </div>
               <span className="text-white font-medium">{player.name}</span>
@@ -44,22 +45,23 @@ export default function RoundScreen() {
 
       {/* Eliminated */}
       {eliminated.length > 0 && (
-        <div>
-          <p className="text-xs font-semibold text-slate-600 uppercase tracking-wide mb-2">
-            Eliminati
-          </p>
-          <div className="flex flex-wrap gap-2">
-            {eliminated.map(player => (
-              <span key={player.id} className="text-slate-600 text-sm line-through">
-                {player.name}
-              </span>
-            ))}
-          </div>
+        <div className="glass rounded-xl px-4 py-2.5 flex items-center gap-2 flex-wrap">
+          <span className="text-slate-500 text-xs font-semibold uppercase tracking-wide">
+            Eliminati ({eliminated.length})
+          </span>
+          <span className="text-slate-600">·</span>
+          {eliminated.map((player, i) => (
+            <span key={player.id} className="flex items-center gap-1 text-slate-500 text-sm">
+              <span className="text-xs">✕</span>
+              <span className="line-through">{player.name}</span>
+              {i < eliminated.length - 1 && <span className="text-slate-700">,</span>}
+            </span>
+          ))}
         </div>
       )}
 
       <div className="mt-auto">
-        <p className="text-slate-500 text-xs text-center mb-4">
+        <p className="text-slate-400 text-sm text-center mb-4">
           Dopo che tutti hanno dato il loro indizio, passate al voto
         </p>
         <motion.button

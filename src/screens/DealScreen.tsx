@@ -29,18 +29,21 @@ export default function DealScreen() {
   return (
     <div className="flex flex-col items-center flex-1 px-5 py-8 gap-6">
       {/* Progress */}
-      <div className="flex gap-1.5">
-        {players.map((_, i) => (
-          <motion.div
-            key={i}
-            animate={{
-              width: i === dealIndex ? 24 : 16,
-              backgroundColor: i < dealIndex ? '#818cf8' : i === dealIndex ? '#ffffff' : 'rgba(255,255,255,0.1)',
-            }}
-            transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-            className="h-1.5 rounded-full"
-          />
-        ))}
+      <div className="flex items-center gap-2">
+        <div className="flex gap-1.5">
+          {players.map((_, i) => (
+            <motion.div
+              key={i}
+              animate={{
+                width: i === dealIndex ? 24 : 16,
+                backgroundColor: i < dealIndex ? '#818cf8' : i === dealIndex ? '#ffffff' : 'rgba(255,255,255,0.1)',
+              }}
+              transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+              className="h-1.5 rounded-full"
+            />
+          ))}
+        </div>
+        <span className="text-slate-400 text-sm font-medium">{dealIndex + 1}/{total}</span>
       </div>
 
       <div className="flex flex-col items-center gap-1">
