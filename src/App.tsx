@@ -1,4 +1,5 @@
-import { Component, type ComponentType, type ReactNode, useState } from 'react'
+import { Component, type ComponentType, type ReactNode, useRef, useState } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
 import { useGameStore } from './store/gameStore'
 import type { Screen } from './store/types'
 import HomeScreen from './screens/HomeScreen'
@@ -19,6 +20,50 @@ const SCREENS: Record<Screen, ComponentType> = {
   elimination: EliminationScreen,
   mrwhite_guess: GuessScreen,
   result: ResultScreen,
+}
+
+const SCREEN_ORDER: Screen[] = [
+  'home', 'setup', 'deal', 'round', 'vote', 'elimination', 'mrwhite_guess', 'result',
+]
+
+const FADE_SCALE_SCREENS: Set<Screen> = new Set(['elimination', 'result'])
+
+function getTransitionVariants(prev: Screen | null, current: Screen) {
+  if (FADE_SCALE_SCREENS.has(current)) {
+    return {
+      initial: { opacity: 0, scale: 0.95 },
+      animate: { opacity: 1, scale: 1 },
+      exit: { opacity: 0, scale: 0.95 },
+    }
+  }
+
+  if (prev === null) {
+    return {
+      initial: { opacity: 0 },
+      animate: { opacity: 1 },
+      exit: { opacity: 0 },
+    }
+  }
+
+  const prevIdx = SCREEN_ORDER.indexOf(prev)
+  const currIdx = SCREEN_ORDER.indexOf(current)
+
+  if ((prev === 'deal' && current === 'round') ||
+      ((prev === 'elimination' || prev === 'mrwhite_guess') && current === 'round')) {
+    return {
+      initial: { opacity: 0 },
+      animate: { opacity: 1 },
+      exit: { opacity: 0 },
+    }
+  }
+
+  const direction = currIdx >= prevIdx ? 1 : -1
+
+  return {
+    initial: { x: direction * 30, opacity: 0 },
+    animate: { x: 0, opacity: 1 },
+    exit: { x: direction * -30, opacity: 0 },
+  }
 }
 
 class ErrorBoundary extends Component<{ children: ReactNode }, { error: string | null }> {
@@ -106,15 +151,41 @@ function AmbientBlobs() {
   )
 }
 
-export default function App() {
+function AnimatedScreen() {
   const screen = useGameStore(s => s.screen)
-  const Screen = SCREENS[screen]
+  const prevScreen = useRef<Screen | null>(null)
+  const ScreenComponent = SCREENS[screen]
+
+  const variants = getTransitionVariants(prevScreen.current, screen)
+
+  const currentScreen = screen
+  if (prevScreen.current !== currentScreen) {
+    setTimeout(() => { prevScreen.current = currentScreen }, 0)
+  }
+
+  return (
+    <AnimatePresence mode="wait">
+      <motion.div
+        key={screen}
+        initial={variants.initial}
+        animate={variants.animate}
+        exit={variants.exit}
+        transition={{ duration: 0.3, ease: 'easeOut' }}
+        className="flex flex-col flex-1 min-h-0"
+      >
+        <ScreenComponent />
+      </motion.div>
+    </AnimatePresence>
+  )
+}
+
+export default function App() {
   return (
     <div className="h-full bg-slate-950 text-white flex flex-col max-w-md mx-auto overflow-hidden relative">
       <AmbientBlobs />
       <ErrorBoundary>
         <QuitButton />
-        <Screen />
+        <AnimatedScreen />
       </ErrorBoundary>
     </div>
   )
