@@ -1,0 +1,32 @@
+import { useGameStore } from '../store/gameStore'
+
+export default function HomeScreen() {
+  const goTo = useGameStore(s => s.goTo)
+
+  return (
+    <div className="flex flex-col items-center justify-center flex-1 gap-8 px-6 py-12">
+      <div className="flex flex-col items-center gap-2">
+        <div className="text-7xl">🕵️</div>
+        <h1 className="text-4xl font-black text-white text-center">Mr. White</h1>
+        <p className="text-slate-400 text-center text-sm max-w-xs">
+          Il gioco di deduzione sociale per feste.
+          Chi è l'impostore tra voi?
+        </p>
+      </div>
+
+      <div className="flex flex-col gap-4 w-full max-w-xs">
+        <button
+          onClick={() => goTo('setup')}
+          className="bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white font-bold py-5 rounded-2xl text-lg transition-colors shadow-lg"
+        >
+          Nuova Partita
+        </button>
+      </div>
+
+      <div className="text-slate-600 text-xs text-center max-w-xs mt-4">
+        <p className="font-semibold text-slate-500 mb-1">Come si gioca</p>
+        <p>Ogni giocatore riceve una parola segreta. Mr. White non ha nessuna parola. Descrivete la vostra parola con un solo indizio. Trovate Mr. White prima che lui scopra la vostra parola!</p>
+      </div>
+    </div>
+  )
+}

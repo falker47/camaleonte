@@ -1,0 +1,103 @@
+<h2>Quale direzione visiva per Mr. White?</h2>
+<p class="subtitle">Scegli lo stile che meglio si adatta all'atmosfera del gioco</p>
+
+<div class="cards">
+  <!-- Option A: Glassmorphism -->
+  <div class="card" data-choice="glassmorphism" onclick="toggleSelect(this)">
+    <div class="card-image" style="background: linear-gradient(135deg, #0f0a1e 0%, #1e1b4b 100%); padding: 24px; min-height: 200px; display: flex; align-items: center; justify-content: center;">
+      <div style="
+        background: rgba(255,255,255,0.08);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255,255,255,0.12);
+        border-radius: 16px;
+        padding: 24px;
+        width: 80%;
+        text-align: center;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1);
+      ">
+        <div style="font-size: 32px; margin-bottom: 8px;">🕵️</div>
+        <div style="color: #e2e8f0; font-weight: 600; font-size: 14px;">Il tuo ruolo</div>
+        <div style="
+          margin-top: 12px;
+          background: rgba(99,102,241,0.2);
+          border: 1px solid rgba(99,102,241,0.3);
+          border-radius: 8px;
+          padding: 8px 16px;
+          color: #a5b4fc;
+          font-size: 13px;
+        ">Civile</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>Glassmorphism Elegante</h3>
+      <p>Superfici semi-trasparenti con blur, bordi luminosi sottili, ombre profonde. Sensazione di profondità e lusso. Stile Apple/iOS.</p>
+    </div>
+  </div>
+
+  <!-- Option B: Neon/Cyberpunk -->
+  <div class="card" data-choice="neon" onclick="toggleSelect(this)">
+    <div class="card-image" style="background: #0a0a0f; padding: 24px; min-height: 200px; display: flex; align-items: center; justify-content: center;">
+      <div style="
+        background: rgba(15,10,30,0.9);
+        border: 1px solid rgba(139,92,246,0.5);
+        border-radius: 16px;
+        padding: 24px;
+        width: 80%;
+        text-align: center;
+        box-shadow: 0 0 20px rgba(139,92,246,0.2), 0 0 60px rgba(139,92,246,0.1), inset 0 0 20px rgba(139,92,246,0.05);
+      ">
+        <div style="font-size: 32px; margin-bottom: 8px;">🕵️</div>
+        <div style="color: #c4b5fd; font-weight: 600; font-size: 14px; text-shadow: 0 0 10px rgba(139,92,246,0.5);">Il tuo ruolo</div>
+        <div style="
+          margin-top: 12px;
+          background: transparent;
+          border: 1px solid rgba(251,191,36,0.6);
+          border-radius: 8px;
+          padding: 8px 16px;
+          color: #fbbf24;
+          font-size: 13px;
+          text-shadow: 0 0 8px rgba(251,191,36,0.4);
+          box-shadow: 0 0 12px rgba(251,191,36,0.15);
+        ">Infiltrato</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>Neon / Glow</h3>
+      <p>Bagliori colorati, ombre neon, bordi luminescenti. Atmosfera misteriosa e cinematografica. Stile cyberpunk/gioco da tavolo moderno.</p>
+    </div>
+  </div>
+
+  <!-- Option C: Refined Dark -->
+  <div class="card" data-choice="refined-dark" onclick="toggleSelect(this)">
+    <div class="card-image" style="background: linear-gradient(180deg, #111118 0%, #18181f 100%); padding: 24px; min-height: 200px; display: flex; align-items: center; justify-content: center;">
+      <div style="
+        background: linear-gradient(145deg, #1e1e28, #16161e);
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 16px;
+        padding: 24px;
+        width: 80%;
+        text-align: center;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 2px 4px rgba(0,0,0,0.2);
+      ">
+        <div style="font-size: 32px; margin-bottom: 8px;">🕵️</div>
+        <div style="color: #94a3b8; font-weight: 600; font-size: 14px; letter-spacing: 0.05em;">Il tuo ruolo</div>
+        <div style="
+          margin-top: 12px;
+          background: linear-gradient(135deg, #4f46e5, #6366f1);
+          border: none;
+          border-radius: 8px;
+          padding: 8px 16px;
+          color: white;
+          font-size: 13px;
+          font-weight: 600;
+          box-shadow: 0 4px 12px rgba(99,102,241,0.3);
+        ">Civile</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>Dark Raffinato</h3>
+      <p>Gradienti sottili, ombre stratificate, superfici solide con texture minimali. Eleganza sobria. Stile premium app/Spotify.</p>
+    </div>
+  </div>
+</div>
