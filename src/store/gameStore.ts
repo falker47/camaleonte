@@ -53,6 +53,7 @@ interface GameState {
   winner: 'civilians' | 'last_two' | null
   scores: Record<string, number>
   roundScores: Record<string, number>
+  usedPairIndices: number[]
 
   goTo: (screen: Screen) => void
   setPlayerNames: (names: string[]) => void
@@ -83,6 +84,7 @@ export const useGameStore = create<GameState>((set, get) => ({
   winner: null,
   scores: {},
   roundScores: {},
+  usedPairIndices: [],
 
   goTo: (screen) => set({ screen }),
 
@@ -91,9 +93,21 @@ export const useGameStore = create<GameState>((set, get) => ({
   setConfig: (config) => set({ config }),
 
   startGame: () => {
-    const { playerNames, config } = get()
-    const shuffledPairs = shuffle(wordPairs)
-    const raw = shuffledPairs[0]
+    const { playerNames, config, usedPairIndices } = get()
+
+    let available = wordPairs
+      .map((pair, i) => ({ pair, i }))
+      .filter(({ i }) => !usedPairIndices.includes(i))
+
+    if (available.length === 0) {
+      const lastUsed = usedPairIndices[usedPairIndices.length - 1]
+      available = wordPairs
+        .map((pair, i) => ({ pair, i }))
+        .filter(({ i }) => i !== lastUsed)
+    }
+
+    const chosen = shuffle(available)[0]
+    const raw = chosen.pair
     const pair = Math.random() < 0.5
       ? { ...raw, civilian: raw.undercover, undercover: raw.civilian }
       : raw
@@ -101,6 +115,7 @@ export const useGameStore = create<GameState>((set, get) => ({
     set({
       players,
       wordPair: pair,
+      usedPairIndices: [...usedPairIndices, chosen.i],
       dealIndex: 0,
       round: 1,
       currentVotes: {},
@@ -235,6 +250,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       winner: null,
       roundScores: {},
       scores: {},
+      usedPairIndices: [],
     })
   },
 
