@@ -136,15 +136,15 @@ export default function SetupScreen() {
 
   return (
     <div className="flex flex-col flex-1 min-h-0 px-5 py-6 gap-5 overflow-y-auto">
-      <div className="flex items-center gap-3">
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-bold text-white">Nuova Partita</h2>
         <button
           onClick={() => goTo('home')}
-          className="text-slate-400 hover:text-white p-2 w-10 h-10 glass rounded-full flex items-center justify-center transition-colors"
+          className="text-slate-400 hover:text-white w-9 h-9 glass rounded-full flex items-center justify-center transition-colors text-lg"
           aria-label="Indietro"
         >
-          ←
+          ✕
         </button>
-        <h2 className="text-xl font-bold text-white">Nuova Partita</h2>
       </div>
 
       {/* Player names */}
