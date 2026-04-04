@@ -198,9 +198,9 @@ export const useGameStore = create<GameState>((set, get) => ({
       || stripSpaces(normalizedGuess) === stripSpaces(normalizedCivilian)
 
     // Fallback: match a significant keyword (>3 chars, no stop words)
-    if (!isCorrect && normalizedGuess.length > 3) {
+    if (!isCorrect && normalizedGuess.length > 1) {
       const civilianWords = normalizedCivilian.split(' ')
-        .filter(w => w.length > 3 && !STOP_WORDS.has(w))
+        .filter(w => w.length > 1 && !STOP_WORDS.has(w))
       isCorrect = civilianWords.some(w => w === normalizedGuess)
     }
 

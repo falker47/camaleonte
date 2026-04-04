@@ -15,7 +15,7 @@ export const wordPairs: WordPair[] = [
   { civilian: 'Pollo', undercover: 'Manzo', category: 'Cibo' },
   { civilian: 'Mela', undercover: 'Banana', category: 'Cibo' },
   { civilian: 'Cipolla', undercover: 'Aglio', category: 'Cibo' },
-  { civilian: 'Sale', undercover: 'Zucchero', category: 'Cibo' },
+  { civilian: 'Peperoncino', undercover: 'Pepe', category: 'Cibo' },
   { civilian: 'Zucchero', undercover: 'Miele', category: 'Cibo' },
   { civilian: 'Tiramisù', undercover: 'Gelato', category: 'Cibo' },
   { civilian: 'Melanzana', undercover: 'Zucchina', category: 'Cibo' },
@@ -38,7 +38,7 @@ export const wordPairs: WordPair[] = [
   // ──── Tecnologia ────
   { civilian: 'Instagram', undercover: 'TikTok', category: 'Tecnologia' },
   { civilian: 'PlayStation', undercover: 'Xbox', category: 'Tecnologia' },
-  { civilian: 'Facebook', undercover: 'Instagram', category: 'Tecnologia' },
+  { civilian: 'Facebook', undercover: 'Twitter', category: 'Tecnologia' },
   { civilian: 'Smartphone', undercover: 'Tablet', category: 'Tecnologia' },
   { civilian: 'Netflix', undercover: 'YouTube', category: 'Tecnologia' },
 
@@ -53,7 +53,7 @@ export const wordPairs: WordPair[] = [
   { civilian: 'Biblioteca', undercover: 'Università', category: 'Luoghi' },
   { civilian: 'Museo', undercover: 'Galleria', category: 'Luoghi' },
   { civilian: 'Castello', undercover: 'Villa', category: 'Luoghi' },
-  { civilian: 'Vulcano', undercover: 'Montagna', category: 'Luoghi' },
+  { civilian: 'Vulcano', undercover: 'Geyser', category: 'Luoghi' },
   { civilian: 'Deserto', undercover: 'Savana', category: 'Luoghi' },
   { civilian: 'Foresta', undercover: 'Parco', category: 'Luoghi' },
   { civilian: 'Oceano', undercover: 'Fiume', category: 'Luoghi' },
@@ -90,7 +90,7 @@ export const wordPairs: WordPair[] = [
   { civilian: 'Cuscino', undercover: 'Coperta', category: 'Oggetti' },
   { civilian: 'Cucchiaio', undercover: 'Forchetta', category: 'Oggetti' },
   { civilian: 'Piatto', undercover: 'Ciotola', category: 'Oggetti' },
-  { civilian: 'Lampada', undercover: 'Candela', category: 'Oggetti' },
+  { civilian: 'Lampada', undercover: 'Torcia', category: 'Oggetti' },
   { civilian: 'Collana', undercover: 'Braccialetto', category: 'Oggetti' },
   { civilian: 'Ombrello', undercover: 'Ombrellone', category: 'Oggetti' },
 
@@ -99,10 +99,9 @@ export const wordPairs: WordPair[] = [
   { civilian: 'Cuoco', undercover: 'Pasticciere', category: 'Professioni' },
   { civilian: 'Avvocato', undercover: 'Giudice', category: 'Professioni' },
   { civilian: 'Pompiere', undercover: 'Poliziotto', category: 'Professioni' },
-  { civilian: 'Farmacista', undercover: 'Dottore', category: 'Professioni' },
   { civilian: 'Ingegnere', undercover: 'Architetto', category: 'Professioni' },
   { civilian: 'Pilota', undercover: 'Astronauta', category: 'Professioni' },
-  { civilian: 'Panettiere', undercover: 'Cuoco', category: 'Professioni' },
+  { civilian: 'Panettiere', undercover: 'Pizzaiolo', category: 'Professioni' },
   { civilian: 'Contadino', undercover: 'Pescatore', category: 'Professioni' },
   { civilian: 'Fabbro', undercover: 'Falegname', category: 'Professioni' },
 
@@ -147,7 +146,6 @@ export const wordPairs: WordPair[] = [
   { civilian: 'Ascensore', undercover: 'Scale', category: 'Trasporti' },
   { civilian: 'Metro', undercover: 'Taxi', category: 'Trasporti' },
   { civilian: 'Crociera', undercover: 'Nave', category: 'Trasporti' },
-  { civilian: 'Valigia', undercover: 'Zaino', category: 'Trasporti' },
 
   // ──── Scienza / Natura ────
   { civilian: 'Sole', undercover: 'Luna', category: 'Scienza' },

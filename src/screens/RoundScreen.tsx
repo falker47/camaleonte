@@ -29,17 +29,20 @@ export default function RoundScreen() {
           Giocatori in gioco
         </p>
         <div className="flex flex-col gap-2">
-          {active.map((player, i) => (
-            <div
-              key={player.id}
-              className="flex items-center gap-3 glass rounded-2xl px-4 py-3"
-            >
-              <div className={`w-8 h-8 rounded-full bg-gradient-to-br ${AVATAR_COLORS[i % AVATAR_COLORS.length]} flex items-center justify-center text-sm font-bold text-white shrink-0`}>
-                {i + 1}
+          {active.map((player) => {
+            const originalIndex = players.indexOf(player)
+            return (
+              <div
+                key={player.id}
+                className="flex items-center gap-3 glass rounded-2xl px-4 py-3"
+              >
+                <div className={`w-8 h-8 rounded-full bg-gradient-to-br ${AVATAR_COLORS[originalIndex % AVATAR_COLORS.length]} flex items-center justify-center text-sm font-bold text-white shrink-0`}>
+                  {originalIndex + 1}
+                </div>
+                <span className="text-white font-medium">{player.name}</span>
               </div>
-              <span className="text-white font-medium">{player.name}</span>
-            </div>
-          ))}
+            )
+          })}
         </div>
       </div>
 

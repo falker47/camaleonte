@@ -1,7 +1,8 @@
-import { Component, type ComponentType, type ReactNode, useEffect, useRef, useState } from 'react'
+import { Component, type ComponentType, type ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useGameStore } from './store/gameStore'
 import type { Screen } from './store/types'
+import { useBackGuard } from './hooks/useBackGuard'
 import HomeScreen from './screens/HomeScreen'
 import SetupScreen from './screens/SetupScreen'
 import DealScreen from './screens/DealScreen'
@@ -95,44 +96,46 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { error: string |
 
 const IN_GAME_SCREENS: Set<Screen> = new Set(['deal', 'round', 'vote', 'elimination', 'mrwhite_guess'])
 
-function QuitButton() {
+function QuitButton({ onRequestQuit }: { onRequestQuit: () => void }) {
   const screen = useGameStore(s => s.screen)
-  const resetGame = useGameStore(s => s.resetGame)
-  const [confirm, setConfirm] = useState(false)
 
   if (!IN_GAME_SCREENS.has(screen)) return null
 
   return (
-    <>
-      <button
-        onClick={() => setConfirm(true)}
-        className="absolute top-4 right-4 z-50 w-9 h-9 rounded-full glass text-slate-400 hover:text-white flex items-center justify-center text-sm font-bold transition-colors"
-        aria-label="Esci"
-      >
-        ✕
-      </button>
+    <button
+      onClick={onRequestQuit}
+      className="absolute top-4 right-4 z-50 w-9 h-9 rounded-full glass text-slate-400 hover:text-white flex items-center justify-center text-sm font-bold transition-colors"
+      aria-label="Esci"
+    >
+      ✕
+    </button>
+  )
+}
 
-      {confirm && (
-        <div className="absolute inset-0 z-50 bg-black/70 flex items-center justify-center px-6">
-          <div className="glass-strong rounded-3xl px-6 py-6 w-full max-w-xs flex flex-col gap-4">
-            <h3 className="text-white font-bold text-lg text-center">Uscire dalla partita?</h3>
-            <p className="text-slate-400 text-sm text-center">I progressi della partita andranno persi.</p>
-            <button
-              onClick={() => { setConfirm(false); resetGame() }}
-              className="w-full bg-rose-600 hover:bg-rose-500 text-white font-bold py-4 rounded-2xl transition-colors"
-            >
-              Esci
-            </button>
-            <button
-              onClick={() => setConfirm(false)}
-              className="w-full glass-button-secondary py-3 rounded-2xl transition-colors"
-            >
-              Annulla
-            </button>
-          </div>
-        </div>
-      )}
-    </>
+function QuitDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const resetGame = useGameStore(s => s.resetGame)
+
+  if (!open) return null
+
+  return (
+    <div className="absolute inset-0 z-50 bg-black/70 flex items-center justify-center px-6">
+      <div className="glass-strong rounded-3xl px-6 py-6 w-full max-w-xs flex flex-col gap-4">
+        <h3 className="text-white font-bold text-lg text-center">Uscire dalla partita?</h3>
+        <p className="text-slate-400 text-sm text-center">I progressi della partita andranno persi.</p>
+        <button
+          onClick={() => { onClose(); resetGame() }}
+          className="w-full bg-rose-600 hover:bg-rose-500 text-white font-bold py-4 rounded-2xl transition-colors"
+        >
+          Esci
+        </button>
+        <button
+          onClick={onClose}
+          className="w-full glass-button-secondary py-3 rounded-2xl transition-colors"
+        >
+          Annulla
+        </button>
+      </div>
+    </div>
   )
 }
 
@@ -180,12 +183,18 @@ function AnimatedScreen() {
 }
 
 export default function App() {
+  const [showQuit, setShowQuit] = useState(false)
+  const requestQuit = useCallback(() => setShowQuit(true), [])
+
+  useBackGuard(requestQuit)
+
   return (
     <div className="h-full bg-slate-950 text-white flex flex-col max-w-md mx-auto overflow-hidden relative">
       <AmbientBlobs />
       <ErrorBoundary>
-        <QuitButton />
+        <QuitButton onRequestQuit={requestQuit} />
         <AnimatedScreen />
+        <QuitDialog open={showQuit} onClose={() => setShowQuit(false)} />
       </ErrorBoundary>
     </div>
   )

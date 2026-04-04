@@ -1,3 +1,4 @@
+import { useRef } from 'react'
 import { motion } from 'framer-motion'
 import { useGameStore } from '../store/gameStore'
 import RoleTag from '../components/RoleTag'
@@ -13,6 +14,8 @@ export default function EliminationScreen() {
   const eliminatedThisRound = useGameStore(s => s.eliminatedThisRound)
   const confirmElimination = useGameStore(s => s.confirmElimination)
   const players = useGameStore(s => s.players)
+
+  const processing = useRef(false)
 
   if (!eliminatedThisRound) return null
 
@@ -115,7 +118,7 @@ export default function EliminationScreen() {
       )}
 
       <motion.button
-        onClick={() => { vibrate(30); confirmElimination() }}
+        onClick={() => { if (processing.current) return; processing.current = true; vibrate(30); confirmElimination() }}
         className="w-full max-w-xs glass-button font-bold py-5 rounded-2xl text-lg relative z-10"
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.97 }}
