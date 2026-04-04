@@ -23,7 +23,7 @@ export const wordPairs: WordPair[] = [
   { civilian: 'Salsiccia', undercover: 'Salame', category: 'Cibo' },
   { civilian: 'Pane', undercover: 'Cracker', category: 'Cibo' },
   { civilian: 'Nutella', undercover: 'Marmellata', category: 'Cibo' },
-
+  { civilian: 'Basilico', undercover: 'Rosmarino', category: 'Cibo' },
   // ──── Sport ────
   { civilian: 'Calcio', undercover: 'Rugby', category: 'Sport' },
   { civilian: 'Tennis', undercover: 'Badminton', category: 'Sport' },
@@ -148,14 +148,15 @@ export const wordPairs: WordPair[] = [
   { civilian: 'Crociera', undercover: 'Nave', category: 'Trasporti' },
 
   // ──── Scienza / Natura ────
-  { civilian: 'Sole', undercover: 'Luna', category: 'Scienza' },
-  { civilian: 'Pianeta', undercover: 'Stella', category: 'Scienza' },
+  { civilian: 'Stella', undercover: 'Luna', category: 'Scienza' },
+  { civilian: 'Pianeta', undercover: 'Satellite', category: 'Scienza' },
   { civilian: 'Terremoto', undercover: 'Tsunami', category: 'Scienza' },
   { civilian: 'Cometa', undercover: 'Asteroide', category: 'Scienza' },
   { civilian: 'Nuvola', undercover: 'Nebbia', category: 'Scienza' },
   { civilian: 'Neve', undercover: 'Grandine', category: 'Scienza' },
   { civilian: 'Virus', undercover: 'Batterio', category: 'Scienza' },
-  { civilian: 'Oro', undercover: 'Argento', category: 'Scienza' },
+  { civilian: 'Oro', undercover: 'Piombo', category: 'Scienza' },
+  { civilian: 'Sole', undercover: 'Luce', category: 'Scienza' },
 
   // ──── Concetti ────
   { civilian: 'Lavoro', undercover: 'Hobby', category: 'Concetti' },
