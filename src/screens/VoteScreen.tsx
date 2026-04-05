@@ -5,6 +5,7 @@ import type { Player } from '../store/types'
 import VoteGrid from '../components/VoteGrid'
 import BackButton from '../components/BackButton'
 import { vibrate } from '../utils/vibrate'
+import { springTap } from '../constants/animations'
 
 export default function VoteScreen() {
   const players = useGameStore(s => s.players)
@@ -44,38 +45,30 @@ export default function VoteScreen() {
     })
   }
 
-  const handleConfirm = () => {
+  const resolveVotes = () => {
     const maxVotes = Math.max(...Object.values(votes))
     const tied = Object.entries(votes)
       .filter(([, v]) => v === maxVotes)
       .map(([id]) => id)
 
-    if (tied.length > 1) {
-      setTieBreak(tied)
-      setVotes({})
-      setVoteHistory([])
-    } else {
+    if (tied.length <= 1) {
       castVote(votes)
+      return
     }
-  }
 
-  const handleTieConfirm = () => {
-    const maxVotes = Math.max(...Object.values(votes))
-    const tied = Object.entries(votes)
-      .filter(([, v]) => v === maxVotes)
-      .map(([id]) => id)
-
-    if (tied.length > 1) {
+    // First tie → re-vote among tied players
+    if (!tieBreak) {
+      setTieBreak(tied)
+    } else {
+      // Second tie → go to random draw
       const tiedPlayers = tied
         .map(id => active.find(p => p.id === id))
         .filter((p): p is Player => p !== undefined)
       if (tiedPlayers.length === 0) return
       setPendingDraw(tiedPlayers)
-      setVotes({})
-      setVoteHistory([])
-    } else {
-      castVote(votes)
     }
+    setVotes({})
+    setVoteHistory([])
   }
 
   const handleDraw = () => {
@@ -122,9 +115,7 @@ export default function VoteScreen() {
           <motion.button
             onClick={handleDraw}
             className="w-full py-5 rounded-2xl font-bold text-lg bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-black transition-colors shadow-[0_8px_32px_rgba(245,158,11,0.3)]"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.97 }}
-            transition={{ type: "spring", stiffness: 400, damping: 25 }}
+            {...springTap}
           >
             Sorteggia
           </motion.button>
@@ -141,9 +132,7 @@ export default function VoteScreen() {
           <motion.button
             onClick={handleDrawConfirm}
             className="w-full py-5 rounded-2xl font-bold text-lg bg-rose-600 hover:bg-rose-500 active:bg-rose-700 text-white transition-colors shadow-[0_0_32px_rgba(244,63,94,0.3)]"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.97 }}
-            transition={{ type: "spring", stiffness: 400, damping: 25 }}
+            {...springTap}
           >
             Continua
           </motion.button>
@@ -207,7 +196,7 @@ export default function VoteScreen() {
 
         {/* Confirm button */}
         <motion.button
-          onClick={tieBreak ? handleTieConfirm : handleConfirm}
+          onClick={resolveVotes}
           disabled={!allVoted}
           className={`w-full py-5 rounded-2xl font-bold text-lg transition-all ${
             allVoted

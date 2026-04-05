@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { useMemo } from 'react'
+import { MAX_PARTICLES } from '../constants/gameConfig'
 
 interface Props {
   count?: number
@@ -25,7 +26,7 @@ interface ParticleData {
 
 export default function Particles({ count = 20, colors, origin = 'center', style = 'burst' }: Props) {
   const particles = useMemo<ParticleData[]>(() => {
-    return Array.from({ length: Math.min(count, 20) }, (_, i) => ({
+    return Array.from({ length: Math.min(count, MAX_PARTICLES) }, (_, i) => ({
       id: i,
       color: colors[i % colors.length],
       x: style === 'fall' ? randomBetween(5, 95) : 50,

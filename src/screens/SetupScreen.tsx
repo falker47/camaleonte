@@ -2,6 +2,8 @@ import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useGameStore } from '../store/gameStore'
 import BackButton from '../components/BackButton'
+import { springTap } from '../constants/animations'
+import { MAX_PLAYERS, MAX_MR_WHITE, MAX_INFILTRATI } from '../constants/gameConfig'
 
 const SUGGESTED_ROLES: Record<number, [number, number]> = {
   3: [1, 0], 4: [1, 0],
@@ -54,8 +56,8 @@ export default function SetupScreen() {
   // Clamp role counts when players are removed
   useEffect(() => {
     const maxTotal = Math.max(0, validNames.length - 2)
-    const clampedMw = Math.min(mrWhiteCount, 2, Math.max(0, maxTotal - infiltratoCount))
-    const clampedInf = Math.min(infiltratoCount, 3, Math.max(0, maxTotal - clampedMw))
+    const clampedMw = Math.min(mrWhiteCount, MAX_MR_WHITE, Math.max(0, maxTotal - infiltratoCount))
+    const clampedInf = Math.min(infiltratoCount, MAX_INFILTRATI, Math.max(0, maxTotal - clampedMw))
     if (clampedMw !== mrWhiteCount) setMrWhiteCount(clampedMw)
     if (clampedInf !== infiltratoCount) setInfiltratoCount(clampedInf)
   }, [validNames.length, mrWhiteCount, infiltratoCount])
@@ -72,8 +74,8 @@ export default function SetupScreen() {
 
   // Dynamic max: always guarantee at least 2 civilians
   const maxTotalImpostors = Math.max(0, validNames.length - 2)
-  const effectiveMaxMrWhite = Math.min(2, Math.max(0, maxTotalImpostors - infiltratoCount))
-  const effectiveMaxInfiltrato = Math.min(3, Math.max(0, maxTotalImpostors - mrWhiteCount))
+  const effectiveMaxMrWhite = Math.min(MAX_MR_WHITE, Math.max(0, maxTotalImpostors - infiltratoCount))
+  const effectiveMaxInfiltrato = Math.min(MAX_INFILTRATI, Math.max(0, maxTotalImpostors - mrWhiteCount))
 
   const impostorCount = mrWhiteCount + infiltratoCount
   const civilianCount = Math.max(0, validNames.length - impostorCount)
@@ -101,7 +103,7 @@ export default function SetupScreen() {
     !hasDuplicates
 
   const addPlayer = () => {
-    if (slots.length < 12) setSlots([...slots, { id: nextSlotId++, name: '' }])
+    if (slots.length < MAX_PLAYERS) setSlots([...slots, { id: nextSlotId++, name: '' }])
   }
 
   const removePlayer = (i: number) => {
@@ -119,7 +121,7 @@ export default function SetupScreen() {
     if (e.key !== 'Enter') return
     e.preventDefault()
     if (i === slots.length - 1) {
-      if (slots.length < 12) {
+      if (slots.length < MAX_PLAYERS) {
         pendingFocus.current = i + 1
         addPlayer()
       }
@@ -197,7 +199,7 @@ export default function SetupScreen() {
             ))}
           </AnimatePresence>
         </div>
-        {slots.length < 12 && (
+        {slots.length < MAX_PLAYERS && (
           <>
             <p className="text-slate-600 text-xs mt-1 ml-10">
               Premi Invio per aggiungere
@@ -285,9 +287,9 @@ export default function SetupScreen() {
             ? 'glass-button'
             : 'bg-white/5 text-slate-500 cursor-not-allowed border border-white/5'
         }`}
-        whileHover={canStart ? { scale: 1.02 } : {}}
-        whileTap={canStart ? { scale: 0.97 } : {}}
-        transition={{ type: "spring", stiffness: 400, damping: 25 }}
+        whileHover={canStart ? springTap.whileHover : {}}
+        whileTap={canStart ? springTap.whileTap : {}}
+        transition={springTap.transition}
       >
         Inizia Partita
       </motion.button>

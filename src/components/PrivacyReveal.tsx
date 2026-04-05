@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import type { Role } from '../store/types'
 import Particles from './Particles'
 import { vibrate } from '../utils/vibrate'
+import { springTap } from '../constants/animations'
 
 interface Props {
   playerName: string
@@ -162,9 +163,7 @@ export default function PrivacyReveal({ playerName, word, role, onDone, isLast }
         <motion.button
           onClick={handleHide}
           className="w-full max-w-xs glass-button-secondary font-semibold py-4 rounded-2xl"
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.97 }}
-          transition={{ type: "spring", stiffness: 400, damping: 25 }}
+          {...springTap}
         >
           Ho visto — Nascondi
         </motion.button>
@@ -174,9 +173,7 @@ export default function PrivacyReveal({ playerName, word, role, onDone, isLast }
         <motion.button
           onClick={onDone}
           className="w-full max-w-xs glass-button font-semibold py-4 rounded-2xl"
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.97 }}
-          transition={{ type: "spring", stiffness: 400, damping: 25 }}
+          {...springTap}
         >
           {isLast ? 'Tutti pronti — Inizia!' : 'Prossimo giocatore →'}
         </motion.button>

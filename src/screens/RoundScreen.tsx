@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { useGameStore } from '../store/gameStore'
 import { AVATAR_COLORS } from '../constants/avatarColors'
+import { springTap } from '../constants/animations'
 
 export default function RoundScreen() {
   const players = useGameStore(s => s.players)
@@ -70,9 +71,7 @@ export default function RoundScreen() {
         <motion.button
           onClick={() => goTo('vote')}
           className="w-full bg-rose-600 hover:bg-rose-500 active:bg-rose-700 text-white font-bold py-5 rounded-2xl text-lg transition-colors shadow-[0_8px_32px_rgba(244,63,94,0.3)]"
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.97 }}
-          transition={{ type: "spring", stiffness: 400, damping: 25 }}
+          {...springTap}
         >
           Vota l'impostore →
         </motion.button>

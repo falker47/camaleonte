@@ -1,33 +1,19 @@
-import { useEffect, useState } from 'react'
-import { motion, AnimatePresence, useSpring, useTransform } from 'framer-motion'
+import { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useGameStore } from '../store/gameStore'
 import RoleTag from '../components/RoleTag'
 import Particles from '../components/Particles'
+import { useAnimatedValue } from '../hooks/useAnimatedValue'
+import { springTap } from '../constants/animations'
 
 function AnimatedCounter({ value }: { value: number }) {
-  const spring = useSpring(0, { stiffness: 50, damping: 20 })
-  const display = useTransform(spring, v => Math.round(v))
-  const [displayValue, setDisplayValue] = useState(0)
-
-  useEffect(() => {
-    spring.set(value)
-    return display.on('change', v => setDisplayValue(v))
-  }, [value, spring, display])
-
+  const displayValue = useAnimatedValue(value, 0)
   if (value <= 0) return <span>0</span>
   return <span>+{displayValue}</span>
 }
 
 function AnimatedScore({ value }: { value: number }) {
-  const spring = useSpring(value, { stiffness: 50, damping: 20 })
-  const display = useTransform(spring, v => Math.round(v))
-  const [displayValue, setDisplayValue] = useState(value)
-
-  useEffect(() => {
-    spring.set(value)
-    return display.on('change', v => setDisplayValue(v))
-  }, [value, spring, display])
-
+  const displayValue = useAnimatedValue(value)
   return <span>{displayValue} pt</span>
 }
 
@@ -386,18 +372,14 @@ export default function ResultScreen() {
         <motion.button
           onClick={rematch}
           className="w-full glass-button font-bold py-5 rounded-2xl text-lg"
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.97 }}
-          transition={{ type: "spring", stiffness: 400, damping: 25 }}
+          {...springTap}
         >
           Continua
         </motion.button>
         <motion.button
           onClick={resetGame}
           className="w-full glass-button-secondary font-semibold py-4 rounded-2xl"
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.97 }}
-          transition={{ type: "spring", stiffness: 400, damping: 25 }}
+          {...springTap}
         >
           Fine partita
         </motion.button>
