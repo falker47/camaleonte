@@ -14,7 +14,6 @@ export default function GuessScreen() {
 
   const [guess, setGuess] = useState('')
   const [phase, setPhase] = useState<Phase>('privacy')
-  const [showGuess, setShowGuess] = useState(false)
 
   const gameOver = winner !== null
 
@@ -72,27 +71,17 @@ export default function GuessScreen() {
           </p>
         </div>
         <div className="w-full max-w-xs flex flex-col gap-3">
-          <div className="relative">
-            <input
-              type={showGuess ? 'text' : 'password'}
-              value={guess}
-              onChange={e => setGuess(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && handleSubmit()}
-              placeholder="Scrivi la parola..."
-              className="w-full glass-input rounded-2xl px-4 py-4 pr-14 text-lg text-center"
-              style={{ userSelect: 'text', touchAction: 'auto' }}
-              autoFocus
-              maxLength={40}
-            />
-            <button
-              type="button"
-              onClick={() => setShowGuess(v => !v)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white text-xl p-1 transition-colors"
-              aria-label={showGuess ? 'Nascondi' : 'Mostra'}
-            >
-              {showGuess ? '🙈' : '👁️'}
-            </button>
-          </div>
+          <input
+            type="text"
+            value={guess}
+            onChange={e => setGuess(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && handleSubmit()}
+            placeholder="Scrivi la parola..."
+            className="w-full glass-input rounded-2xl px-4 py-4 text-lg text-center"
+            style={{ userSelect: 'text', touchAction: 'auto' }}
+            autoFocus
+            maxLength={40}
+          />
           <motion.button
             onClick={handleSubmit}
             disabled={guess.trim().length === 0}
