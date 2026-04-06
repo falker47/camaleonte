@@ -77,6 +77,10 @@ export default function SetupScreen() {
   const effectiveMaxMrWhite = Math.min(MAX_MR_WHITE, Math.max(0, maxTotalImpostors - infiltratoCount))
   const effectiveMaxInfiltrato = Math.min(MAX_INFILTRATI, Math.max(0, maxTotalImpostors - mrWhiteCount))
 
+  const suggestion = SUGGESTED_ROLES[validNames.length]
+  const isCustomRoles = manualOverride && suggestion != null &&
+    (mrWhiteCount !== suggestion[0] || infiltratoCount !== suggestion[1])
+
   const impostorCount = mrWhiteCount + infiltratoCount
   const civilianCount = Math.max(0, validNames.length - impostorCount)
   const hasDuplicates = new Set(validNames.map(n => n.trim().toLowerCase())).size < validNames.length
@@ -239,6 +243,12 @@ export default function SetupScreen() {
             onChange={handleInfiltratoChange}
           />
         </div>
+
+        {isCustomRoles && (
+          <p className="text-amber-400/80 text-xs mt-2">
+            ⚠️ I valori predefiniti sono quelli consigliati per un gioco bilanciato. Modificarli potrebbe sbilanciare la partita.
+          </p>
+        )}
 
         {/* Validation errors */}
         {impostorCount === 0 && (
