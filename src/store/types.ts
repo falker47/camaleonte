@@ -16,7 +16,7 @@ export interface Player {
   role: Role
   word: string | null
   eliminated: boolean
-  eliminatedInRound: number | null
+  eliminatedInTurno: number | null
 }
 
 export interface WordPair {

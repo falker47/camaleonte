@@ -5,23 +5,40 @@ import { springTap } from '../constants/animations'
 
 export default function RoundScreen() {
   const players = useGameStore(s => s.players)
-  const round = useGameStore(s => s.round)
+  const turno = useGameStore(s => s.turno)
   const goTo = useGameStore(s => s.goTo)
 
   const active = players.filter(p => !p.eliminated)
   const eliminated = players.filter(p => p.eliminated)
 
+  const civili = active.filter(p => p.role === 'civile').length
+  const mrWhite = active.filter(p => p.role === 'mrwhite').length
+  const infiltrati = active.filter(p => p.role === 'infiltrato').length
+
   return (
     <div className="flex flex-col flex-1 min-h-0 px-5 py-6 gap-5 overflow-y-auto">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-black text-white">Round {round}</h2>
-          <p className="text-slate-400 text-sm">Ogni giocatore dà un indizio</p>
+      <div>
+        <h2 className="text-2xl font-black text-white">Turno {turno}</h2>
+        <p className="text-slate-400 text-sm">Ogni giocatore dà un indizio</p>
+      </div>
+
+      <div className="flex gap-2">
+        <div className="glass rounded-xl px-3 py-2 text-center flex-1">
+          <p className="text-indigo-400 font-bold text-lg">{civili}</p>
+          <p className="text-slate-500 text-xs">civili</p>
         </div>
-        <div className="glass rounded-xl px-3 py-2 text-center">
-          <p className="text-white font-bold text-lg">{active.length}</p>
-          <p className="text-slate-500 text-xs">attivi</p>
-        </div>
+        {mrWhite > 0 && (
+          <div className="glass rounded-xl px-3 py-2 text-center flex-1">
+            <p className="text-white font-bold text-lg">{mrWhite}</p>
+            <p className="text-slate-500 text-xs">mr. white</p>
+          </div>
+        )}
+        {infiltrati > 0 && (
+          <div className="glass rounded-xl px-3 py-2 text-center flex-1">
+            <p className="text-amber-400 font-bold text-lg">{infiltrati}</p>
+            <p className="text-slate-500 text-xs">infiltrati</p>
+          </div>
+        )}
       </div>
 
       {/* Active players */}

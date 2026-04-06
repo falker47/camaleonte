@@ -20,9 +20,9 @@ function getInfiltratoWinPoints(totalPlayers: number): number {
   return totalPlayers <= 4 ? 3 : 5
 }
 
-function getInfiltratoPartialPoints(eliminatedInRound: number | null): number {
-  if (eliminatedInRound == null) return 0
-  return Math.min(3, Math.max(0, eliminatedInRound - 1))
+function getInfiltratoPartialPoints(eliminatedInTurno: number | null): number {
+  if (eliminatedInTurno == null) return 0
+  return Math.min(3, Math.max(0, eliminatedInTurno - 1))
 }
 
 function calcFinalScores(
@@ -43,7 +43,7 @@ function calcFinalScores(
       if (p.role === 'civile' && !mwPoisoned) pts = 2
       if (p.role === 'mrwhite' && mrWhiteCorrectIds.has(p.id)) pts = getMwGuessPoints(totalPlayers)
       // Infiltrato eliminato → punti parziali
-      if (p.role === 'infiltrato' && p.eliminated) pts = getInfiltratoPartialPoints(p.eliminatedInRound)
+      if (p.role === 'infiltrato' && p.eliminated) pts = getInfiltratoPartialPoints(p.eliminatedInTurno)
     }
 
     if (winner === 'last_two') {
@@ -52,7 +52,7 @@ function calcFinalScores(
       // MW eliminato ma ha indovinato
       if (p.role === 'mrwhite' && p.eliminated && mrWhiteCorrectIds.has(p.id)) pts = getMwGuessPoints(totalPlayers)
       // Infiltrato eliminato → punti parziali
-      if (p.role === 'infiltrato' && p.eliminated) pts = getInfiltratoPartialPoints(p.eliminatedInRound)
+      if (p.role === 'infiltrato' && p.eliminated) pts = getInfiltratoPartialPoints(p.eliminatedInTurno)
     }
 
     roundScores[p.name] = pts
@@ -69,9 +69,9 @@ interface GameState {
   players: Player[]
   wordPair: WordPair | null
   dealIndex: number
-  round: number
+  turno: number
   currentVotes: Record<string, number>
-  eliminatedThisRound: Player | null
+  eliminatedThisTurno: Player | null
   mrWhiteGuessResult: 'correct' | 'wrong' | null
   mrWhiteCorrectIds: string[]
   winner: 'civilians' | 'last_two' | null
@@ -87,7 +87,8 @@ interface GameState {
   castVote: (votes: Record<string, number>) => void
   confirmElimination: () => void
   submitMrWhiteGuess: (guess: string) => void
-  nextRound: () => void
+  nextTurno: () => void
+  invalidateRound: () => void
   resetGame: () => void
   rematch: () => void
   resetScores: () => void
@@ -100,9 +101,9 @@ export const useGameStore = create<GameState>((set, get) => ({
   players: [],
   wordPair: null,
   dealIndex: 0,
-  round: 1,
+  turno: 1,
   currentVotes: {},
-  eliminatedThisRound: null,
+  eliminatedThisTurno: null,
   mrWhiteGuessResult: null,
   mrWhiteCorrectIds: [],
   winner: null,
@@ -141,9 +142,9 @@ export const useGameStore = create<GameState>((set, get) => ({
       wordPair: pair,
       usedPairIndices: [...usedPairIndices, chosen.i],
       dealIndex: 0,
-      round: 1,
+      turno: 1,
       currentVotes: {},
-      eliminatedThisRound: null,
+      eliminatedThisTurno: null,
       mrWhiteGuessResult: null,
       mrWhiteCorrectIds: [],
       winner: null,
@@ -172,19 +173,19 @@ export const useGameStore = create<GameState>((set, get) => ({
         eliminated = players.find(p => p.id === id) ?? null
       }
     }
-    set({ currentVotes: votes, eliminatedThisRound: eliminated, screen: 'elimination' })
+    set({ currentVotes: votes, eliminatedThisTurno: eliminated, screen: 'elimination' })
   },
 
   confirmElimination: () => {
-    const { eliminatedThisRound, players, wordPair, scores, mrWhiteCorrectIds, round } = get()
-    if (!eliminatedThisRound) return
+    const { eliminatedThisTurno, players, wordPair, scores, mrWhiteCorrectIds, turno } = get()
+    if (!eliminatedThisTurno) return
 
     const updatedPlayers = players.map(p =>
-      p.id === eliminatedThisRound.id ? { ...p, eliminated: true, eliminatedInRound: round } : p
+      p.id === eliminatedThisTurno.id ? { ...p, eliminated: true, eliminatedInTurno: turno } : p
     )
     set({ players: updatedPlayers })
 
-    if (eliminatedThisRound.role === 'mrwhite' && wordPair) {
+    if (eliminatedThisTurno.role === 'mrwhite' && wordPair) {
       set({ screen: 'mrwhite_guess', mrWhiteGuessResult: null })
       return
     }
@@ -195,19 +196,19 @@ export const useGameStore = create<GameState>((set, get) => ({
       const { scores: newScores, roundScores } = calcFinalScores(updatedPlayers, win, correctSet, scores)
       set({ winner: win, scores: newScores, roundScores, screen: 'result' })
     } else {
-      set({ screen: 'round', round: get().round + 1, currentVotes: {} })
+      set({ screen: 'round', turno: get().turno + 1, currentVotes: {} })
     }
   },
 
   submitMrWhiteGuess: (guess) => {
-    const { wordPair, players, scores, mrWhiteCorrectIds, eliminatedThisRound } = get()
-    if (!wordPair || !eliminatedThisRound) return
+    const { wordPair, players, scores, mrWhiteCorrectIds, eliminatedThisTurno } = get()
+    if (!wordPair || !eliminatedThisTurno) return
 
     const isCorrect = isWordMatch(guess, wordPair.civilian)
 
     if (isCorrect) {
       // Track this MW — points will be awarded by calcFinalScores at game end
-      const mwId = eliminatedThisRound.id
+      const mwId = eliminatedThisTurno.id
       const newCorrectIds = [...mrWhiteCorrectIds, mwId]
 
       // Check if game is over
@@ -233,8 +234,14 @@ export const useGameStore = create<GameState>((set, get) => ({
     }
   },
 
-  nextRound: () => {
-    set({ screen: 'round', round: get().round + 1, currentVotes: {} })
+  nextTurno: () => {
+    set({ screen: 'round', turno: get().turno + 1, currentVotes: {} })
+  },
+
+  invalidateRound: () => {
+    const { usedPairIndices } = get()
+    set({ usedPairIndices: usedPairIndices.slice(0, -1) })
+    get().startGame()
   },
 
   resetGame: () => {
@@ -243,9 +250,9 @@ export const useGameStore = create<GameState>((set, get) => ({
       players: [],
       wordPair: null,
       dealIndex: 0,
-      round: 1,
+      turno: 1,
       currentVotes: {},
-      eliminatedThisRound: null,
+      eliminatedThisTurno: null,
       mrWhiteGuessResult: null,
       mrWhiteCorrectIds: [],
       winner: null,

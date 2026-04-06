@@ -6,12 +6,12 @@ import { springTap } from '../constants/animations'
 type Phase = 'privacy' | 'input' | 'result'
 
 export default function GuessScreen() {
-  const eliminatedThisRound = useGameStore(s => s.eliminatedThisRound)
+  const eliminatedThisTurno = useGameStore(s => s.eliminatedThisTurno)
   const players = useGameStore(s => s.players)
   const submitMrWhiteGuess = useGameStore(s => s.submitMrWhiteGuess)
   const mrWhiteGuessResult = useGameStore(s => s.mrWhiteGuessResult)
   const winner = useGameStore(s => s.winner)
-  const nextRound = useGameStore(s => s.nextRound)
+  const nextTurno = useGameStore(s => s.nextTurno)
 
   const mwGuessPoints = players.length <= 4 ? 4 : 3
 
@@ -58,7 +58,7 @@ export default function GuessScreen() {
       // winner is already set in store, screen will change via goTo
       useGameStore.getState().goTo('result')
     } else {
-      nextRound()
+      nextTurno()
     }
   }
 
@@ -70,7 +70,7 @@ export default function GuessScreen() {
           <div className="text-6xl">📱</div>
           <p className="text-slate-400 text-sm">Passa il telefono a</p>
           <h2 className="text-3xl font-black text-white text-center">
-            {eliminatedThisRound?.name}
+            {eliminatedThisTurno?.name}
           </h2>
           <p className="text-slate-500 text-center text-sm max-w-xs">
             Gli altri giocatori non devono guardare lo schermo!
@@ -152,7 +152,7 @@ export default function GuessScreen() {
           <div className="text-6xl">🎉</div>
           <div className="glass rounded-2xl px-6 py-4 text-center w-full" style={{ borderColor: 'rgba(52, 211, 153, 0.2)' }}>
             <p className="text-emerald-300 font-bold text-lg">Parola indovinata!</p>
-            <p className="text-white text-sm mt-1">{eliminatedThisRound?.name} guadagna {mwGuessPoints} punti</p>
+            <p className="text-white text-sm mt-1">{eliminatedThisTurno?.name} guadagna {mwGuessPoints} punti</p>
           </div>
           {!gameOver && (
             <div className="glass rounded-2xl px-6 py-4 text-center w-full" style={{ borderColor: 'rgba(251, 191, 36, 0.2)' }}>

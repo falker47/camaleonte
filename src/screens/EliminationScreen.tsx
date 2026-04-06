@@ -12,20 +12,20 @@ const ROLE_FLASH_COLORS: Record<string, string> = {
 }
 
 export default function EliminationScreen() {
-  const eliminatedThisRound = useGameStore(s => s.eliminatedThisRound)
+  const eliminatedThisTurno = useGameStore(s => s.eliminatedThisTurno)
   const confirmElimination = useGameStore(s => s.confirmElimination)
   const players = useGameStore(s => s.players)
 
   const processing = useRef(false)
 
-  if (!eliminatedThisRound) return null
+  if (!eliminatedThisTurno) return null
 
-  const { name, role } = eliminatedThisRound
+  const { name, role } = eliminatedThisTurno
   const isMrWhite = role === 'mrwhite'
 
   // Count remaining impostors (excluding the one being eliminated right now)
-  const remainingMrWhite = players.filter(p => !p.eliminated && p.role === 'mrwhite' && p.id !== eliminatedThisRound.id).length
-  const remainingInfiltrati = players.filter(p => !p.eliminated && p.role === 'infiltrato' && p.id !== eliminatedThisRound.id).length
+  const remainingMrWhite = players.filter(p => !p.eliminated && p.role === 'mrwhite' && p.id !== eliminatedThisTurno.id).length
+  const remainingInfiltrati = players.filter(p => !p.eliminated && p.role === 'infiltrato' && p.id !== eliminatedThisTurno.id).length
   const remainingImpostors = remainingMrWhite + remainingInfiltrati
 
   return (

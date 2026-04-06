@@ -6,9 +6,9 @@ const STEPS = [
   { emoji: '🔤', title: 'Le parole', text: 'Civili e Infiltrati ricevono parole della stessa categoria (es. Pizza e Focaccia), ma non sanno quale delle due hanno. Mr.\u00A0White deve bluffare senza parola.' },
   { emoji: '💬', title: 'Dai un indizio', text: 'A turno, ognuno dice una parola o frase breve per descrivere la propria parola. Attenti a non rivelare troppo... e a non tradirvi!' },
   { emoji: '🗳️', title: 'Votate', text: 'Dopo il giro di indizi, votate chi eliminare. In caso di parità si rivota o si procede con eliminazione casuale.' },
-  { emoji: '🎯', title: 'Obiettivi', text: 'I Civili devono eliminare tutti gli impostori. Infiltrato e Mr.\u00A0White vincono se sopravvivono abbastanza a lungo \u2014 più siete, più round dovranno resistere!' },
+  { emoji: '🎯', title: 'Obiettivi', text: 'I Civili devono eliminare tutti gli impostori. Infiltrato e Mr.\u00A0White vincono se sopravvivono abbastanza a lungo \u2014 più siete, più turni dovranno resistere!' },
   { emoji: '🕵️', title: 'L\'ultima chance', text: 'Se Mr.\u00A0White viene eliminato, può tentare di indovinare la parola dei Civili. Se ci riesce, vince comunque!' },
-  { emoji: '🏆', title: 'Punteggi', text: 'Civili: 2\u00A0pt se eliminano tutti gli impostori. Mr.\u00A0White guadagna di più sopravvivendo in partite lunghe, di più indovinando in quelle brevi. L\'Infiltrato prende punti parziali per ogni round sopravvissuto. Dettagli nella schermata risultati!' },
+  { emoji: '🏆', title: 'Punteggi', text: 'Civili: 2\u00A0pt se eliminano tutti gli impostori. Mr.\u00A0White guadagna di più sopravvivendo in partite lunghe, di più indovinando in quelle brevi. L\'Infiltrato prende punti parziali per ogni turno sopravvissuto. Dettagli nella schermata risultati!' },
 ]
 
 const swipeThreshold = 50

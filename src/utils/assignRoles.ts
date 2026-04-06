@@ -24,7 +24,7 @@ export function assignRoles(
       role,
       word: role === 'civile' ? pair.civilian : role === 'infiltrato' ? pair.undercover : null,
       eliminated: false,
-      eliminatedInRound: null,
+      eliminatedInTurno: null,
     }
   })
 }
