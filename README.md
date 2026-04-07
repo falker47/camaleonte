@@ -55,4 +55,4 @@ npm run build
 
 ## License
 
-MIT
+All Rights Reserved. Vedi [LICENSE](LICENSE) per i dettagli.
