@@ -14,9 +14,17 @@ Ogni giocatore riceve una parola segreta. **Mr. White** non ha nessuna parola e 
 | Infiltrato | Ha una parola simile ma diversa. Non sa di essere un impostore. |
 | Mr. White | Non ha nessuna parola. Deve bluffare e, se eliminato, può tentare di indovinare la parola dei civili per vincere. |
 
+### Meccaniche
+
+- **Indizi e voto**: a turno ogni giocatore dà un indizio di una parola, poi si vota per eliminare il sospettato.
+- **Guess di Mr. White**: se eliminato, Mr. White ha 60 secondi per indovinare la parola dei civili e vincere.
+- **Punteggio persistente**: punti diversi in base al ruolo e all'esito della partita, con classifica che si mantiene tra le rivincite.
+- **Rivincita**: rimescola ruoli e ordine dei giocatori mantenendo i punteggi.
+- **Invalida turno**: possibilità di ripetere un turno se qualcosa è andato storto.
+
 ### Parole
 
-177 coppie di parole in 15 categorie: Cibo, Bevande, Sport, Tecnologia, Luoghi, Animali, Oggetti, Professioni, Cinema, Brand, Abbigliamento, Cultura, Giochi, Trasporti, Scienza.
+248 coppie di parole in 16 categorie: Cibo, Bevande, Sport, Tecnologia, Luoghi, Animali, Oggetti, Professioni, Cinema, Abbigliamento, Cultura, Concetti, Fantasy, Giochi, Trasporti, Scienza.
 
 ## Gioca
 
