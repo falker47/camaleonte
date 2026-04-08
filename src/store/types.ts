@@ -1,4 +1,4 @@
-export type Role = 'civile' | 'infiltrato' | 'mrwhite'
+export type Role = 'civile' | 'talpa' | 'camaleonte'
 
 export type SpecialRole = 'buffone' | 'mimo' | 'spettro'
 
@@ -9,7 +9,7 @@ export type Screen =
   | 'round'
   | 'vote'
   | 'elimination'
-  | 'mrwhite_guess'
+  | 'camaleonte_guess'
   | 'result'
 
 export interface Player {
@@ -29,7 +29,7 @@ export interface WordPair {
 }
 
 export interface GameConfig {
-  mrWhiteCount: number
-  infiltratoCount: number
+  camaleonteCount: number
+  talpaCount: number
   specialRoles?: { buffone?: boolean; mimo?: boolean; spettro?: boolean }
 }

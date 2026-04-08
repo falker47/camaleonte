@@ -8,12 +8,12 @@ type Phase = 'privacy' | 'input' | 'result'
 export default function GuessScreen() {
   const eliminatedThisTurno = useGameStore(s => s.eliminatedThisTurno)
   const players = useGameStore(s => s.players)
-  const submitMrWhiteGuess = useGameStore(s => s.submitMrWhiteGuess)
-  const mrWhiteGuessResult = useGameStore(s => s.mrWhiteGuessResult)
+  const submitCamaleonteGuess = useGameStore(s => s.submitCamaleonteGuess)
+  const camaleonteGuessResult = useGameStore(s => s.camaleonteGuessResult)
   const winner = useGameStore(s => s.winner)
   const nextTurno = useGameStore(s => s.nextTurno)
 
-  const mwGuessPoints = players.length <= 4 ? 4 : 3
+  const camaleonteGuessPoints = players.length <= 4 ? 4 : 3
 
   const [guess, setGuess] = useState('')
   const [phase, setPhase] = useState<Phase>('privacy')
@@ -42,14 +42,14 @@ export default function GuessScreen() {
   useEffect(() => {
     if (timedOut.current && timeLeft === 0) {
       timedOut.current = false
-      submitMrWhiteGuess('')
+      submitCamaleonteGuess('')
       setPhase('result')
     }
-  }, [timeLeft, submitMrWhiteGuess])
+  }, [timeLeft, submitCamaleonteGuess])
 
   const handleSubmit = () => {
     if (guess.trim().length === 0) return
-    submitMrWhiteGuess(guess.trim())
+    submitCamaleonteGuess(guess.trim())
     setPhase('result')
   }
 
@@ -143,7 +143,7 @@ export default function GuessScreen() {
   }
 
   // Result screen — show correct/wrong, then continue
-  const isCorrect = mrWhiteGuessResult === 'correct'
+  const isCorrect = camaleonteGuessResult === 'correct'
 
   return (
     <div className="flex flex-col items-center justify-center flex-1 px-5 py-8 gap-6">
@@ -152,7 +152,7 @@ export default function GuessScreen() {
           <div className="text-6xl">🎉</div>
           <div className="glass rounded-2xl px-6 py-4 text-center w-full" style={{ borderColor: 'rgba(52, 211, 153, 0.2)' }}>
             <p className="text-emerald-300 font-bold text-lg">Parola indovinata!</p>
-            <p className="text-white text-sm mt-1">{eliminatedThisTurno?.name} guadagna {mwGuessPoints} punti</p>
+            <p className="text-white text-sm mt-1">{eliminatedThisTurno?.name} guadagna {camaleonteGuessPoints} punti</p>
           </div>
           {!gameOver && (
             <div className="glass rounded-2xl px-6 py-4 text-center w-full" style={{ borderColor: 'rgba(251, 191, 36, 0.2)' }}>

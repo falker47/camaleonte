@@ -7,13 +7,13 @@ export function assignRoles(
   pair: WordPair
 ): Player[] {
   const roles: Role[] = [
-    ...Array(config.mrWhiteCount).fill('mrwhite' as Role),
-    ...Array(config.infiltratoCount).fill('infiltrato' as Role),
-    ...Array(names.length - config.mrWhiteCount - config.infiltratoCount).fill('civile' as Role),
+    ...Array(config.camaleonteCount).fill('camaleonte' as Role),
+    ...Array(config.talpaCount).fill('talpa' as Role),
+    ...Array(names.length - config.camaleonteCount - config.talpaCount).fill('civile' as Role),
   ]
   let shuffledRoles = shuffle(roles)
-  // Mr. White as first player is a big handicap — reshuffle with 50% chance to mitigate
-  if (shuffledRoles[0] === 'mrwhite' && Math.random() < 0.5) {
+  // Camaleonte as first player is a big handicap — reshuffle with 50% chance to mitigate
+  if (shuffledRoles[0] === 'camaleonte' && Math.random() < 0.5) {
     shuffledRoles = shuffle(roles)
   }
   const result = names.map((name, i) => {
@@ -22,7 +22,7 @@ export function assignRoles(
       id: crypto.randomUUID(),
       name,
       role,
-      word: role === 'civile' ? pair.civilian : role === 'infiltrato' ? pair.undercover : null,
+      word: role === 'civile' ? pair.civilian : role === 'talpa' ? pair.undercover : null,
       eliminated: false,
       eliminatedInTurno: null,
     } as Player

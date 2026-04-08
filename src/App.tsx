@@ -20,12 +20,12 @@ const SCREENS: Record<Screen, ComponentType> = {
   round: RoundScreen,
   vote: VoteScreen,
   elimination: EliminationScreen,
-  mrwhite_guess: GuessScreen,
+  camaleonte_guess: GuessScreen,
   result: ResultScreen,
 }
 
 const SCREEN_ORDER: Screen[] = [
-  'home', 'setup', 'deal', 'round', 'vote', 'elimination', 'mrwhite_guess', 'result',
+  'home', 'setup', 'deal', 'round', 'vote', 'elimination', 'camaleonte_guess', 'result',
 ]
 
 const FADE_SCALE_SCREENS: Set<Screen> = new Set(['elimination', 'result'])
@@ -51,7 +51,7 @@ function getTransitionVariants(prev: Screen | null, current: Screen) {
   const currIdx = SCREEN_ORDER.indexOf(current)
 
   if ((prev === 'deal' && current === 'round') ||
-      ((prev === 'elimination' || prev === 'mrwhite_guess') && current === 'round')) {
+      ((prev === 'elimination' || prev === 'camaleonte_guess') && current === 'round')) {
     return {
       initial: { opacity: 0 },
       animate: { opacity: 1 },
@@ -95,8 +95,8 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { error: string |
   }
 }
 
-const IN_GAME_SCREENS: Set<Screen> = new Set(['deal', 'round', 'vote', 'elimination', 'mrwhite_guess'])
-const INVALIDATE_SCREENS: Set<Screen> = new Set(['round', 'vote', 'elimination', 'mrwhite_guess'])
+const IN_GAME_SCREENS: Set<Screen> = new Set(['deal', 'round', 'vote', 'elimination', 'camaleonte_guess'])
+const INVALIDATE_SCREENS: Set<Screen> = new Set(['round', 'vote', 'elimination', 'camaleonte_guess'])
 
 function QuitButton({ onRequestQuit }: { onRequestQuit: () => void }) {
   const screen = useGameStore(s => s.screen)

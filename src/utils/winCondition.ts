@@ -8,7 +8,7 @@ export function getSurvivalThreshold(totalPlayers: number): number {
 
 export function checkWinCondition(players: Player[], totalPlayers: number): 'civilians' | 'last_two' | null {
   const active = players.filter(p => !p.eliminated)
-  const activeImpostors = active.filter(p => p.role === 'mrwhite' || p.role === 'infiltrato')
+  const activeImpostors = active.filter(p => p.role === 'camaleonte' || p.role === 'talpa')
 
   // Tutti gli impostori eliminati → civili vincono
   // (se un MW ha indovinato, i civili non prendono punti — gestito in calcFinalScores)

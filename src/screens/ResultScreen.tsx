@@ -6,6 +6,8 @@ import RoleTag from '../components/RoleTag'
 import Particles from '../components/Particles'
 import { useAnimatedValue } from '../hooks/useAnimatedValue'
 import { springTap } from '../constants/animations'
+import talpaPng from '../assets/talpa.png'
+import camaleontePng from '../assets/camaleonte.png'
 
 function AnimatedCounter({ value }: { value: number }) {
   const displayValue = useAnimatedValue(value, 0)
@@ -22,7 +24,7 @@ export default function ResultScreen() {
   const players = useGameStore(s => s.players)
   const wordPair = useGameStore(s => s.wordPair)
   const winner = useGameStore(s => s.winner)
-  const mrWhiteCorrectIds = useGameStore(s => s.mrWhiteCorrectIds)
+  const camaleonteCorrectIds = useGameStore(s => s.camaleonteCorrectIds)
   const scores = useGameStore(s => s.scores)
   const roundScores = useGameStore(s => s.roundScores)
   const resetGame = useGameStore(s => s.resetGame)
@@ -30,24 +32,24 @@ export default function ResultScreen() {
   const resetScores = useGameStore(s => s.resetScores)
 
   const config = useGameStore(s => s.config)
-  const hasMw = config.mrWhiteCount > 0
-  const hasInf = config.infiltratoCount > 0
+  const hasCamaleonte = config.camaleonteCount > 0
+  const hasTalpa = config.talpaCount > 0
 
   const [showLegend, setShowLegend] = useState(false)
   const [confirmReset, setConfirmReset] = useState(false)
 
-  const mwPoisoned = mrWhiteCorrectIds.length > 0
-  const isCiviliansWin = winner === 'civilians' && !mwPoisoned
-  const isPoisoned = winner === 'civilians' && mwPoisoned
+  const camaleontePoisoned = camaleonteCorrectIds.length > 0
+  const isCiviliansWin = winner === 'civilians' && !camaleontePoisoned
+  const isPoisoned = winner === 'civilians' && camaleontePoisoned
 
   // Sub-cases for last_two: who survived?
   const activePlayers = players.filter(p => !p.eliminated)
-  const hasMwSurvivor = activePlayers.some(p => p.role === 'mrwhite')
-  const hasInfiltratoSurvivor = activePlayers.some(p => p.role === 'infiltrato')
+  const hasCamaleonteSurvivor = activePlayers.some(p => p.role === 'camaleonte')
+  const hasTalpaSurvivor = activePlayers.some(p => p.role === 'talpa')
 
-  const isMwSurvived = winner === 'last_two' && hasMwSurvivor && !hasInfiltratoSurvivor
-  const isInfiltratoSurvived = winner === 'last_two' && hasInfiltratoSurvivor && !hasMwSurvivor
-  const isBothSurvived = winner === 'last_two' && hasMwSurvivor && hasInfiltratoSurvivor
+  const isCamaleonteSurvived = winner === 'last_two' && hasCamaleonteSurvivor && !hasTalpaSurvivor
+  const isTalpaSurvived = winner === 'last_two' && hasTalpaSurvivor && !hasCamaleonteSurvivor
+  const isBothSurvived = winner === 'last_two' && hasCamaleonteSurvivor && hasTalpaSurvivor
 
   // Leaderboard sorted by cumulative score
   const leaderboard = Object.entries(scores)
@@ -65,23 +67,23 @@ export default function ResultScreen() {
           origin="top"
         />
       )}
-      {hasMw && isMwSurvived && (
+      {hasCamaleonte && isCamaleonteSurvived && (
         <>
           <Particles
             count={15}
-            colors={['#ffffff', '#e2e8f0', '#cbd5e1']}
+            colors={['#2dd4bf', '#14b8a6', '#0d9488']}
             style="burst"
             origin="center"
           />
           <motion.div
-            className="absolute inset-0 bg-white pointer-events-none z-40"
+            className="absolute inset-0 bg-teal-400 pointer-events-none z-40"
             initial={{ opacity: 0 }}
             animate={{ opacity: [0, 0.15, 0] }}
             transition={{ duration: 0.6 }}
           />
         </>
       )}
-      {hasInf && isInfiltratoSurvived && (
+      {hasTalpa && isTalpaSurvived && (
         <Particles
           count={15}
           colors={['#fbbf24', '#f59e0b', '#d97706', '#b45309']}
@@ -89,7 +91,7 @@ export default function ResultScreen() {
           origin="center"
         />
       )}
-      {hasMw && hasInf && isBothSurvived && (
+      {hasCamaleonte && hasTalpa && isBothSurvived && (
         <Particles
           count={15}
           colors={['#ef4444', '#f59e0b', '#dc2626', '#d97706']}
@@ -97,16 +99,16 @@ export default function ResultScreen() {
           origin="center"
         />
       )}
-      {hasMw && isPoisoned && (
+      {hasCamaleonte && isPoisoned && (
         <>
           <Particles
             count={15}
-            colors={['#ffffff', '#e2e8f0', '#cbd5e1']}
+            colors={['#2dd4bf', '#14b8a6', '#0d9488']}
             style="burst"
             origin="center"
           />
           <motion.div
-            className="absolute inset-0 bg-white pointer-events-none z-40"
+            className="absolute inset-0 bg-teal-400 pointer-events-none z-40"
             initial={{ opacity: 0 }}
             animate={{ opacity: [0, 0.2, 0] }}
             transition={{ duration: 0.6 }}
@@ -128,52 +130,52 @@ export default function ResultScreen() {
         </motion.div>
       )}
 
-      {hasMw && isPoisoned && (
+      {hasCamaleonte && isPoisoned && (
         <motion.div
-          className="rounded-3xl px-6 py-6 text-center bg-gradient-to-br from-slate-100 to-slate-300 border border-white/10"
+          className="rounded-3xl px-6 py-6 text-center bg-gradient-to-br from-teal-600 to-teal-800 border border-white/10"
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ type: 'spring', stiffness: 200, damping: 20 }}
         >
-          <div className="text-5xl mb-2">🕵️</div>
-          <h2 className="text-2xl font-black text-slate-900">Mr. White vince!</h2>
-          <p className="text-slate-600 text-sm mt-1">
+          <img src={camaleontePng} alt="Il Camaleonte" className="w-12 h-12 mx-auto mb-2" />
+          <h2 className="text-2xl font-black text-white">Il Camaleonte vince!</h2>
+          <p className="text-teal-200 text-sm mt-1">
             Ha indovinato la parola dei civili.
           </p>
         </motion.div>
       )}
 
-      {hasMw && isMwSurvived && (
+      {hasCamaleonte && isCamaleonteSurvived && (
         <motion.div
-          className="rounded-3xl px-6 py-6 text-center bg-gradient-to-br from-slate-100 to-slate-300 border border-white/10"
+          className="rounded-3xl px-6 py-6 text-center bg-gradient-to-br from-teal-600 to-teal-800 border border-white/10"
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ type: 'spring', stiffness: 200, damping: 20 }}
         >
-          <div className="text-5xl mb-2">🕵️</div>
-          <h2 className="text-2xl font-black text-slate-900">Mr. White vince!</h2>
-          <p className="text-slate-600 text-sm mt-1">
+          <img src={camaleontePng} alt="Il Camaleonte" className="w-12 h-12 mx-auto mb-2" />
+          <h2 className="text-2xl font-black text-white">Il Camaleonte vince!</h2>
+          <p className="text-teal-200 text-sm mt-1">
             È sopravvissuto fino alla fine.
           </p>
         </motion.div>
       )}
 
-      {hasInf && isInfiltratoSurvived && (
+      {hasTalpa && isTalpaSurvived && (
         <motion.div
           className="rounded-3xl px-6 py-6 text-center bg-gradient-to-br from-amber-600 to-amber-800 border border-white/10"
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ type: 'spring', stiffness: 200, damping: 20 }}
         >
-          <div className="text-5xl mb-2">🎭</div>
-          <h2 className="text-2xl font-black text-white">L'infiltrato vince!</h2>
+          <img src={talpaPng} alt="La Talpa" className="w-12 h-12 mx-auto mb-2" />
+          <h2 className="text-2xl font-black text-white">La Talpa vince!</h2>
           <p className="text-amber-200 text-sm mt-1">
-            È sopravvissuto fino alla fine.
+            È sopravvissuta fino alla fine.
           </p>
         </motion.div>
       )}
 
-      {hasMw && hasInf && isBothSurvived && (
+      {hasCamaleonte && hasTalpa && isBothSurvived && (
         <motion.div
           className="rounded-3xl px-6 py-6 text-center bg-gradient-to-br from-rose-700 to-rose-900 border border-white/10"
           initial={{ scale: 0.9, opacity: 0 }}
@@ -197,11 +199,11 @@ export default function ResultScreen() {
               <p className="text-xs text-indigo-400">Civili</p>
               <p className="text-white font-bold">{wordPair.civilian}</p>
             </div>
-            {hasInf && (
+            {hasTalpa && (
               <>
                 <div className="w-px bg-white/8" />
                 <div>
-                  <p className="text-xs text-amber-400">Infiltrati</p>
+                  <p className="text-xs text-amber-400">Talpe</p>
                   <p className="text-white font-bold">{wordPair.undercover}</p>
                 </div>
               </>
@@ -241,8 +243,8 @@ export default function ResultScreen() {
                   <div className="flex flex-wrap gap-2">
                     {group.map(player => {
                       const pts = roundScores[player.name] ?? 0
-                      const isInfiltrateSurvivor = player.role === 'infiltrato' && !player.eliminated
-                      const isMwCorrect = player.role === 'mrwhite' && mrWhiteCorrectIds.includes(player.id)
+                      const isTalpaSurvivor = player.role === 'talpa' && !player.eliminated
+                      const isCamaleonteCorrect = player.role === 'camaleonte' && camaleonteCorrectIds.includes(player.id)
                       const idx = chipIndex++
                       return (
                         <motion.div
@@ -259,16 +261,16 @@ export default function ResultScreen() {
                           <span className={`font-medium text-sm ${player.eliminated ? 'line-through text-slate-500' : 'text-white'}`}>
                             {player.name}
                           </span>
-                          {isInfiltrateSurvivor && (isInfiltratoSurvived || isBothSurvived) && (
-                            <span className="text-amber-400 text-[10px] shrink-0">sopravvissuto!</span>
+                          {isTalpaSurvivor && (isTalpaSurvived || isBothSurvived) && (
+                            <span className="text-amber-400 text-[10px] shrink-0">sopravvissuta!</span>
                           )}
-                          {player.role === 'mrwhite' && !player.eliminated && isMwSurvived && (
-                            <span className="text-white text-[10px] shrink-0">sopravvissuto!</span>
+                          {player.role === 'camaleonte' && !player.eliminated && isCamaleonteSurvived && (
+                            <span className="text-teal-400 text-[10px] shrink-0">sopravvissuto!</span>
                           )}
-                          {player.role === 'infiltrato' && player.eliminated && pts > 0 && (
+                          {player.role === 'talpa' && player.eliminated && pts > 0 && (
                             <span className="text-amber-400/70 text-[10px] shrink-0">parziale</span>
                           )}
-                          {isMwCorrect && (
+                          {isCamaleonteCorrect && (
                             <span className="text-emerald-400 text-[10px] shrink-0">ha indovinato!</span>
                           )}
                           {player.specialRole === 'buffone' && player.eliminatedInTurno === 1 && (
@@ -383,21 +385,21 @@ export default function ResultScreen() {
                 <div>
                   <div className="text-indigo-400 font-semibold">Civile — 2{'\u00A0'}pt</div>
                   <div className="text-slate-500 mt-0.5">
-                    {hasMw
-                      ? 'Se tutti gli impostori vengono eliminati (e Mr.\u00A0White non indovina)'
+                    {hasCamaleonte
+                      ? 'Se tutti gli impostori vengono eliminati (e il Camaleonte non indovina)'
                       : 'Se tutti gli impostori vengono eliminati'}
                   </div>
                 </div>
-                {hasMw && (
+                {hasCamaleonte && (
                   <div>
-                    <div className="text-white font-semibold">Mr.{'\u00A0'}White — {players.length <= 4 ? '4' : '3'}{'\u00A0'}pt indovina / {players.length <= 3 ? '3' : players.length <= 4 ? '4' : '5'}{'\u00A0'}pt sopravvive</div>
+                    <div className="text-teal-400 font-semibold">Il Camaleonte — {players.length <= 4 ? '4' : '3'}{'\u00A0'}pt indovina / {players.length <= 3 ? '3' : players.length <= 4 ? '4' : '5'}{'\u00A0'}pt sopravvive</div>
                     <div className="text-slate-500 mt-0.5">Se eliminato, può tentare di indovinare la parola dei civili</div>
                   </div>
                 )}
-                {hasInf && (
+                {hasTalpa && (
                   <div>
-                    <div className="text-amber-400 font-semibold">Infiltrato — {players.length <= 4 ? '3' : '5'}{'\u00A0'}pt sopravvive</div>
-                    <div className="text-slate-500 mt-0.5">Se eliminato: +1{'\u00A0'}pt per ogni civile eliminato (max 3{'\u00A0'}pt)</div>
+                    <div className="text-amber-400 font-semibold">La Talpa — {players.length <= 4 ? '3' : '5'}{'\u00A0'}pt sopravvive</div>
+                    <div className="text-slate-500 mt-0.5">Se eliminata: +1{'\u00A0'}pt per ogni civile eliminato (max 3{'\u00A0'}pt)</div>
                   </div>
                 )}
                 {players.some(p => p.specialRole === 'buffone') && (

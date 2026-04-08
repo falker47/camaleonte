@@ -4,10 +4,12 @@ import { useGameStore } from '../store/gameStore'
 import RoleTag from '../components/RoleTag'
 import { vibrate } from '../utils/vibrate'
 import { springTap } from '../constants/animations'
+import talpaPng from '../assets/talpa.png'
+import camaleontePng from '../assets/camaleonte.png'
 
 const ROLE_FLASH_COLORS: Record<string, string> = {
-  mrwhite: 'rgba(255,255,255,0.15)',
-  infiltrato: 'rgba(251,191,36,0.15)',
+  camaleonte: 'rgba(20,184,166,0.15)',
+  talpa: 'rgba(251,191,36,0.15)',
   civile: 'rgba(99,102,241,0.15)',
 }
 
@@ -22,14 +24,14 @@ export default function EliminationScreen() {
   if (!eliminatedThisTurno) return null
 
   const { name, role } = eliminatedThisTurno
-  const isMrWhite = role === 'mrwhite'
+  const isCamaleonte = role === 'camaleonte'
   const isBuffoneBonus = eliminatedThisTurno.specialRole === 'buffone' && turno === 1
   const isSpettro = eliminatedThisTurno.specialRole === 'spettro'
 
   // Count remaining impostors (excluding the one being eliminated right now)
-  const remainingMrWhite = players.filter(p => !p.eliminated && p.role === 'mrwhite' && p.id !== eliminatedThisTurno.id).length
-  const remainingInfiltrati = players.filter(p => !p.eliminated && p.role === 'infiltrato' && p.id !== eliminatedThisTurno.id).length
-  const remainingImpostors = remainingMrWhite + remainingInfiltrati
+  const remainingCamaleonti = players.filter(p => !p.eliminated && p.role === 'camaleonte' && p.id !== eliminatedThisTurno.id).length
+  const remainingTalpe = players.filter(p => !p.eliminated && p.role === 'talpa' && p.id !== eliminatedThisTurno.id).length
+  const remainingImpostors = remainingCamaleonti + remainingTalpe
 
   return (
     <div className="flex flex-col items-center justify-center flex-1 px-5 py-8 gap-8">
@@ -49,7 +51,7 @@ export default function EliminationScreen() {
           animate={{ scale: 1 }}
           transition={{ type: 'spring', stiffness: 300, damping: 15 }}
         >
-          {isMrWhite ? '🕵️' : role === 'infiltrato' ? '🎭' : isBuffoneBonus ? '🃏' : isSpettro ? '🎐' : '😇'}
+          {isCamaleonte ? <img src={camaleontePng} alt="Il Camaleonte" className="w-12 h-12" /> : role === 'talpa' ? <img src={talpaPng} alt="La Talpa" className="w-12 h-12" /> : isBuffoneBonus ? '🃏' : isSpettro ? '🎐' : '😇'}
         </motion.div>
         <p className="text-slate-400 text-sm uppercase tracking-widest">Eliminato</p>
         <motion.h2
@@ -80,27 +82,27 @@ export default function EliminationScreen() {
         </motion.div>
       </div>
 
-      {isMrWhite && (
+      {isCamaleonte && (
         <motion.div
           className="glass rounded-2xl px-6 py-4 text-center max-w-xs relative z-10"
-          style={{ borderColor: 'rgba(251, 191, 36, 0.2)' }}
+          style={{ borderColor: 'rgba(20, 184, 166, 0.2)' }}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
         >
-          <p className="text-amber-400 font-semibold">Mr. White eliminato!</p>
+          <p className="text-teal-400 font-semibold">Il Camaleonte eliminato!</p>
           <p className="text-slate-400 text-sm mt-1">
             Potrà tentare di indovinare la parola dei civili per vincere ancora.
           </p>
-          {remainingInfiltrati > 0 && (
+          {remainingTalpe > 0 && (
             <p className="text-amber-400/70 text-xs mt-2">
-              Attenzione: {remainingInfiltrati === 1 ? 'c\'è ancora 1 infiltrato' : `ci sono ancora ${remainingInfiltrati} infiltrati`} in gioco!
+              Attenzione: {remainingTalpe === 1 ? 'c\'è ancora 1 talpa' : `ci sono ancora ${remainingTalpe} talpe`} in gioco!
             </p>
           )}
         </motion.div>
       )}
 
-      {role === 'infiltrato' && (
+      {role === 'talpa' && (
         <motion.div
           className="glass rounded-2xl px-6 py-4 text-center max-w-xs relative z-10"
           style={{ borderColor: 'rgba(251, 191, 36, 0.2)' }}
@@ -108,13 +110,13 @@ export default function EliminationScreen() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
         >
-          <p className="text-amber-400 font-semibold">Infiltrato scoperto!</p>
+          <p className="text-amber-400 font-semibold">La Talpa scoperta!</p>
           {remainingImpostors > 0 ? (
             <p className="text-slate-400 text-sm mt-1">
               {remainingImpostors === 1 ? 'Resta ancora 1 impostore' : `Restano ancora ${remainingImpostors} impostori`} da trovare.
             </p>
           ) : (
-            <p className="text-slate-400 text-sm mt-1">Era l'ultimo!</p>
+            <p className="text-slate-400 text-sm mt-1">Era l'ultima!</p>
           )}
         </motion.div>
       )}
@@ -169,7 +171,7 @@ export default function EliminationScreen() {
         className="w-full max-w-xs glass-button font-bold py-5 rounded-2xl text-lg relative z-10"
         {...springTap}
       >
-        {isMrWhite ? 'Vai al tentativo →' : 'Continua →'}
+        {isCamaleonte ? 'Vai al tentativo →' : 'Continua →'}
       </motion.button>
     </div>
   )

@@ -19,8 +19,8 @@ export default function RoundScreen() {
   const dismissOverlay = useCallback(() => setShowOverlay(false), [])
 
   const civili = active.filter(p => p.role === 'civile').length
-  const mrWhite = active.filter(p => p.role === 'mrwhite').length
-  const infiltrati = active.filter(p => p.role === 'infiltrato').length
+  const camaleonti = active.filter(p => p.role === 'camaleonte').length
+  const talpe = active.filter(p => p.role === 'talpa').length
 
   return (
     <div className="flex flex-col flex-1 min-h-0 px-5 py-6 gap-5 overflow-y-auto">
@@ -49,16 +49,16 @@ export default function RoundScreen() {
           <p className="text-indigo-400 font-bold text-lg">{civili}</p>
           <p className="text-slate-500 text-xs">civili</p>
         </div>
-        {mrWhite > 0 && (
+        {camaleonti > 0 && (
           <div className="glass rounded-xl px-3 py-2 text-center flex-1">
-            <p className="text-white font-bold text-lg">{mrWhite}</p>
-            <p className="text-slate-500 text-xs">mr. white</p>
+            <p className="text-teal-400 font-bold text-lg">{camaleonti}</p>
+            <p className="text-slate-500 text-xs">camaleont{camaleonti === 1 ? 'e' : 'i'}</p>
           </div>
         )}
-        {infiltrati > 0 && (
+        {talpe > 0 && (
           <div className="glass rounded-xl px-3 py-2 text-center flex-1">
-            <p className="text-amber-400 font-bold text-lg">{infiltrati}</p>
-            <p className="text-slate-500 text-xs">infiltrati</p>
+            <p className="text-amber-400 font-bold text-lg">{talpe}</p>
+            <p className="text-slate-500 text-xs">talp{talpe === 1 ? 'a' : 'e'}</p>
           </div>
         )}
       </div>

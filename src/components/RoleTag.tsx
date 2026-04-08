@@ -10,13 +10,13 @@ const CONFIG: Record<Role, { label: string; classes: string }> = {
     label: 'Civile',
     classes: 'bg-indigo-500/20 border border-indigo-400/30 text-indigo-300',
   },
-  infiltrato: {
-    label: 'Infiltrato',
+  talpa: {
+    label: 'La Talpa',
     classes: 'bg-amber-500/20 border border-amber-400/30 text-amber-300',
   },
-  mrwhite: {
-    label: 'Mr. White',
-    classes: 'bg-white/15 border border-white/20 text-white',
+  camaleonte: {
+    label: 'Il Camaleonte',
+    classes: 'bg-teal-500/20 border border-teal-400/30 text-teal-300',
   },
 }
 

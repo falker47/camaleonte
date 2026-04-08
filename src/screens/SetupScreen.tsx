@@ -4,7 +4,7 @@ import { useGameStore } from '../store/gameStore'
 import BackButton from '../components/BackButton'
 import SpecialRolesOverlay from '../components/SpecialRolesOverlay'
 import { springTap } from '../constants/animations'
-import { MAX_PLAYERS, MAX_MR_WHITE, MAX_INFILTRATI } from '../constants/gameConfig'
+import { MAX_PLAYERS, MAX_CAMALEONTE, MAX_TALPE } from '../constants/gameConfig'
 
 const SUGGESTED_ROLES: Record<number, [number, number]> = {
   3: [1, 0], 4: [1, 0],
@@ -25,8 +25,8 @@ export default function SetupScreen() {
   const goTo = useGameStore(s => s.goTo)
 
   const [slots, setSlots] = useState<Slot[]>([{ id: 0, name: '' }, { id: 1, name: '' }, { id: 2, name: '' }])
-  const [mrWhiteCount, setMrWhiteCount] = useState(config.mrWhiteCount)
-  const [infiltratoCount, setInfiltratoCount] = useState(config.infiltratoCount)
+  const [camaleonteCount, setCamaleonteCount] = useState(config.camaleonteCount)
+  const [talpaCount, setTalpaCount] = useState(config.talpaCount)
   const [manualOverride, setManualOverride] = useState(false)
 
   const inputRefs = useRef<(HTMLInputElement | null)[]>([])
@@ -61,45 +61,45 @@ export default function SetupScreen() {
     const count = validNames.length
     const suggestion = SUGGESTED_ROLES[count]
     if (suggestion) {
-      setMrWhiteCount(suggestion[0])
-      setInfiltratoCount(suggestion[1])
+      setCamaleonteCount(suggestion[0])
+      setTalpaCount(suggestion[1])
     }
   }, [validNames.length, manualOverride])
 
   // Clamp role counts when players are removed
   useEffect(() => {
     const maxTotal = Math.max(0, validNames.length - 2)
-    const clampedMw = Math.min(mrWhiteCount, MAX_MR_WHITE, Math.max(0, maxTotal - infiltratoCount))
-    const clampedInf = Math.min(infiltratoCount, MAX_INFILTRATI, Math.max(0, maxTotal - clampedMw))
-    if (clampedMw !== mrWhiteCount) setMrWhiteCount(clampedMw)
-    if (clampedInf !== infiltratoCount) setInfiltratoCount(clampedInf)
-  }, [validNames.length, mrWhiteCount, infiltratoCount])
+    const clampedCam = Math.min(camaleonteCount, MAX_CAMALEONTE, Math.max(0, maxTotal - talpaCount))
+    const clampedTalpa = Math.min(talpaCount, MAX_TALPE, Math.max(0, maxTotal - clampedCam))
+    if (clampedCam !== camaleonteCount) setCamaleonteCount(clampedCam)
+    if (clampedTalpa !== talpaCount) setTalpaCount(clampedTalpa)
+  }, [validNames.length, camaleonteCount, talpaCount])
 
   // Auto-disable buffone if not enough players
   useEffect(() => {
     if (validNames.length < 5) setBuffoneEnabled(false)
   }, [validNames.length])
 
-  const handleMrWhiteChange = (v: number) => {
+  const handleCamaleonteChange = (v: number) => {
     setManualOverride(true)
-    setMrWhiteCount(v)
+    setCamaleonteCount(v)
   }
 
-  const handleInfiltratoChange = (v: number) => {
+  const handleTalpaChange = (v: number) => {
     setManualOverride(true)
-    setInfiltratoCount(v)
+    setTalpaCount(v)
   }
 
   // Dynamic max: always guarantee at least 2 civilians
   const maxTotalImpostors = Math.max(0, validNames.length - 2)
-  const effectiveMaxMrWhite = Math.min(MAX_MR_WHITE, Math.max(0, maxTotalImpostors - infiltratoCount))
-  const effectiveMaxInfiltrato = Math.min(MAX_INFILTRATI, Math.max(0, maxTotalImpostors - mrWhiteCount))
+  const effectiveMaxCamaleonte = Math.min(MAX_CAMALEONTE, Math.max(0, maxTotalImpostors - talpaCount))
+  const effectiveMaxTalpa = Math.min(MAX_TALPE, Math.max(0, maxTotalImpostors - camaleonteCount))
 
   const suggestion = SUGGESTED_ROLES[validNames.length]
   const isCustomRoles = manualOverride && suggestion != null &&
-    (mrWhiteCount !== suggestion[0] || infiltratoCount !== suggestion[1])
+    (camaleonteCount !== suggestion[0] || talpaCount !== suggestion[1])
 
-  const impostorCount = mrWhiteCount + infiltratoCount
+  const impostorCount = camaleonteCount + talpaCount
   const civilianCount = Math.max(0, validNames.length - impostorCount)
   const hasDuplicates = new Set(validNames.map(n => n.trim().toLowerCase())).size < validNames.length
 
@@ -182,7 +182,7 @@ export default function SetupScreen() {
   const handleStart = () => {
     const filtered = names.filter(n => n.trim().length > 0)
     setPlayerNames(filtered)
-    setConfig({ mrWhiteCount, infiltratoCount, specialRoles: { buffone: buffoneEnabled && filtered.length >= 5, mimo: mimoEnabled, spettro: spettroEnabled } })
+    setConfig({ camaleonteCount, talpaCount, specialRoles: { buffone: buffoneEnabled && filtered.length >= 5, mimo: mimoEnabled, spettro: spettroEnabled } })
     startGame()
   }
 
@@ -289,22 +289,22 @@ export default function SetupScreen() {
         </h3>
         <div className="flex flex-col gap-3">
           <RoleCounter
-            label="Mr. White"
+            label="Il Camaleonte"
             description={"Non ha nessuna parola.\nDeve bluffare e indovinarla!"}
-            value={mrWhiteCount}
+            value={camaleonteCount}
             min={0}
-            max={effectiveMaxMrWhite}
-            color="white"
-            onChange={handleMrWhiteChange}
+            max={effectiveMaxCamaleonte}
+            color="teal"
+            onChange={handleCamaleonteChange}
           />
           <RoleCounter
-            label="Infiltrato"
+            label="La Talpa"
             description={"Ha una parola diversa...\nMa non lo sa!"}
-            value={infiltratoCount}
+            value={talpaCount}
             min={0}
-            max={effectiveMaxInfiltrato}
+            max={effectiveMaxTalpa}
             color="amber"
-            onChange={handleInfiltratoChange}
+            onChange={handleTalpaChange}
           />
         </div>
 
@@ -331,22 +331,22 @@ export default function SetupScreen() {
             <div className="flex flex-wrap gap-x-3 gap-y-1 text-sm">
               <span className="text-indigo-400">{civilianCount} Civili</span>
               <span className="text-slate-600">·</span>
-              <span className="text-white">{mrWhiteCount} Mr. White</span>
-              {infiltratoCount > 0 && (
+              <span className="text-teal-400">{camaleonteCount} Camaleont{camaleonteCount === 1 ? 'e' : 'i'}</span>
+              {talpaCount > 0 && (
                 <>
                   <span className="text-slate-600">·</span>
-                  <span className="text-amber-400">{infiltratoCount} Infiltrat{infiltratoCount === 1 ? 'o' : 'i'}</span>
+                  <span className="text-amber-400">{talpaCount} Talp{talpaCount === 1 ? 'a' : 'e'}</span>
                 </>
               )}
             </div>
-            {infiltratoCount > 0 && (
+            {talpaCount > 0 && (
               <p className="text-slate-500 text-xs mt-1.5">
-                L'infiltrato riceve una parola diversa ma non sa di esserlo!
+                La Talpa riceve una parola diversa ma non sa di esserlo!
               </p>
             )}
-            {mrWhiteCount > 0 && (
+            {camaleonteCount > 0 && (
               <p className="text-slate-500 text-xs mt-1">
-                Mr. White non ha nessuna parola e deve bluffare.
+                Il Camaleonte non ha nessuna parola e deve bluffare.
               </p>
             )}
           </div>
@@ -474,12 +474,12 @@ interface RoleCounterProps {
   value: number
   min: number
   max: number
-  color: 'white' | 'amber'
+  color: 'teal' | 'amber'
   onChange: (v: number) => void
 }
 
 function RoleCounter({ label, description, value, min, max, color, onChange }: RoleCounterProps) {
-  const dotColor = color === 'white' ? 'bg-white' : 'bg-amber-400'
+  const dotColor = color === 'teal' ? 'bg-teal-400' : 'bg-amber-400'
   return (
     <div className="flex items-center justify-between glass rounded-2xl px-4 py-3">
       <div className="flex items-center gap-3">
