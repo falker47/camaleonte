@@ -91,13 +91,13 @@ export default function GuessScreen() {
           <p className="text-slate-500 text-center text-sm max-w-xs">
             Gli altri giocatori non devono guardare lo schermo!
           </p>
-          <p className="text-amber-400 text-sm font-semibold mt-1">
+          <p className="text-teal-400 text-sm font-semibold mt-1">
             Avrai 60 secondi per indovinare la parola!
           </p>
         </div>
         <motion.button
           onClick={() => setPhase('input')}
-          className="w-full max-w-xs bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-black font-bold py-5 rounded-2xl text-lg transition-colors shadow-[0_8px_32px_rgba(245,158,11,0.3)]"
+          className="w-full max-w-xs bg-teal-500 hover:bg-teal-400 active:bg-teal-600 text-black font-bold py-5 rounded-2xl text-lg transition-colors shadow-[0_8px_32px_rgba(20,184,166,0.3)]"
           {...springTap}
         >
           Sono pronto
