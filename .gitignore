@@ -28,3 +28,5 @@ Thumbs.db
 # Claude / Superpowers
 .claude/
 .superpowers/
+.agent/
+.docs/
