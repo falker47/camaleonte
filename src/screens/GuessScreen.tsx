@@ -7,6 +7,7 @@ type Phase = 'privacy' | 'input' | 'result'
 
 export default function GuessScreen() {
   const eliminatedThisTurno = useGameStore(s => s.eliminatedThisTurno)
+  const linkedEliminatedThisTurno = useGameStore(s => s.linkedEliminatedThisTurno)
   const players = useGameStore(s => s.players)
   const submitCamaleonteGuess = useGameStore(s => s.submitCamaleonteGuess)
   const camaleonteGuessResult = useGameStore(s => s.camaleonteGuessResult)
@@ -54,9 +55,19 @@ export default function GuessScreen() {
   }
 
   const handleContinue = () => {
+    const store = useGameStore.getState()
+    // If linked partner is a camaleonte that hasn't guessed yet, give them a turn
+    if (linkedEliminatedThisTurno?.role === 'camaleonte' && linkedEliminatedThisTurno.id !== eliminatedThisTurno?.id) {
+      store.goTo('camaleonte_guess')
+      useGameStore.setState({ eliminatedThisTurno: linkedEliminatedThisTurno, linkedEliminatedThisTurno: null, camaleonteGuessResult: null })
+      setGuess('')
+      setPhase('privacy')
+      setTimeLeft(60)
+      timedOut.current = false
+      return
+    }
     if (gameOver) {
-      // winner is already set in store, screen will change via goTo
-      useGameStore.getState().goTo('result')
+      store.goTo('result')
     } else {
       nextTurno()
     }

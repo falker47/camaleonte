@@ -27,6 +27,10 @@ export default function EliminationScreen() {
   const isCamaleonte = role === 'camaleonte'
   const isBuffoneBonus = eliminatedThisTurno.specialRole === 'buffone' && turno === 1
   const isSpettro = eliminatedThisTurno.specialRole === 'spettro'
+  const isRomeoGiulietta = eliminatedThisTurno.specialRole === 'romeo' || eliminatedThisTurno.specialRole === 'giulietta'
+  const linkedPartner = isRomeoGiulietta
+    ? players.find(p => (p.specialRole === 'romeo' || p.specialRole === 'giulietta') && p.id !== eliminatedThisTurno.id && !p.eliminated)
+    : null
 
   // Count remaining impostors (excluding the one being eliminated right now)
   const remainingCamaleonti = players.filter(p => !p.eliminated && p.role === 'camaleonte' && p.id !== eliminatedThisTurno.id).length
@@ -163,6 +167,24 @@ export default function EliminationScreen() {
             Continuerà a <span className="text-cyan-400 font-bold">votare</span> anche dall'aldilà.
           </p>
           <p className="text-slate-500 text-xs mt-2">Non darà indizi e non potrà essere votato.</p>
+        </motion.div>
+      )}
+
+      {linkedPartner && (
+        <motion.div
+          className="glass rounded-2xl px-6 py-5 text-center max-w-xs relative z-10"
+          style={{ borderColor: 'rgba(236, 72, 153, 0.3)' }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+        >
+          <p className="text-pink-400 font-bold text-lg">{eliminatedThisTurno.specialRole === 'romeo' ? 'Era Romeo!' : 'Era Giulietta!'}</p>
+          <p className="text-slate-300 text-sm mt-2">
+            Anche <span className="text-pink-400 font-bold">{linkedPartner.name}</span> viene eliminato!
+          </p>
+          <div className="mt-3 flex items-center justify-center gap-2">
+            <RoleTag role={linkedPartner.role} size="lg" />
+          </div>
         </motion.div>
       )}
 

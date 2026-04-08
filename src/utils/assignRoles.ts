@@ -70,5 +70,16 @@ export function assignRoles(
     }
   }
 
+  if (config.specialRoles?.romeoGiulietta && names.length >= 5) {
+    const eligible = result
+      .map((p, i) => ({ p, i }))
+      .filter(({ p }) => !p.specialRole)
+    if (eligible.length >= 2) {
+      const chosen = shuffle(eligible).slice(0, 2)
+      result[chosen[0].i] = { ...result[chosen[0].i], specialRole: 'romeo' }
+      result[chosen[1].i] = { ...result[chosen[1].i], specialRole: 'giulietta' }
+    }
+  }
+
   return result
 }

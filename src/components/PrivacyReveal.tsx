@@ -152,6 +152,26 @@ export default function PrivacyReveal({ playerName, word, role, specialRole, spe
                     </p>
                   </div>
                 )}
+                {specialRole === 'romeo' && (
+                  <div className="mt-2 flex flex-col items-center gap-1">
+                    <span className="inline-block rounded-full bg-pink-800/30 border border-pink-600/30 text-pink-200 text-sm font-bold px-4 py-1">
+                      💕 Romeo
+                    </span>
+                    <p className={`text-xs text-center ${textColor} opacity-60`}>
+                      Il tuo destino è legato a Giulietta.
+                    </p>
+                  </div>
+                )}
+                {specialRole === 'giulietta' && (
+                  <div className="mt-2 flex flex-col items-center gap-1">
+                    <span className="inline-block rounded-full bg-pink-800/30 border border-pink-600/30 text-pink-200 text-sm font-bold px-4 py-1">
+                      💕 Giulietta
+                    </span>
+                    <p className={`text-xs text-center ${textColor} opacity-60`}>
+                      Il tuo destino è legato a Romeo.
+                    </p>
+                  </div>
+                )}
               </>
             ) : (
               <>
@@ -196,6 +216,26 @@ export default function PrivacyReveal({ playerName, word, role, specialRole, spe
                     </span>
                     <p className={`text-sm text-center ${textColor} opacity-60`}>
                       Sfidi <span className="font-bold">{specialRoleExtra}</span>! Eliminalo per rubargli 2 pt.
+                    </p>
+                  </div>
+                )}
+                {specialRole === 'romeo' && (
+                  <div className="mt-3 flex flex-col items-center gap-1.5">
+                    <span className="inline-block rounded-full bg-pink-500/20 border border-pink-400/30 text-pink-400 text-sm font-bold px-4 py-1">
+                      💕 Romeo
+                    </span>
+                    <p className={`text-sm text-center ${textColor} opacity-60`}>
+                      Il tuo destino è legato a Giulietta. Se uno di voi viene eliminato, anche l'altro lo sarà.
+                    </p>
+                  </div>
+                )}
+                {specialRole === 'giulietta' && (
+                  <div className="mt-3 flex flex-col items-center gap-1.5">
+                    <span className="inline-block rounded-full bg-pink-500/20 border border-pink-400/30 text-pink-400 text-sm font-bold px-4 py-1">
+                      💕 Giulietta
+                    </span>
+                    <p className={`text-sm text-center ${textColor} opacity-60`}>
+                      Il tuo destino è legato a Romeo. Se uno di voi viene eliminato, anche l'altro lo sarà.
                     </p>
                   </div>
                 )}

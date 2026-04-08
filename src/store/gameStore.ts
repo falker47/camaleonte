@@ -100,6 +100,7 @@ interface GameState {
   turno: number
   currentVotes: Record<string, number>
   eliminatedThisTurno: Player | null
+  linkedEliminatedThisTurno: Player | null
   camaleonteGuessResult: 'correct' | 'wrong' | null
   camaleonteCorrectIds: string[]
   winner: 'civilians' | 'last_two' | null
@@ -132,6 +133,7 @@ export const useGameStore = create<GameState>((set, get) => ({
   turno: 1,
   currentVotes: {},
   eliminatedThisTurno: null,
+  linkedEliminatedThisTurno: null,
   camaleonteGuessResult: null,
   camaleonteCorrectIds: [],
   winner: null,
@@ -173,6 +175,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       turno: 1,
       currentVotes: {},
       eliminatedThisTurno: null,
+      linkedEliminatedThisTurno: null,
       camaleonteGuessResult: null,
       camaleonteCorrectIds: [],
       winner: null,
@@ -208,13 +211,35 @@ export const useGameStore = create<GameState>((set, get) => ({
     const { eliminatedThisTurno, players, wordPair, scores, camaleonteCorrectIds, turno } = get()
     if (!eliminatedThisTurno) return
 
-    const updatedPlayers = players.map(p =>
+    let updatedPlayers = players.map(p =>
       p.id === eliminatedThisTurno.id ? { ...p, eliminated: true, eliminatedInTurno: turno } : p
     )
-    set({ players: updatedPlayers })
 
+    // Romeo & Giulietta linked elimination
+    let linkedPartner: Player | null = null
+    const sr = eliminatedThisTurno.specialRole
+    if (sr === 'romeo' || sr === 'giulietta') {
+      const partnerRole = sr === 'romeo' ? 'giulietta' : 'romeo'
+      const partner = updatedPlayers.find(p => p.specialRole === partnerRole && !p.eliminated)
+      if (partner) {
+        linkedPartner = partner
+        updatedPlayers = updatedPlayers.map(p =>
+          p.id === partner.id ? { ...p, eliminated: true, eliminatedInTurno: turno } : p
+        )
+      }
+    }
+
+    set({ players: updatedPlayers, linkedEliminatedThisTurno: linkedPartner })
+
+    // Voted camaleonte gets a guess first
     if (eliminatedThisTurno.role === 'camaleonte' && wordPair) {
       set({ screen: 'camaleonte_guess', camaleonteGuessResult: null })
+      return
+    }
+
+    // Linked partner camaleonte also gets a guess
+    if (linkedPartner?.role === 'camaleonte' && wordPair) {
+      set({ eliminatedThisTurno: linkedPartner, screen: 'camaleonte_guess', camaleonteGuessResult: null })
       return
     }
 
@@ -222,9 +247,9 @@ export const useGameStore = create<GameState>((set, get) => ({
     if (win) {
       const correctSet = new Set(camaleonteCorrectIds)
       const { scores: newScores, roundScores } = calcFinalScores(updatedPlayers, win, correctSet, scores)
-      set({ winner: win, scores: newScores, roundScores, screen: 'result', eliminatedThisTurno: null })
+      set({ winner: win, scores: newScores, roundScores, screen: 'result', eliminatedThisTurno: null, linkedEliminatedThisTurno: null })
     } else {
-      set({ screen: 'round', turno: get().turno + 1, currentVotes: {}, eliminatedThisTurno: null })
+      set({ screen: 'round', turno: get().turno + 1, currentVotes: {}, eliminatedThisTurno: null, linkedEliminatedThisTurno: null })
     }
   },
 
@@ -263,7 +288,7 @@ export const useGameStore = create<GameState>((set, get) => ({
   },
 
   nextTurno: () => {
-    set({ screen: 'round', turno: get().turno + 1, currentVotes: {} })
+    set({ screen: 'round', turno: get().turno + 1, currentVotes: {}, linkedEliminatedThisTurno: null })
   },
 
   invalidateRound: () => {
@@ -281,6 +306,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       turno: 1,
       currentVotes: {},
       eliminatedThisTurno: null,
+      linkedEliminatedThisTurno: null,
       camaleonteGuessResult: null,
       camaleonteCorrectIds: [],
       winner: null,

@@ -33,6 +33,13 @@ export default function RoundScreen() {
         <p className="text-slate-400 text-sm">Ogni giocatore dà un indizio</p>
       </div>
 
+      {turno === 1 && players.some(p => p.specialRole === 'romeo' || p.specialRole === 'giulietta') && (
+        <div className="glass rounded-xl px-4 py-3 border border-pink-400/20">
+          <p className="text-pink-400 text-sm font-semibold">💕 Romeo e Giulietta sono in gioco!</p>
+          <p className="text-slate-400 text-xs mt-1">Due giocatori sono legati: se uno cade, cade anche l'altro.</p>
+        </div>
+      )}
+
       {isLastChance && (
         <div className="flex items-center gap-2.5 rounded-xl px-3.5 py-2.5"
           style={{ background: 'rgba(220,38,38,0.1)', border: '1px solid rgba(220,38,38,0.3)' }}>

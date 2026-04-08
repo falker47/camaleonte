@@ -1,6 +1,6 @@
 export type Role = 'civile' | 'talpa' | 'camaleonte'
 
-export type SpecialRole = 'buffone' | 'mimo' | 'spettro' | 'duellante'
+export type SpecialRole = 'buffone' | 'mimo' | 'spettro' | 'duellante' | 'romeo' | 'giulietta'
 
 export type Screen =
   | 'home'
@@ -32,5 +32,5 @@ export interface WordPair {
 export interface GameConfig {
   camaleonteCount: number
   talpaCount: number
-  specialRoles?: { buffone?: boolean; mimo?: boolean; spettro?: boolean; duellanti?: boolean }
+  specialRoles?: { buffone?: boolean; mimo?: boolean; spettro?: boolean; duellanti?: boolean; romeoGiulietta?: boolean }
 }
