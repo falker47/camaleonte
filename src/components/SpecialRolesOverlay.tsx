@@ -14,16 +14,18 @@ interface SpecialRoleConfig {
   toggleColor: string
   enabled: boolean
   minPlayers: number
+  slotCost: number
 }
 
 interface Props {
   roles: SpecialRoleConfig[]
   playerCount: number
+  slotsRemaining: number
   onToggle: (id: string) => void
   onClose: () => void
 }
 
-export default function SpecialRolesOverlay({ roles, playerCount, onToggle, onClose }: Props) {
+export default function SpecialRolesOverlay({ roles, playerCount, slotsRemaining, onToggle, onClose }: Props) {
   const activeCount = roles.filter(r => r.enabled && playerCount >= r.minPlayers).length
 
   return createPortal(
@@ -59,12 +61,20 @@ export default function SpecialRolesOverlay({ roles, playerCount, onToggle, onCl
 
         {/* Roles list */}
         <div className="flex flex-col gap-3 px-6 py-4 overflow-y-auto">
-          {roles.map(role => {
-            const locked = playerCount < role.minPlayers
-            const active = role.enabled && !locked
-            return (
-              <button
+          {[...roles]
+            .map(role => {
+              const tooFewPlayers = playerCount < role.minPlayers
+              const noSlotsLeft = !role.enabled && slotsRemaining < role.slotCost
+              const locked = tooFewPlayers || noSlotsLeft
+              const active = role.enabled && !tooFewPlayers
+              return { role, locked, active }
+            })
+            .sort((a, b) => (a.locked === b.locked ? 0 : a.locked ? 1 : -1))
+            .map(({ role, locked, active }) => (
+              <motion.button
                 key={role.id}
+                layout
+                transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                 onClick={() => !locked && onToggle(role.id)}
                 disabled={locked}
                 className={`flex items-center gap-4 rounded-2xl px-4 py-3.5 text-left transition-all border ${
@@ -90,9 +100,8 @@ export default function SpecialRolesOverlay({ roles, playerCount, onToggle, onCl
                     transition={{ type: 'spring', stiffness: 400, damping: 25 }}
                   />
                 </div>
-              </button>
-            )
-          })}
+              </motion.button>
+            ))}
         </div>
 
         {/* Footer */}

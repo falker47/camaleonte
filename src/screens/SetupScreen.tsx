@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useGameStore } from '../store/gameStore'
 import BackButton from '../components/BackButton'
@@ -40,6 +40,7 @@ export default function SetupScreen() {
   const [duellantiEnabled, setDuellantiEnabled] = useState(false)
   const [romeoGiuliettaEnabled, setRomeoGiuliettaEnabled] = useState(false)
   const [riccioEnabled, setRiccioEnabled] = useState(false)
+  const [oracoloEnabled, setOracoloEnabled] = useState(false)
   const [showSpecialRoles, setShowSpecialRoles] = useState(false)
 
   // Auto-focus CTA input on mount
@@ -87,6 +88,48 @@ export default function SetupScreen() {
   useEffect(() => {
     if (validNames.length < 5) setRomeoGiuliettaEnabled(false)
   }, [validNames.length])
+
+  // Auto-disable Oracolo if not enough players
+  useEffect(() => {
+    if (validNames.length < 4) setOracoloEnabled(false)
+  }, [validNames.length])
+
+  const specialRoleSlotsUsed = useMemo(() => {
+    let slots = 0
+    if (buffoneEnabled && validNames.length >= 5) slots += 1
+    if (mimoEnabled) slots += 1
+    if (spettroEnabled) slots += 1
+    if (duellantiEnabled && validNames.length >= 4) slots += 2
+    if (romeoGiuliettaEnabled && validNames.length >= 5) slots += 2
+    if (riccioEnabled && validNames.length >= 5) slots += 1
+    if (oracoloEnabled && validNames.length >= 4) slots += 1
+    return slots
+  }, [buffoneEnabled, mimoEnabled, spettroEnabled, duellantiEnabled, romeoGiuliettaEnabled, riccioEnabled, oracoloEnabled, validNames.length])
+
+  const slotsRemaining = validNames.length - specialRoleSlotsUsed
+
+  // Auto-disable special roles if they exceed available player slots
+  useEffect(() => {
+    if (specialRoleSlotsUsed <= validNames.length) return
+    // Disable roles in reverse priority order (last in list first) until we fit
+    const rolesByPriority: { enabled: boolean; cost: number; disable: () => void }[] = [
+      { enabled: oracoloEnabled, cost: 1, disable: () => setOracoloEnabled(false) },
+      { enabled: riccioEnabled, cost: 1, disable: () => setRiccioEnabled(false) },
+      { enabled: romeoGiuliettaEnabled, cost: 2, disable: () => setRomeoGiuliettaEnabled(false) },
+      { enabled: duellantiEnabled, cost: 2, disable: () => setDuellantiEnabled(false) },
+      { enabled: spettroEnabled, cost: 1, disable: () => setSpettroEnabled(false) },
+      { enabled: mimoEnabled, cost: 1, disable: () => setMimoEnabled(false) },
+      { enabled: buffoneEnabled, cost: 1, disable: () => setBuffoneEnabled(false) },
+    ]
+    let excess = specialRoleSlotsUsed - validNames.length
+    for (const role of rolesByPriority) {
+      if (excess <= 0) break
+      if (role.enabled) {
+        role.disable()
+        excess -= role.cost
+      }
+    }
+  }, [validNames.length, specialRoleSlotsUsed])
 
   const handleCamaleonteChange = (v: number) => {
     setManualOverride(true)
@@ -190,7 +233,7 @@ export default function SetupScreen() {
   const handleStart = () => {
     const filtered = names.filter(n => n.trim().length > 0)
     setPlayerNames(filtered)
-    setConfig({ camaleonteCount, talpaCount, specialRoles: { buffone: buffoneEnabled && filtered.length >= 5, mimo: mimoEnabled, spettro: spettroEnabled, duellanti: duellantiEnabled, romeoGiulietta: romeoGiuliettaEnabled && filtered.length >= 5, riccio: riccioEnabled } })
+    setConfig({ camaleonteCount, talpaCount, specialRoles: { buffone: buffoneEnabled && filtered.length >= 5, mimo: mimoEnabled, spettro: spettroEnabled, duellanti: duellantiEnabled, romeoGiulietta: romeoGiuliettaEnabled && filtered.length >= 5, riccio: riccioEnabled && filtered.length >= 5, oracolo: oracoloEnabled && filtered.length >= 4 } })
     startGame()
   }
 
@@ -372,7 +415,7 @@ export default function SetupScreen() {
               <div className="text-left">
                 <p className="text-white text-sm font-semibold">Ruoli Speciali</p>
                 {(() => {
-                  const active = [buffoneEnabled && validNames.length >= 5, mimoEnabled, spettroEnabled, duellantiEnabled, romeoGiuliettaEnabled && validNames.length >= 5, riccioEnabled].filter(Boolean).length
+                  const active = [buffoneEnabled && validNames.length >= 5, mimoEnabled, spettroEnabled, duellantiEnabled, romeoGiuliettaEnabled && validNames.length >= 5, riccioEnabled && validNames.length >= 5, oracoloEnabled && validNames.length >= 4].filter(Boolean).length
                   return active > 0
                     ? <p className="text-teal-400 text-xs">{active} attiv{active === 1 ? 'o' : 'i'}</p>
                     : <p className="text-slate-500 text-xs">Nessuno attivo</p>
@@ -381,7 +424,7 @@ export default function SetupScreen() {
             </div>
             <span className="text-slate-500 text-sm">›</span>
           </motion.button>
-          {(buffoneEnabled && validNames.length >= 5 || mimoEnabled || spettroEnabled || duellantiEnabled || romeoGiuliettaEnabled && validNames.length >= 5 || riccioEnabled) && (
+          {(buffoneEnabled && validNames.length >= 5 || mimoEnabled || spettroEnabled || duellantiEnabled || romeoGiuliettaEnabled && validNames.length >= 5 || riccioEnabled && validNames.length >= 5 || oracoloEnabled && validNames.length >= 4) && (
             <div className="flex flex-wrap gap-1.5 px-4 pb-3">
               {buffoneEnabled && validNames.length >= 5 && (
                 <span className="inline-block rounded-full bg-red-500/20 border border-red-400/30 text-red-400 text-xs font-bold px-2.5 py-0.5">
@@ -408,9 +451,14 @@ export default function SetupScreen() {
                   💕 R&G
                 </span>
               )}
-              {riccioEnabled && (
-                <span className="inline-block rounded-full bg-orange-500/20 border border-orange-400/30 text-orange-400 text-xs font-bold px-2.5 py-0.5">
+              {riccioEnabled && validNames.length >= 5 && (
+                <span className="inline-block rounded-full bg-yellow-500/20 border border-yellow-400/30 text-yellow-400 text-xs font-bold px-2.5 py-0.5">
                   🦔 Riccio
+                </span>
+              )}
+              {oracoloEnabled && validNames.length >= 4 && (
+                <span className="inline-block rounded-full bg-purple-500/20 border border-purple-400/30 text-purple-400 text-xs font-bold px-2.5 py-0.5">
+                  🔮 Oracolo
                 </span>
               )}
             </div>
@@ -449,6 +497,7 @@ export default function SetupScreen() {
                 toggleColor: 'bg-red-500',
                 enabled: buffoneEnabled,
                 minPlayers: 5,
+                slotCost: 1,
               },
               {
                 id: 'mimo',
@@ -462,6 +511,7 @@ export default function SetupScreen() {
                 toggleColor: 'bg-slate-400',
                 enabled: mimoEnabled,
                 minPlayers: 3,
+                slotCost: 1,
               },
               {
                 id: 'spettro',
@@ -475,6 +525,7 @@ export default function SetupScreen() {
                 toggleColor: 'bg-cyan-500',
                 enabled: spettroEnabled,
                 minPlayers: 3,
+                slotCost: 1,
               },
               {
                 id: 'duellanti',
@@ -488,6 +539,7 @@ export default function SetupScreen() {
                 toggleColor: 'bg-blue-800',
                 enabled: duellantiEnabled,
                 minPlayers: 4,
+                slotCost: 2,
               },
               {
                 id: 'romeoGiulietta',
@@ -501,22 +553,39 @@ export default function SetupScreen() {
                 toggleColor: 'bg-fuchsia-400',
                 enabled: romeoGiuliettaEnabled,
                 minPlayers: 5,
+                slotCost: 2,
               },
               {
                 id: 'riccio',
                 label: 'Il Riccio',
                 emoji: '🦔',
                 description: 'Se eliminato, trascina un altro giocatore con sé.',
-                bgBase: 'bg-orange-500/10',
-                bgActive: 'bg-orange-500/25',
-                borderBase: 'border-orange-400/20',
-                borderActive: 'border-orange-400/50',
-                toggleColor: 'bg-orange-500',
+                bgBase: 'bg-yellow-500/10',
+                bgActive: 'bg-yellow-500/25',
+                borderBase: 'border-yellow-400/20',
+                borderActive: 'border-yellow-400/50',
+                toggleColor: 'bg-yellow-500',
                 enabled: riccioEnabled,
-                minPlayers: 3,
+                minPlayers: 5,
+                slotCost: 1,
+              },
+              {
+                id: 'oracolo',
+                label: 'L\'Oracolo',
+                emoji: '🔮',
+                description: 'Se eliminato, svela il ruolo di un giocatore a sua scelta.',
+                bgBase: 'bg-purple-500/10',
+                bgActive: 'bg-purple-500/25',
+                borderBase: 'border-purple-400/20',
+                borderActive: 'border-purple-400/50',
+                toggleColor: 'bg-purple-500',
+                enabled: oracoloEnabled,
+                minPlayers: 4,
+                slotCost: 1,
               },
             ]}
             playerCount={validNames.length}
+            slotsRemaining={slotsRemaining}
             onToggle={(id) => {
               if (id === 'buffone') setBuffoneEnabled(v => !v)
               if (id === 'mimo') setMimoEnabled(v => !v)
@@ -524,6 +593,7 @@ export default function SetupScreen() {
               if (id === 'duellanti') setDuellantiEnabled(v => !v)
               if (id === 'romeoGiulietta') setRomeoGiuliettaEnabled(v => !v)
               if (id === 'riccio') setRiccioEnabled(v => !v)
+              if (id === 'oracolo') setOracoloEnabled(v => !v)
             }}
             onClose={() => setShowSpecialRoles(false)}
           />
