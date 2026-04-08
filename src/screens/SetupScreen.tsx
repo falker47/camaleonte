@@ -30,6 +30,14 @@ export default function SetupScreen() {
 
   const inputRefs = useRef<(HTMLInputElement | null)[]>([])
   const pendingFocus = useRef<number | null>(null)
+  const ctaInputRef = useRef<HTMLInputElement | null>(null)
+  const [ctaValue, setCtaValue] = useState('')
+  const [ctaError, setCtaError] = useState('')
+
+  // Auto-focus CTA input on mount
+  useEffect(() => {
+    ctaInputRef.current?.focus()
+  }, [])
 
   // Auto-focus new field after adding
   useEffect(() => {
@@ -100,11 +108,13 @@ export default function SetupScreen() {
       }
     })
   }
+  const hasEmptySlots = slots.some(s => s.name.trim().length === 0)
   const canStart =
     validNames.length >= 3 &&
     impostorCount >= 1 &&
     impostorCount < validNames.length - 1 &&
-    !hasDuplicates
+    !hasDuplicates &&
+    !hasEmptySlots
 
   const addPlayer = () => {
     if (slots.length < MAX_PLAYERS) setSlots([...slots, { id: nextSlotId++, name: '' }])
@@ -134,6 +144,31 @@ export default function SetupScreen() {
     }
   }
 
+  const handleCtaKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key !== 'Enter') return
+    e.preventDefault()
+    const trimmed = ctaValue.trim()
+    if (!trimmed) return
+    if (slots.length >= MAX_PLAYERS) return
+    // Check duplicate
+    const isDuplicate = slots.some(s => s.name.trim().toLowerCase() === trimmed.toLowerCase())
+    if (isDuplicate) {
+      setCtaError('Nome già inserito')
+      return
+    }
+    setCtaError('')
+    // Fill first empty slot if one exists, otherwise add a new one
+    const emptyIndex = slots.findIndex(s => s.name.trim().length === 0)
+    if (emptyIndex !== -1) {
+      const next = [...slots]
+      next[emptyIndex] = { ...next[emptyIndex], name: trimmed }
+      setSlots(next)
+    } else {
+      setSlots([...slots, { id: nextSlotId++, name: trimmed }])
+    }
+    setCtaValue('')
+  }
+
   const handleStart = () => {
     const filtered = names.filter(n => n.trim().length > 0)
     setPlayerNames(filtered)
@@ -148,56 +183,75 @@ export default function SetupScreen() {
         <h2 className="text-xl font-bold text-white">Nuova Partita</h2>
       </div>
 
+      {/* CTA Input */}
+      <div>
+        <div className="relative">
+          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-indigo-400 text-lg font-bold pointer-events-none">+</span>
+          <input
+            ref={ctaInputRef}
+            type="text"
+            value={ctaValue}
+            onChange={e => { setCtaValue(e.target.value); setCtaError('') }}
+            onKeyDown={handleCtaKeyDown}
+            placeholder="Aggiungi giocatore..."
+            disabled={slots.length >= MAX_PLAYERS}
+            className="w-full rounded-2xl pl-10 pr-12 py-4 text-base bg-indigo-500/8 border-2 border-indigo-400/45 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-400/70 focus:shadow-[0_0_30px_rgba(99,102,241,0.12)] disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+            style={{ userSelect: 'text', touchAction: 'auto' }}
+            maxLength={20}
+          />
+          <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-600 text-[10px] border border-white/10 rounded px-1.5 py-0.5 font-mono pointer-events-none">⏎</span>
+        </div>
+        {ctaError && (
+          <p className="text-rose-400 text-xs mt-1 ml-1">{ctaError}</p>
+        )}
+        {!ctaError && (
+          <p className="text-slate-600 text-xs mt-1 ml-1">Scrivi un nome e premi Invio</p>
+        )}
+      </div>
+
       {/* Player names */}
       <div>
         <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wide mb-3">
           Giocatori ({validNames.length})
         </h3>
-        <div className="flex flex-col gap-2">
+        <div className="grid grid-cols-3 gap-2">
           <AnimatePresence initial={false}>
             {slots.map((slot, i) => (
               <motion.div
                 key={slot.id}
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
                 transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-                className="flex gap-2"
+                className="relative"
               >
-                <div className="w-8 h-8 rounded-full bg-indigo-700 flex items-center justify-center text-sm font-bold text-white shrink-0">
-                  {i + 1}
-                </div>
-                <div className="flex-1 flex flex-col gap-1">
-                  <div className="relative">
-                    <input
-                      ref={el => { inputRefs.current[i] = el }}
-                      type="text"
-                      value={slot.name}
-                      onChange={e => updateName(i, e.target.value)}
-                      onKeyDown={e => handleKeyDown(i, e)}
-                      placeholder={`Giocatore ${i + 1}`}
-                      className={`w-full glass-input rounded-xl px-4 py-3 text-sm ${duplicateIndices.has(i) ? 'border-rose-500/60' : ''}`}
-                      style={{ userSelect: 'text', touchAction: 'auto' }}
-                      maxLength={20}
-                    />
-                    {slot.name.length > 15 && (
-                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 text-xs pointer-events-none">
-                        {slot.name.length}/20
-                      </span>
-                    )}
-                  </div>
-                  {duplicateIndices.has(i) && (
-                    <p className="text-rose-400 text-xs ml-1">Nome duplicato</p>
+                <div className="relative">
+                  <span className="absolute left-2 top-1/2 -translate-y-1/2 text-indigo-400 text-xs font-bold pointer-events-none z-10">
+                    {i + 1}.
+                  </span>
+                  {slots.length > 3 && (
+                    <button
+                      onClick={() => removePlayer(i)}
+                      className="absolute right-1.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-rose-400 text-xs z-10 w-4 h-4 flex items-center justify-center"
+                      aria-label="Rimuovi"
+                    >
+                      ✕
+                    </button>
                   )}
+                  <input
+                    ref={el => { inputRefs.current[i] = el }}
+                    type="text"
+                    value={slot.name}
+                    onChange={e => updateName(i, e.target.value)}
+                    onKeyDown={e => handleKeyDown(i, e)}
+                    placeholder={`Gioc. ${i + 1}`}
+                    className={`w-full glass-input rounded-lg pl-6 pr-2.5 py-2 text-sm ${duplicateIndices.has(i) ? 'border-rose-500/60' : ''}`}
+                    style={{ userSelect: 'text', touchAction: 'auto' }}
+                    maxLength={20}
+                  />
                 </div>
-                {slots.length > 3 && (
-                  <button
-                    onClick={() => removePlayer(i)}
-                    className="text-slate-500 hover:text-rose-400 px-3 py-3 rounded-xl transition-colors"
-                    aria-label="Rimuovi"
-                  >
-                    ✕
-                  </button>
+                {duplicateIndices.has(i) && (
+                  <p className="text-rose-400 text-[10px] mt-0.5 ml-1">Duplicato</p>
                 )}
               </motion.div>
             ))}
@@ -205,7 +259,7 @@ export default function SetupScreen() {
         </div>
         {slots.length < MAX_PLAYERS && (
           <>
-            <p className="text-slate-600 text-xs mt-1 ml-10">
+            <p className="text-slate-600 text-xs mt-1">
               Premi Invio per aggiungere
             </p>
             <button
@@ -226,7 +280,7 @@ export default function SetupScreen() {
         <div className="flex flex-col gap-3">
           <RoleCounter
             label="Mr. White"
-            description="Non conosce la parola — deve bluffare"
+            description={"Non ha nessuna parola.\nDeve bluffare e indovinarla!"}
             value={mrWhiteCount}
             min={0}
             max={effectiveMaxMrWhite}
@@ -234,8 +288,8 @@ export default function SetupScreen() {
             onChange={handleMrWhiteChange}
           />
           <RoleCounter
-            label="Infiltrati"
-            description="Hanno una parola diversa — non lo sanno!"
+            label="Infiltrato"
+            description={"Ha una parola diversa...\nMa non lo sa!"}
             value={infiltratoCount}
             min={0}
             max={effectiveMaxInfiltrato}
@@ -325,7 +379,7 @@ function RoleCounter({ label, description, value, min, max, color, onChange }: R
         <div className={`w-3 h-3 rounded-full ${dotColor}`} />
         <div>
           <p className="text-white text-sm font-semibold">{label}</p>
-          <p className="text-slate-500 text-xs">{description}</p>
+          <p className="text-slate-500 text-xs whitespace-pre-line">{description}</p>
         </div>
       </div>
       <div className="flex items-center gap-3">
