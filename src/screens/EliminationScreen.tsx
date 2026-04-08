@@ -9,7 +9,7 @@ import camaleontePng from '../assets/camaleonte.png'
 
 const ROLE_FLASH_COLORS: Record<string, string> = {
   camaleonte: 'rgba(20,184,166,0.15)',
-  talpa: 'rgba(202,138,4,0.15)',
+  talpa: 'rgba(234,88,12,0.15)',
   civile: 'rgba(99,102,241,0.15)',
 }
 
@@ -111,7 +111,7 @@ export default function EliminationScreen() {
             Potrà tentare di indovinare la parola dei civili per vincere ancora.
           </p>
           {remainingTalpe > 0 && (
-            <p className="text-yellow-500/70 text-xs mt-2">
+            <p className="text-orange-500/70 text-xs mt-2">
               Attenzione: {remainingTalpe === 1 ? 'c\'è ancora 1 talpa' : `ci sono ancora ${remainingTalpe} talpe`} in gioco!
             </p>
           )}
@@ -121,12 +121,12 @@ export default function EliminationScreen() {
       {role === 'talpa' && (
         <motion.div
           className="glass rounded-2xl px-6 py-4 text-center max-w-xs relative z-10"
-          style={{ borderColor: 'rgba(202, 138, 4, 0.2)' }}
+          style={{ borderColor: 'rgba(234, 88, 12, 0.2)' }}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
         >
-          <p className="text-yellow-500 font-semibold">La Talpa scoperta!</p>
+          <p className="text-orange-500 font-semibold">La Talpa scoperta!</p>
           {remainingImpostors > 0 ? (
             <p className="text-slate-400 text-sm mt-1">
               {remainingImpostors === 1 ? 'Resta ancora 1 impostore' : `Restano ancora ${remainingImpostors} impostori`} da trovare.
@@ -220,9 +220,9 @@ export default function EliminationScreen() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
         >
-          <p className="text-pink-400 font-bold text-lg">{eliminatedThisTurno.specialRole === 'romeo' ? 'Era Romeo!' : 'Era Giulietta!'}</p>
+          <p className="text-rose-300 font-bold text-lg">{eliminatedThisTurno.specialRole === 'romeo' ? 'Era Romeo!' : 'Era Giulietta!'}</p>
           <p className="text-slate-300 text-sm mt-2">
-            Anche <span className="text-pink-400 font-bold">{linkedPartner.name}</span> viene eliminato!
+            Anche <span className="text-rose-300 font-bold">{linkedPartner.name}</span> viene eliminato!
           </p>
           <div className="mt-3 flex items-center justify-center gap-2">
             <RoleTag role={linkedPartner.role} size="lg" />

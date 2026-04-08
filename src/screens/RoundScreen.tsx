@@ -11,13 +11,13 @@ import camaleontePng from '../assets/camaleonte.png'
 
 const ROLE_BORDER_COLORS: Record<Role, string> = {
   civile: 'border-indigo-400/40',
-  talpa: 'border-yellow-500/40',
+  talpa: 'border-orange-500/40',
   camaleonte: 'border-teal-400/40',
 }
 
 const ROLE_AVATAR_BG: Record<Role, string> = {
   civile: 'from-indigo-600 to-indigo-800',
-  talpa: 'from-yellow-600 to-yellow-800',
+  talpa: 'from-orange-700 to-orange-900',
   camaleonte: 'from-teal-600 to-teal-800',
 }
 
@@ -87,7 +87,7 @@ export default function RoundScreen() {
         )}
         {talpe > 0 && (
           <div className="glass rounded-xl px-3 py-2 text-center flex-1">
-            <p className="text-yellow-500 font-bold text-lg">{talpe}</p>
+            <p className="text-orange-500 font-bold text-lg">{talpe}</p>
             <p className="text-slate-500 text-xs">talp{talpe === 1 ? 'a' : 'e'}</p>
           </div>
         )}

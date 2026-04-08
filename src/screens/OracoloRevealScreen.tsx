@@ -12,8 +12,8 @@ const SPECIAL_ROLE_BADGES: Record<string, { emoji: string; label: string; classe
   buffone: { emoji: '🃏', label: 'Buffone', classes: 'bg-red-500/20 border-red-400/30 text-red-400' },
   spettro: { emoji: '🎐', label: 'Spettro', classes: 'bg-cyan-500/20 border-cyan-400/30 text-cyan-400' },
   duellante: { emoji: '⚔️', label: 'Duellante', classes: 'bg-blue-900/20 border-blue-700/30 text-blue-400' },
-  romeo: { emoji: '💕', label: 'Romeo', classes: 'bg-pink-500/20 border-pink-400/30 text-pink-400' },
-  giulietta: { emoji: '💕', label: 'Giulietta', classes: 'bg-pink-500/20 border-pink-400/30 text-pink-400' },
+  romeo: { emoji: '💕', label: 'Romeo', classes: 'bg-rose-400/20 border-rose-300/30 text-rose-300' },
+  giulietta: { emoji: '💕', label: 'Giulietta', classes: 'bg-rose-400/20 border-rose-300/30 text-rose-300' },
   riccio: { emoji: '🦔', label: 'Riccio', classes: 'bg-yellow-500/20 border-yellow-400/30 text-yellow-400' },
   oracolo: { emoji: '🔮', label: 'Oracolo', classes: 'bg-purple-500/20 border-purple-400/30 text-purple-400' },
 }

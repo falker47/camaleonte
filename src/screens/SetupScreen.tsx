@@ -439,7 +439,7 @@ export default function SetupScreen() {
                 </span>
               )}
               {romeoGiuliettaEnabled && validNames.length >= 5 && (
-                <span className="inline-block rounded-full bg-pink-500/20 border border-pink-400/30 text-pink-400 text-xs font-bold px-2.5 py-0.5">
+                <span className="inline-block rounded-full bg-rose-400/20 border border-rose-300/30 text-rose-300 text-xs font-bold px-2.5 py-0.5">
                   💕 R&G
                 </span>
               )}
@@ -449,7 +449,7 @@ export default function SetupScreen() {
                 </span>
               )}
               {oracoloEnabled && validNames.length >= 4 && (
-                <span className="inline-block rounded-full bg-purple-500/20 border border-purple-400/30 text-purple-400 text-xs font-bold px-2.5 py-0.5">
+                <span className="inline-block rounded-full bg-purple-900/20 border border-purple-700/30 text-purple-400 text-xs font-bold px-2.5 py-0.5">
                   🔮 Oracolo
                 </span>
               )}
@@ -552,11 +552,11 @@ export default function SetupScreen() {
                 label: 'L\'Oracolo',
                 emoji: '🔮',
                 description: 'Se eliminato, svela il ruolo di un giocatore a sua scelta.',
-                bgBase: 'bg-purple-500/10',
-                bgActive: 'bg-purple-500/25',
-                borderBase: 'border-purple-400/20',
-                borderActive: 'border-purple-400/50',
-                toggleColor: 'bg-purple-500',
+                bgBase: 'bg-purple-900/10',
+                bgActive: 'bg-purple-900/25',
+                borderBase: 'border-purple-700/20',
+                borderActive: 'border-purple-700/50',
+                toggleColor: 'bg-purple-800',
                 enabled: oracoloEnabled,
                 minPlayers: 4,
                 slotCost: 1,

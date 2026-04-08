@@ -274,7 +274,7 @@ export default function ResultScreen() {
                           {player.specialRole === 'buffone' && <span className="text-red-400 text-xs">🃏</span>}
                           {player.specialRole === 'spettro' && <span className="text-cyan-400 text-xs">🎐</span>}
                           {player.specialRole === 'duellante' && <span className="text-blue-400 text-xs">⚔️</span>}
-                          {(player.specialRole === 'romeo' || player.specialRole === 'giulietta') && <span className="text-pink-400 text-xs">💕</span>}
+                          {(player.specialRole === 'romeo' || player.specialRole === 'giulietta') && <span className="text-rose-300 text-xs">💕</span>}
                           {player.specialRole === 'riccio' && <span className="text-yellow-400 text-xs">🦔</span>}
                           {player.specialRole === 'oracolo' && <span className="text-purple-400 text-xs">🔮</span>}
                           <span className={`font-medium text-sm ${player.eliminated ? 'line-through text-slate-500' : 'text-white'}`}>
@@ -448,7 +448,7 @@ export default function ResultScreen() {
                 )}
                 {players.some(p => p.specialRole === 'romeo' || p.specialRole === 'giulietta') && (
                   <div>
-                    <div className="text-pink-400 font-semibold">Romeo & Giulietta — legame fatale</div>
+                    <div className="text-rose-300 font-semibold">Romeo & Giulietta — legame fatale</div>
                     <div className="text-slate-500 mt-0.5">Due giocatori legati: se uno viene eliminato, anche l'altro cade.</div>
                   </div>
                 )}

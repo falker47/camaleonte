@@ -144,7 +144,7 @@ export default function PrivacyReveal({ playerName, word, role, specialRole, spe
                 )}
                 {specialRole === 'romeo' && (
                   <div className="mt-2 flex flex-col items-center gap-1">
-                    <span className="inline-block rounded-full bg-pink-800/30 border border-pink-600/30 text-pink-200 text-sm font-bold px-4 py-1">
+                    <span className="inline-block rounded-full bg-rose-600/30 border border-rose-400/30 text-rose-200 text-sm font-bold px-4 py-1">
                       💕 Romeo
                     </span>
                     <p className={`text-xs text-center ${textColor} opacity-60`}>
@@ -154,7 +154,7 @@ export default function PrivacyReveal({ playerName, word, role, specialRole, spe
                 )}
                 {specialRole === 'giulietta' && (
                   <div className="mt-2 flex flex-col items-center gap-1">
-                    <span className="inline-block rounded-full bg-pink-800/30 border border-pink-600/30 text-pink-200 text-sm font-bold px-4 py-1">
+                    <span className="inline-block rounded-full bg-rose-600/30 border border-rose-400/30 text-rose-200 text-sm font-bold px-4 py-1">
                       💕 Giulietta
                     </span>
                     <p className={`text-xs text-center ${textColor} opacity-60`}>
@@ -221,7 +221,7 @@ export default function PrivacyReveal({ playerName, word, role, specialRole, spe
                 )}
                 {specialRole === 'romeo' && (
                   <div className="mt-3 flex flex-col items-center gap-1.5">
-                    <span className="inline-block rounded-full bg-pink-500/20 border border-pink-400/30 text-pink-400 text-sm font-bold px-4 py-1">
+                    <span className="inline-block rounded-full bg-rose-400/20 border border-rose-300/30 text-rose-300 text-sm font-bold px-4 py-1">
                       💕 Romeo
                     </span>
                     <p className={`text-sm text-center ${textColor} opacity-60`}>
@@ -231,7 +231,7 @@ export default function PrivacyReveal({ playerName, word, role, specialRole, spe
                 )}
                 {specialRole === 'giulietta' && (
                   <div className="mt-3 flex flex-col items-center gap-1.5">
-                    <span className="inline-block rounded-full bg-pink-500/20 border border-pink-400/30 text-pink-400 text-sm font-bold px-4 py-1">
+                    <span className="inline-block rounded-full bg-rose-400/20 border border-rose-300/30 text-rose-300 text-sm font-bold px-4 py-1">
                       💕 Giulietta
                     </span>
                     <p className={`text-sm text-center ${textColor} opacity-60`}>
