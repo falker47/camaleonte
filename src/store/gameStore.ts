@@ -62,6 +62,31 @@ function calcFinalScores(
     scores[p.name] = (scores[p.name] ?? 0) + pts
   }
 
+  // Duellanti: trasferimento punti
+  const duellanti = players.filter(p => p.specialRole === 'duellante')
+  if (duellanti.length === 2) {
+    const [a, b] = duellanti
+    let loser: Player | null = null
+    let winnerId: string | null = null
+
+    if (a.eliminated && !b.eliminated) {
+      loser = a; winnerId = b.id
+    } else if (b.eliminated && !a.eliminated) {
+      loser = b; winnerId = a.id
+    } else if (a.eliminated && b.eliminated && a.eliminatedInTurno !== b.eliminatedInTurno) {
+      loser = (a.eliminatedInTurno! < b.eliminatedInTurno!) ? a : b
+      winnerId = loser === a ? b.id : a.id
+    }
+
+    if (loser && winnerId) {
+      roundScores[loser.name] = (roundScores[loser.name] ?? 0) - 2
+      scores[loser.name] = (scores[loser.name] ?? 0) - 2
+      const winnerName = players.find(p => p.id === winnerId)!.name
+      roundScores[winnerName] = (roundScores[winnerName] ?? 0) + 2
+      scores[winnerName] = (scores[winnerName] ?? 0) + 2
+    }
+  }
+
   return { scores, roundScores }
 }
 

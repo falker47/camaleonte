@@ -24,6 +24,10 @@ export default function DealScreen() {
     }
   }, [])
 
+  const opponentName = current?.specialRole === 'duellante' && current.duelOpponentId
+    ? players.find(p => p.id === current.duelOpponentId)?.name
+    : undefined
+
   if (!current) return null
 
   return (
@@ -57,6 +61,7 @@ export default function DealScreen() {
         word={current.word}
         role={current.role}
         specialRole={current.specialRole}
+        specialRoleExtra={opponentName}
         onDone={advanceDeal}
         isLast={dealIndex === total - 1}
       />

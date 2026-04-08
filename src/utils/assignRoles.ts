@@ -59,5 +59,16 @@ export function assignRoles(
     }
   }
 
+  if (config.specialRoles?.duellanti) {
+    const eligible = result
+      .map((p, i) => ({ p, i }))
+      .filter(({ p }) => !p.specialRole)
+    if (eligible.length >= 2) {
+      const [a, b] = shuffle(eligible)
+      result[a.i] = { ...result[a.i], specialRole: 'duellante', duelOpponentId: result[b.i].id }
+      result[b.i] = { ...result[b.i], specialRole: 'duellante', duelOpponentId: result[a.i].id }
+    }
+  }
+
   return result
 }

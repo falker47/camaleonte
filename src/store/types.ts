@@ -1,6 +1,6 @@
 export type Role = 'civile' | 'talpa' | 'camaleonte'
 
-export type SpecialRole = 'buffone' | 'mimo' | 'spettro'
+export type SpecialRole = 'buffone' | 'mimo' | 'spettro' | 'duellante'
 
 export type Screen =
   | 'home'
@@ -20,6 +20,7 @@ export interface Player {
   word: string | null
   eliminated: boolean
   eliminatedInTurno: number | null
+  duelOpponentId?: string
 }
 
 export interface WordPair {
@@ -31,5 +32,5 @@ export interface WordPair {
 export interface GameConfig {
   camaleonteCount: number
   talpaCount: number
-  specialRoles?: { buffone?: boolean; mimo?: boolean; spettro?: boolean }
+  specialRoles?: { buffone?: boolean; mimo?: boolean; spettro?: boolean; duellanti?: boolean }
 }

@@ -37,6 +37,7 @@ export default function SetupScreen() {
   const [buffoneEnabled, setBuffoneEnabled] = useState(false)
   const [mimoEnabled, setMimoEnabled] = useState(false)
   const [spettroEnabled, setSpettroEnabled] = useState(false)
+  const [duellantiEnabled, setDuellantiEnabled] = useState(false)
   const [showSpecialRoles, setShowSpecialRoles] = useState(false)
 
   // Auto-focus CTA input on mount
@@ -182,7 +183,7 @@ export default function SetupScreen() {
   const handleStart = () => {
     const filtered = names.filter(n => n.trim().length > 0)
     setPlayerNames(filtered)
-    setConfig({ camaleonteCount, talpaCount, specialRoles: { buffone: buffoneEnabled && filtered.length >= 5, mimo: mimoEnabled, spettro: spettroEnabled } })
+    setConfig({ camaleonteCount, talpaCount, specialRoles: { buffone: buffoneEnabled && filtered.length >= 5, mimo: mimoEnabled, spettro: spettroEnabled, duellanti: duellantiEnabled } })
     startGame()
   }
 
@@ -364,7 +365,7 @@ export default function SetupScreen() {
               <div className="text-left">
                 <p className="text-white text-sm font-semibold">Ruoli Speciali</p>
                 {(() => {
-                  const active = [buffoneEnabled && validNames.length >= 5, mimoEnabled, spettroEnabled].filter(Boolean).length
+                  const active = [buffoneEnabled && validNames.length >= 5, mimoEnabled, spettroEnabled, duellantiEnabled].filter(Boolean).length
                   return active > 0
                     ? <p className="text-teal-400 text-xs">{active} attiv{active === 1 ? 'o' : 'i'}</p>
                     : <p className="text-slate-500 text-xs">Nessuno attivo</p>
@@ -373,7 +374,7 @@ export default function SetupScreen() {
             </div>
             <span className="text-slate-500 text-sm">›</span>
           </motion.button>
-          {(buffoneEnabled && validNames.length >= 5 || mimoEnabled || spettroEnabled) && (
+          {(buffoneEnabled && validNames.length >= 5 || mimoEnabled || spettroEnabled || duellantiEnabled) && (
             <div className="flex flex-wrap gap-1.5 px-4 pb-3">
               {buffoneEnabled && validNames.length >= 5 && (
                 <span className="inline-block rounded-full bg-red-500/20 border border-red-400/30 text-red-400 text-xs font-bold px-2.5 py-0.5">
@@ -388,6 +389,11 @@ export default function SetupScreen() {
               {spettroEnabled && (
                 <span className="inline-block rounded-full bg-cyan-500/20 border border-cyan-400/30 text-cyan-400 text-xs font-bold px-2.5 py-0.5">
                   🎐 Spettro
+                </span>
+              )}
+              {duellantiEnabled && (
+                <span className="inline-block rounded-full bg-blue-900/20 border border-blue-700/30 text-blue-400 text-xs font-bold px-2.5 py-0.5">
+                  ⚔️ Duellanti
                 </span>
               )}
             </div>
@@ -453,12 +459,26 @@ export default function SetupScreen() {
                 enabled: spettroEnabled,
                 minPlayers: 3,
               },
+              {
+                id: 'duellanti',
+                label: 'I Duellanti',
+                emoji: '⚔️',
+                description: 'Due nemici: chi viene eliminato per primo cede 2 punti all\'altro.',
+                bgBase: 'bg-blue-900/10',
+                bgActive: 'bg-blue-900/25',
+                borderBase: 'border-blue-700/20',
+                borderActive: 'border-blue-700/50',
+                toggleColor: 'bg-blue-800',
+                enabled: duellantiEnabled,
+                minPlayers: 4,
+              },
             ]}
             playerCount={validNames.length}
             onToggle={(id) => {
               if (id === 'buffone') setBuffoneEnabled(v => !v)
               if (id === 'mimo') setMimoEnabled(v => !v)
               if (id === 'spettro') setSpettroEnabled(v => !v)
+              if (id === 'duellanti') setDuellantiEnabled(v => !v)
             }}
             onClose={() => setShowSpecialRoles(false)}
           />

@@ -11,7 +11,8 @@ import camaleontePng from '../assets/camaleonte.png'
 
 function AnimatedCounter({ value }: { value: number }) {
   const displayValue = useAnimatedValue(value, 0)
-  if (value <= 0) return <span>0</span>
+  if (value === 0) return <span>0</span>
+  if (value < 0) return <span>{displayValue}</span>
   return <span>+{displayValue}</span>
 }
 
@@ -55,6 +56,21 @@ export default function ResultScreen() {
   const leaderboard = Object.entries(scores)
     .sort(([, a], [, b]) => b - a)
   const hasScoreHistory = leaderboard.length > 0
+
+  // Duellanti: compute duel result for display
+  const duelists = players.filter(p => p.specialRole === 'duellante')
+  const duelResult = (playerId: string): 'won' | 'lost' | 'draw' | null => {
+    if (duelists.length !== 2) return null
+    const me = duelists.find(p => p.id === playerId)
+    const opponent = duelists.find(p => p.id !== playerId)
+    if (!me || !opponent) return null
+    if (!me.eliminated && !opponent.eliminated) return null
+    if (me.eliminated && opponent.eliminated) {
+      if (me.eliminatedInTurno === opponent.eliminatedInTurno) return 'draw'
+      return me.eliminatedInTurno! < opponent.eliminatedInTurno! ? 'lost' : 'won'
+    }
+    return me.eliminated ? 'lost' : 'won'
+  }
 
   return (
     <div className="relative flex flex-col flex-1 min-h-0 px-5 py-6 gap-4 overflow-y-auto">
@@ -258,6 +274,7 @@ export default function ResultScreen() {
                           {player.specialRole === 'buffone' && <span className="text-red-400 text-xs">🃏</span>}
                           {player.specialRole === 'mimo' && <span className="text-slate-300 text-xs">🤫</span>}
                           {player.specialRole === 'spettro' && <span className="text-cyan-400 text-xs">🎐</span>}
+                          {player.specialRole === 'duellante' && <span className="text-blue-400 text-xs">⚔️</span>}
                           <span className={`font-medium text-sm ${player.eliminated ? 'line-through text-slate-500' : 'text-white'}`}>
                             {player.name}
                           </span>
@@ -276,7 +293,14 @@ export default function ResultScreen() {
                           {player.specialRole === 'buffone' && player.eliminatedInTurno === 1 && (
                             <span className="text-red-400 text-[10px] shrink-0">bonus buffone!</span>
                           )}
-                          <span className={`text-xs font-bold ${pts > 0 ? 'text-emerald-400' : 'text-slate-600'}`}>
+                          {player.specialRole === 'duellante' && (() => {
+                            const result = duelResult(player.id)
+                            if (result === 'won') return <span className="text-blue-400 text-[10px] shrink-0">duello vinto!</span>
+                            if (result === 'lost') return <span className="text-rose-400 text-[10px] shrink-0">duello perso!</span>
+                            if (result === 'draw') return <span className="text-slate-400 text-[10px] shrink-0">duello pari</span>
+                            return null
+                          })()}
+                          <span className={`text-xs font-bold ${pts > 0 ? 'text-emerald-400' : pts < 0 ? 'text-rose-400' : 'text-slate-600'}`}>
                             <AnimatedCounter value={pts} />
                           </span>
                         </motion.div>
@@ -344,7 +368,7 @@ export default function ResultScreen() {
                     <span className="text-white font-medium text-sm">{name}</span>
                   </div>
                   <span className={`font-bold text-sm ${
-                    isFirst ? 'text-amber-400' : 'text-white'
+                    isFirst ? 'text-amber-400' : total < 0 ? 'text-rose-400' : 'text-white'
                   }`}>
                     <AnimatedScore value={total} />
                   </span>
@@ -412,6 +436,12 @@ export default function ResultScreen() {
                   <div>
                     <div className="text-cyan-400 font-semibold">Lo Spettro — vota dopo eliminazione</div>
                     <div className="text-slate-500 mt-0.5">Continua a votare anche dopo essere stato eliminato</div>
+                  </div>
+                )}
+                {players.some(p => p.specialRole === 'duellante') && (
+                  <div>
+                    <div className="text-blue-400 font-semibold">I Duellanti — ±2{'\u00A0'}pt trasferimento</div>
+                    <div className="text-slate-500 mt-0.5">Il primo dei due eliminato perde 2 pt, l'avversario ne guadagna 2. Pareggio se eliminati nello stesso turno.</div>
                   </div>
                 )}
               </div>

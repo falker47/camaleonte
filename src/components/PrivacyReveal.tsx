@@ -11,6 +11,7 @@ interface Props {
   word: string | null
   role: Role
   specialRole?: SpecialRole
+  specialRoleExtra?: string
   onDone: () => void
   isLast?: boolean
 }
@@ -30,7 +31,7 @@ const ROLE_TEXT_COLORS: Record<Role, string> = {
   camaleonte: 'text-white',
 }
 
-export default function PrivacyReveal({ playerName, word, role, specialRole, onDone, isLast }: Props) {
+export default function PrivacyReveal({ playerName, word, role, specialRole, specialRoleExtra, onDone, isLast }: Props) {
   const [phase, setPhase] = useState<Phase>('waiting')
   const [showHide, setShowHide] = useState(false)
   const [showParticles, setShowParticles] = useState(false)
@@ -141,6 +142,16 @@ export default function PrivacyReveal({ playerName, word, role, specialRole, onD
                     </p>
                   </div>
                 )}
+                {specialRole === 'duellante' && (
+                  <div className="mt-2 flex flex-col items-center gap-1">
+                    <span className="inline-block rounded-full bg-blue-800/30 border border-blue-600/30 text-blue-200 text-sm font-bold px-4 py-1">
+                      ⚔️ Il Duellante
+                    </span>
+                    <p className={`text-xs text-center ${textColor} opacity-60`}>
+                      Il tuo nemico è <span className="font-bold">{specialRoleExtra}</span>
+                    </p>
+                  </div>
+                )}
               </>
             ) : (
               <>
@@ -175,6 +186,16 @@ export default function PrivacyReveal({ playerName, word, role, specialRole, onD
                     </span>
                     <p className={`text-sm text-center ${textColor} opacity-60`}>
                       Anche se verrai eliminato, potrai continuare a votare!
+                    </p>
+                  </div>
+                )}
+                {specialRole === 'duellante' && (
+                  <div className="mt-3 flex flex-col items-center gap-1.5">
+                    <span className="inline-block rounded-full bg-blue-900/20 border border-blue-700/30 text-blue-400 text-sm font-bold px-4 py-1">
+                      ⚔️ Il Duellante
+                    </span>
+                    <p className={`text-sm text-center ${textColor} opacity-60`}>
+                      Sfidi <span className="font-bold">{specialRoleExtra}</span>! Eliminalo per rubargli 2 pt.
                     </p>
                   </div>
                 )}
