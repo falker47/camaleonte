@@ -174,7 +174,7 @@ export default function PrivacyReveal({ playerName, word, role, specialRole, spe
                 )}
                 {specialRole === 'oracolo' && (
                   <div className="mt-2 flex flex-col items-center gap-1">
-                    <span className="inline-block rounded-full bg-purple-800/30 border border-purple-600/30 text-purple-200 text-sm font-bold px-4 py-1">
+                    <span className="inline-block rounded-full bg-purple-950/40 border border-purple-700/30 text-purple-300 text-sm font-bold px-4 py-1">
                       🔮 L'Oracolo
                     </span>
                     <p className={`text-xs text-center ${textColor} opacity-60`}>
@@ -251,7 +251,7 @@ export default function PrivacyReveal({ playerName, word, role, specialRole, spe
                 )}
                 {specialRole === 'oracolo' && (
                   <div className="mt-3 flex flex-col items-center gap-1.5">
-                    <span className="inline-block rounded-full bg-purple-500/20 border border-purple-400/30 text-purple-400 text-sm font-bold px-4 py-1">
+                    <span className="inline-block rounded-full bg-purple-900/20 border border-purple-700/30 text-purple-400 text-sm font-bold px-4 py-1">
                       🔮 L'Oracolo
                     </span>
                     <p className={`text-sm text-center ${textColor} opacity-60`}>

@@ -44,7 +44,7 @@ export default function EliminationScreen() {
       {/* Background flash */}
       <motion.div
         className="absolute inset-0 pointer-events-none z-0"
-        style={{ backgroundColor: isBuffoneBonus ? 'rgba(239,68,68,0.2)' : isRiccio ? 'rgba(234,179,8,0.15)' : isOracolo ? 'rgba(168,85,247,0.15)' : ROLE_FLASH_COLORS[role] }}
+        style={{ backgroundColor: isBuffoneBonus ? 'rgba(239,68,68,0.2)' : isRiccio ? 'rgba(234,179,8,0.15)' : isOracolo ? 'rgba(126,34,206,0.15)' : ROLE_FLASH_COLORS[role] }}
         initial={{ opacity: 0 }}
         animate={{ opacity: [0, 1, 0] }}
         transition={{ duration: 0.6 }}
@@ -91,7 +91,7 @@ export default function EliminationScreen() {
             </span>
           )}
           {isOracolo && (
-            <span className="inline-block rounded-full bg-purple-500/20 border border-purple-400/30 text-purple-400 text-sm font-bold px-3 py-1">
+            <span className="inline-block rounded-full bg-purple-900/20 border border-purple-700/30 text-purple-400 text-sm font-bold px-3 py-1">
               🔮 Oracolo
             </span>
           )}
@@ -190,9 +190,9 @@ export default function EliminationScreen() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
         >
-          <p className="text-yellow-400 font-bold text-lg">Il Riccio colpisce!</p>
+          <p className="text-yellow-400 font-bold text-lg">Il Riccio!</p>
           <p className="text-slate-300 text-sm mt-2">
-            Potrà scegliere un giocatore da <span className="text-yellow-400 font-bold">eliminare</span> con sé.
+            Se il gioco non è finito, potrà scegliere un giocatore da <span className="text-yellow-400 font-bold">eliminare</span> con sé.
           </p>
         </motion.div>
       )}
@@ -200,14 +200,14 @@ export default function EliminationScreen() {
       {isOracolo && (
         <motion.div
           className="glass rounded-2xl px-6 py-5 text-center max-w-xs relative z-10"
-          style={{ borderColor: 'rgba(168, 85, 247, 0.3)' }}
+          style={{ borderColor: 'rgba(126, 34, 206, 0.3)' }}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
         >
-          <p className="text-purple-400 font-bold text-lg">L'Oracolo rivela!</p>
+          <p className="text-purple-400 font-bold text-lg">L'Oracolo!</p>
           <p className="text-slate-300 text-sm mt-2">
-            Potrà svelare il <span className="text-purple-400 font-bold">ruolo</span> di un giocatore a sua scelta.
+            Se il gioco non è finito, potrà svelare il <span className="text-purple-400 font-bold">ruolo</span> di un giocatore a sua scelta.
           </p>
         </motion.div>
       )}

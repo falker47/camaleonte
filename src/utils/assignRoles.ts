@@ -49,7 +49,7 @@ export function assignRoles(
     }
   }
 
-  if (config.specialRoles?.duellanti) {
+  if (config.specialRoles?.duellanti && names.length >= 4) {
     const eligible = result
       .map((p, i) => ({ p, i }))
       .filter(({ p }) => !p.specialRole)

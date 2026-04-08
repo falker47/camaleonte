@@ -15,7 +15,7 @@ const SPECIAL_ROLE_BADGES: Record<string, { emoji: string; label: string; classe
   romeo: { emoji: '💕', label: 'Romeo', classes: 'bg-rose-400/20 border-rose-300/30 text-rose-300' },
   giulietta: { emoji: '💕', label: 'Giulietta', classes: 'bg-rose-400/20 border-rose-300/30 text-rose-300' },
   riccio: { emoji: '🦔', label: 'Riccio', classes: 'bg-yellow-500/20 border-yellow-400/30 text-yellow-400' },
-  oracolo: { emoji: '🔮', label: 'Oracolo', classes: 'bg-purple-500/20 border-purple-400/30 text-purple-400' },
+  oracolo: { emoji: '🔮', label: 'Oracolo', classes: 'bg-purple-900/20 border-purple-700/30 text-purple-400' },
 }
 
 type Phase = 'select' | 'reveal'
@@ -133,7 +133,7 @@ export default function OracoloRevealScreen() {
             <motion.button
               key={player.id}
               onClick={() => setSelectedId(player.id)}
-              className="flex items-center gap-3 glass rounded-2xl px-4 py-3 hover:bg-purple-500/10 transition-colors border border-transparent hover:border-purple-400/20"
+              className="flex items-center gap-3 glass rounded-2xl px-4 py-3 hover:bg-purple-900/10 transition-colors border border-transparent hover:border-purple-700/20"
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               {...springTap}

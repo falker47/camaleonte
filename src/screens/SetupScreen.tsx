@@ -88,6 +88,16 @@ export default function SetupScreen() {
     if (validNames.length < 5) setRomeoGiuliettaEnabled(false)
   }, [validNames.length])
 
+  // Auto-disable Duellanti if not enough players
+  useEffect(() => {
+    if (validNames.length < 4) setDuellantiEnabled(false)
+  }, [validNames.length])
+
+  // Auto-disable Riccio if not enough players
+  useEffect(() => {
+    if (validNames.length < 5) setRiccioEnabled(false)
+  }, [validNames.length])
+
   // Auto-disable Oracolo if not enough players
   useEffect(() => {
     if (validNames.length < 4) setOracoloEnabled(false)
@@ -230,7 +240,7 @@ export default function SetupScreen() {
   const handleStart = () => {
     const filtered = names.filter(n => n.trim().length > 0)
     setPlayerNames(filtered)
-    setConfig({ camaleonteCount, talpaCount, specialRoles: { buffone: buffoneEnabled && filtered.length >= 5, spettro: spettroEnabled, duellanti: duellantiEnabled, romeoGiulietta: romeoGiuliettaEnabled && filtered.length >= 5, riccio: riccioEnabled && filtered.length >= 5, oracolo: oracoloEnabled && filtered.length >= 4 } })
+    setConfig({ camaleonteCount, talpaCount, specialRoles: { buffone: buffoneEnabled && filtered.length >= 5, spettro: spettroEnabled, duellanti: duellantiEnabled && filtered.length >= 4, romeoGiulietta: romeoGiuliettaEnabled && filtered.length >= 5, riccio: riccioEnabled && filtered.length >= 5, oracolo: oracoloEnabled && filtered.length >= 4 } })
     startGame()
   }
 
