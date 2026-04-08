@@ -49,5 +49,15 @@ export function assignRoles(
     }
   }
 
+  if (config.specialRoles?.spettro) {
+    const eligible = result
+      .map((p, i) => ({ p, i }))
+      .filter(({ p }) => !p.specialRole)
+    if (eligible.length > 0) {
+      const chosen = shuffle(eligible)[0]
+      result[chosen.i] = { ...result[chosen.i], specialRole: 'spettro' }
+    }
+  }
+
   return result
 }

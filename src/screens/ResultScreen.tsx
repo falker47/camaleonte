@@ -255,6 +255,7 @@ export default function ResultScreen() {
                           {player.eliminated && <span className="text-slate-500 text-xs">✕</span>}
                           {player.specialRole === 'buffone' && <span className="text-red-400 text-xs">🃏</span>}
                           {player.specialRole === 'mimo' && <span className="text-slate-300 text-xs">🤫</span>}
+                          {player.specialRole === 'spettro' && <span className="text-cyan-400 text-xs">🎐</span>}
                           <span className={`font-medium text-sm ${player.eliminated ? 'line-through text-slate-500' : 'text-white'}`}>
                             {player.name}
                           </span>
@@ -403,6 +404,12 @@ export default function ResultScreen() {
                   <div>
                     <div className="text-red-400 font-semibold">Il Buffone — +2{'\u00A0'}pt bonus</div>
                     <div className="text-slate-500 mt-0.5">Se eliminato al primo turno di votazione</div>
+                  </div>
+                )}
+                {players.some(p => p.specialRole === 'spettro') && (
+                  <div>
+                    <div className="text-cyan-400 font-semibold">Lo Spettro — vota dopo eliminazione</div>
+                    <div className="text-slate-500 mt-0.5">Continua a votare anche dopo essere stato eliminato</div>
                   </div>
                 )}
               </div>

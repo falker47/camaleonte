@@ -13,7 +13,8 @@ export default function VoteScreen() {
   const goTo = useGameStore(s => s.goTo)
 
   const active = players.filter(p => !p.eliminated)
-  const voterCount = active.length
+  const eliminatedSpettro = players.find(p => p.eliminated && p.specialRole === 'spettro')
+  const voterCount = active.length + (eliminatedSpettro ? 1 : 0)
 
   const [votes, setVotes] = useState<Record<string, number>>({})
   const [voteHistory, setVoteHistory] = useState<string[]>([]) // track order for undo
@@ -183,6 +184,22 @@ export default function VoteScreen() {
           <p className="text-amber-400 text-sm glass rounded-xl px-4 py-2" style={{ borderColor: 'rgba(251, 191, 36, 0.2)' }}>
             Pareggio tra {tiePlayers!.map(p => p.name).join(' e ')}. Votate di nuovo.
           </p>
+        )}
+
+        {/* Spettro banner */}
+        {eliminatedSpettro && (
+          <div className="flex items-center gap-2.5 rounded-xl px-3.5 py-2.5"
+            style={{ background: 'rgba(6,182,212,0.1)', border: '1px solid rgba(6,182,212,0.3)' }}>
+            <span className="text-lg">🎐</span>
+            <div>
+              <p className="text-cyan-400 font-bold text-[13px]">
+                {eliminatedSpettro.name} vota dall'aldilà
+              </p>
+              <p className="text-cyan-400/60 text-[11px]">
+                Lo Spettro ha ancora 1 voto
+              </p>
+            </div>
+          </div>
         )}
 
         {/* Grid */}

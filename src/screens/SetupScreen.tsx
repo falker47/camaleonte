@@ -36,6 +36,7 @@ export default function SetupScreen() {
   const [ctaError, setCtaError] = useState('')
   const [buffoneEnabled, setBuffoneEnabled] = useState(false)
   const [mimoEnabled, setMimoEnabled] = useState(false)
+  const [spettroEnabled, setSpettroEnabled] = useState(false)
   const [showSpecialRoles, setShowSpecialRoles] = useState(false)
 
   // Auto-focus CTA input on mount
@@ -181,7 +182,7 @@ export default function SetupScreen() {
   const handleStart = () => {
     const filtered = names.filter(n => n.trim().length > 0)
     setPlayerNames(filtered)
-    setConfig({ mrWhiteCount, infiltratoCount, specialRoles: { buffone: buffoneEnabled && filtered.length >= 5, mimo: mimoEnabled } })
+    setConfig({ mrWhiteCount, infiltratoCount, specialRoles: { buffone: buffoneEnabled && filtered.length >= 5, mimo: mimoEnabled, spettro: spettroEnabled } })
     startGame()
   }
 
@@ -363,7 +364,7 @@ export default function SetupScreen() {
               <div className="text-left">
                 <p className="text-white text-sm font-semibold">Ruoli Speciali</p>
                 {(() => {
-                  const active = [buffoneEnabled && validNames.length >= 5, mimoEnabled].filter(Boolean).length
+                  const active = [buffoneEnabled && validNames.length >= 5, mimoEnabled, spettroEnabled].filter(Boolean).length
                   return active > 0
                     ? <p className="text-indigo-400 text-xs">{active} attiv{active === 1 ? 'o' : 'i'}</p>
                     : <p className="text-slate-500 text-xs">Nessuno attivo</p>
@@ -372,7 +373,7 @@ export default function SetupScreen() {
             </div>
             <span className="text-slate-500 text-sm">›</span>
           </motion.button>
-          {(buffoneEnabled && validNames.length >= 5 || mimoEnabled) && (
+          {(buffoneEnabled && validNames.length >= 5 || mimoEnabled || spettroEnabled) && (
             <div className="flex flex-wrap gap-1.5 px-4 pb-3">
               {buffoneEnabled && validNames.length >= 5 && (
                 <span className="inline-block rounded-full bg-red-500/20 border border-red-400/30 text-red-400 text-xs font-bold px-2.5 py-0.5">
@@ -382,6 +383,11 @@ export default function SetupScreen() {
               {mimoEnabled && (
                 <span className="inline-block rounded-full bg-slate-500/20 border border-slate-400/30 text-slate-200 text-xs font-bold px-2.5 py-0.5">
                   🤫 Mimo
+                </span>
+              )}
+              {spettroEnabled && (
+                <span className="inline-block rounded-full bg-cyan-500/20 border border-cyan-400/30 text-cyan-400 text-xs font-bold px-2.5 py-0.5">
+                  🎐 Spettro
                 </span>
               )}
             </div>
@@ -434,11 +440,25 @@ export default function SetupScreen() {
                 enabled: mimoEnabled,
                 minPlayers: 3,
               },
+              {
+                id: 'spettro',
+                label: 'Lo Spettro',
+                emoji: '🎐',
+                description: 'Anche dopo essere eliminato, continua a votare.',
+                bgBase: 'bg-cyan-500/10',
+                bgActive: 'bg-cyan-500/25',
+                borderBase: 'border-cyan-400/20',
+                borderActive: 'border-cyan-400/50',
+                toggleColor: 'bg-cyan-500',
+                enabled: spettroEnabled,
+                minPlayers: 3,
+              },
             ]}
             playerCount={validNames.length}
             onToggle={(id) => {
               if (id === 'buffone') setBuffoneEnabled(v => !v)
               if (id === 'mimo') setMimoEnabled(v => !v)
+              if (id === 'spettro') setSpettroEnabled(v => !v)
             }}
             onClose={() => setShowSpecialRoles(false)}
           />

@@ -97,9 +97,13 @@ export default function RoundScreen() {
           </span>
           <span className="text-slate-600">·</span>
           {eliminated.map((player, i) => (
-            <span key={player.id} className="flex items-center gap-1 text-slate-500 text-sm">
-              <span className="text-xs">✕</span>
-              <span className="line-through">{player.name}</span>
+            <span key={player.id} className={`flex items-center gap-1 text-sm ${
+              player.specialRole === 'spettro' ? 'text-cyan-400' : 'text-slate-500'
+            }`}>
+              {player.specialRole !== 'spettro' && <span className="text-xs">✕</span>}
+              {player.specialRole === 'spettro' && <span className="text-xs">🎐</span>}
+              <span className={player.specialRole === 'spettro' ? '' : 'line-through'}>{player.name}</span>
+              {player.specialRole === 'spettro' && <span className="text-[10px] text-cyan-400/70">vota ancora</span>}
               {i < eliminated.length - 1 && <span className="text-slate-700">,</span>}
             </span>
           ))}

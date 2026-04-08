@@ -1,6 +1,6 @@
 export type Role = 'civile' | 'infiltrato' | 'mrwhite'
 
-export type SpecialRole = 'buffone' | 'mimo'
+export type SpecialRole = 'buffone' | 'mimo' | 'spettro'
 
 export type Screen =
   | 'home'
@@ -31,5 +31,5 @@ export interface WordPair {
 export interface GameConfig {
   mrWhiteCount: number
   infiltratoCount: number
-  specialRoles?: { buffone?: boolean; mimo?: boolean }
+  specialRoles?: { buffone?: boolean; mimo?: boolean; spettro?: boolean }
 }

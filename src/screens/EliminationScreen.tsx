@@ -24,6 +24,7 @@ export default function EliminationScreen() {
   const { name, role } = eliminatedThisTurno
   const isMrWhite = role === 'mrwhite'
   const isBuffoneBonus = eliminatedThisTurno.specialRole === 'buffone' && turno === 1
+  const isSpettro = eliminatedThisTurno.specialRole === 'spettro'
 
   // Count remaining impostors (excluding the one being eliminated right now)
   const remainingMrWhite = players.filter(p => !p.eliminated && p.role === 'mrwhite' && p.id !== eliminatedThisTurno.id).length
@@ -48,7 +49,7 @@ export default function EliminationScreen() {
           animate={{ scale: 1 }}
           transition={{ type: 'spring', stiffness: 300, damping: 15 }}
         >
-          {isMrWhite ? '🕵️' : role === 'infiltrato' ? '🎭' : isBuffoneBonus ? '🃏' : '😇'}
+          {isMrWhite ? '🕵️' : role === 'infiltrato' ? '🎭' : isBuffoneBonus ? '🃏' : isSpettro ? '🎐' : '😇'}
         </motion.div>
         <p className="text-slate-400 text-sm uppercase tracking-widest">Eliminato</p>
         <motion.h2
@@ -69,6 +70,11 @@ export default function EliminationScreen() {
           {isBuffoneBonus && (
             <span className="inline-block rounded-full bg-red-500/20 border border-red-400/30 text-red-400 text-sm font-bold px-3 py-1">
               🃏 Buffone
+            </span>
+          )}
+          {isSpettro && (
+            <span className="inline-block rounded-full bg-cyan-500/20 border border-cyan-400/30 text-cyan-400 text-sm font-bold px-3 py-1">
+              🎐 Spettro
             </span>
           )}
         </motion.div>
@@ -139,6 +145,22 @@ export default function EliminationScreen() {
         >
           <p className="text-rose-400 font-semibold">Un civile eliminato!</p>
           <p className="text-slate-400 text-sm mt-1">Attenzione, gli impostori guadagnano terreno.</p>
+        </motion.div>
+      )}
+
+      {isSpettro && (
+        <motion.div
+          className="glass rounded-2xl px-6 py-4 text-center max-w-xs relative z-10"
+          style={{ borderColor: 'rgba(6, 182, 212, 0.3)' }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+        >
+          <p className="text-cyan-400 font-bold text-lg">Lo Spettro non svanisce!</p>
+          <p className="text-slate-300 text-sm mt-2">
+            Continuerà a <span className="text-cyan-400 font-bold">votare</span> anche dall'aldilà.
+          </p>
+          <p className="text-slate-500 text-xs mt-2">Non darà indizi e non potrà essere votato.</p>
         </motion.div>
       )}
 

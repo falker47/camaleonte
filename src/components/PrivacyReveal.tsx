@@ -130,6 +130,16 @@ export default function PrivacyReveal({ playerName, word, role, specialRole, onD
                     </p>
                   </div>
                 )}
+                {specialRole === 'spettro' && (
+                  <div className="mt-2 flex flex-col items-center gap-1">
+                    <span className="inline-block rounded-full bg-cyan-800/30 border border-cyan-600/30 text-cyan-700 text-sm font-bold px-4 py-1">
+                      🎐 Lo Spettro
+                    </span>
+                    <p className={`text-xs text-center ${textColor} opacity-60`}>
+                      Se eliminato, continui a votare!
+                    </p>
+                  </div>
+                )}
               </>
             ) : (
               <>
@@ -154,6 +164,16 @@ export default function PrivacyReveal({ playerName, word, role, specialRole, onD
                     </span>
                     <p className={`text-sm text-center ${textColor} opacity-60`}>
                       Devi mimare i tuoi indizi! No parole, no labiale, no lettere nell'aria.
+                    </p>
+                  </div>
+                )}
+                {specialRole === 'spettro' && (
+                  <div className="mt-3 flex flex-col items-center gap-1.5">
+                    <span className="inline-block rounded-full bg-cyan-500/20 border border-cyan-400/30 text-cyan-400 text-sm font-bold px-4 py-1">
+                      🎐 Lo Spettro
+                    </span>
+                    <p className={`text-sm text-center ${textColor} opacity-60`}>
+                      Anche se verrai eliminato, potrai continuare a votare!
                     </p>
                   </div>
                 )}
