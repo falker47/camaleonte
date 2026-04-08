@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useGameStore } from '../store/gameStore'
 import { usePwaInstall } from '../hooks/usePwaInstall'
 import Tutorial from '../components/Tutorial'
+import camaleontePng from '../assets/camaleonte.png'
 
 const stagger = {
   hidden: {},
@@ -53,13 +54,13 @@ export default function HomeScreen() {
       <div className="particle particle-10" />
       <div className="particle particle-11" />
 
-      {/* Spy icon */}
+      {/* Camaleonte icon */}
       <motion.div
-        className="text-7xl z-10"
-        style={{ filter: 'drop-shadow(0 0 30px rgba(129,140,248,0.5))' }}
+        className="z-10"
+        style={{ filter: 'drop-shadow(0 0 30px rgba(45,212,191,0.5))' }}
         variants={fadeUp}
       >
-        🕵️
+        <img src={camaleontePng} alt="Camaleonte" className="w-[90px] h-[90px] object-contain" />
       </motion.div>
 
       {/* Title */}
@@ -67,21 +68,21 @@ export default function HomeScreen() {
         className="text-4xl font-black text-white z-10 mt-3 title-glow"
         variants={fadeUp}
       >
-        Undercover
+        Camaleonte
       </motion.h1>
 
       {/* Tagline */}
       <motion.p
-        className="text-violet-300 italic uppercase tracking-[3px] text-sm z-10 mt-2"
+        className="text-teal-300 italic uppercase tracking-[3px] text-sm z-10 mt-2"
         variants={fadeUp}
       >
-        Chi è l'impostore?
+        Chi si mimetizza fra voi?
       </motion.p>
 
       {/* Divider */}
       <motion.div
         className="w-15 h-0.5 my-5 z-10"
-        style={{ background: 'linear-gradient(90deg, transparent, rgba(129,140,248,0.5), transparent)' }}
+        style={{ background: 'linear-gradient(90deg, transparent, rgba(45,212,191,0.5), transparent)' }}
         variants={fadeUp}
       />
 
@@ -106,8 +107,12 @@ export default function HomeScreen() {
       {/* CTA */}
       <motion.button
         onClick={() => goTo('setup')}
-        className="glass-button z-10 mt-7 font-bold py-4 px-14 rounded-2xl text-lg transition-colors"
-        style={{ boxShadow: '0 0 30px rgba(99,102,241,0.35), inset 0 1px 0 rgba(255,255,255,0.1)' }}
+        className="z-10 mt-7 font-bold py-4 px-14 rounded-2xl text-lg transition-colors text-white"
+        style={{
+          background: 'linear-gradient(135deg, rgba(20,184,166,0.8), rgba(13,148,136,0.9))',
+          border: '1px solid rgba(45,212,191,0.4)',
+          boxShadow: '0 8px 32px rgba(20,184,166,0.3), inset 0 1px 0 rgba(255,255,255,0.15)',
+        }}
         variants={fadeUp}
         {...springTap}
       >
