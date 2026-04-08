@@ -12,10 +12,10 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['icons/*.png'],
       manifest: {
-        name: 'Undercover — Gioco di Deduzione',
-        short_name: 'Undercover',
+        name: 'Camaleonte — Gioco di Deduzione',
+        short_name: 'Camaleonte',
         description: 'Il gioco di deduzione sociale per feste',
-        theme_color: '#1e1b4b',
+        theme_color: '#0f766e',
         background_color: '#0f0a1e',
         display: 'standalone',
         orientation: 'portrait',
