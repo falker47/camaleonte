@@ -6,21 +6,21 @@ import { assignRoles } from '../utils/assignRoles'
 import { checkWinCondition } from '../utils/winCondition'
 import { isWordMatch } from '../utils/matchWord'
 
-function getMwGuessPoints(totalPlayers: number): number {
+function getCamaleonteGuessPoints(totalPlayers: number): number {
   return totalPlayers <= 4 ? 4 : 3
 }
 
-function getMwSurvivalPoints(totalPlayers: number): number {
+function getCamaleonteSurvivalPoints(totalPlayers: number): number {
   if (totalPlayers <= 3) return 3
   if (totalPlayers <= 4) return 4
   return 5
 }
 
-function getInfiltratoWinPoints(totalPlayers: number): number {
+function getTalpaWinPoints(totalPlayers: number): number {
   return totalPlayers <= 4 ? 3 : 5
 }
 
-function getInfiltratoPartialPoints(players: Player[]): number {
+function getTalpaPartialPoints(players: Player[]): number {
   const eliminatedCivili = players.filter(p => p.role === 'civile' && p.eliminated).length
   return Math.min(3, eliminatedCivili)
 }
@@ -28,31 +28,31 @@ function getInfiltratoPartialPoints(players: Player[]): number {
 function calcFinalScores(
   players: Player[],
   winner: 'civilians' | 'last_two',
-  mrWhiteCorrectIds: Set<string>,
+  camaleonteCorrectIds: Set<string>,
   prevScores: Record<string, number>
 ): { scores: Record<string, number>; roundScores: Record<string, number> } {
   const roundScores: Record<string, number> = {}
   const scores = { ...prevScores }
-  const mwPoisoned = mrWhiteCorrectIds.size > 0
+  const camaleontePoisoned = camaleonteCorrectIds.size > 0
   const totalPlayers = players.length
 
   for (const p of players) {
     let pts = 0
 
     if (winner === 'civilians') {
-      if (p.role === 'civile' && !mwPoisoned) pts = 2
-      if (p.role === 'mrwhite' && mrWhiteCorrectIds.has(p.id)) pts = getMwGuessPoints(totalPlayers)
-      // Infiltrato eliminato → punti parziali
-      if (p.role === 'infiltrato' && p.eliminated) pts = getInfiltratoPartialPoints(players)
+      if (p.role === 'civile' && !camaleontePoisoned) pts = 2
+      if (p.role === 'camaleonte' && camaleonteCorrectIds.has(p.id)) pts = getCamaleonteGuessPoints(totalPlayers)
+      // Talpa eliminata → punti parziali
+      if (p.role === 'talpa' && p.eliminated) pts = getTalpaPartialPoints(players)
     }
 
     if (winner === 'last_two') {
-      if (p.role === 'mrwhite' && !p.eliminated) pts = getMwSurvivalPoints(totalPlayers)
-      if (p.role === 'infiltrato' && !p.eliminated) pts = getInfiltratoWinPoints(totalPlayers)
-      // MW eliminato ma ha indovinato
-      if (p.role === 'mrwhite' && p.eliminated && mrWhiteCorrectIds.has(p.id)) pts = getMwGuessPoints(totalPlayers)
-      // Infiltrato eliminato → punti parziali
-      if (p.role === 'infiltrato' && p.eliminated) pts = getInfiltratoPartialPoints(players)
+      if (p.role === 'camaleonte' && !p.eliminated) pts = getCamaleonteSurvivalPoints(totalPlayers)
+      if (p.role === 'talpa' && !p.eliminated) pts = getTalpaWinPoints(totalPlayers)
+      // Camaleonte eliminato ma ha indovinato
+      if (p.role === 'camaleonte' && p.eliminated && camaleonteCorrectIds.has(p.id)) pts = getCamaleonteGuessPoints(totalPlayers)
+      // Talpa eliminata → punti parziali
+      if (p.role === 'talpa' && p.eliminated) pts = getTalpaPartialPoints(players)
     }
 
     // Buffone bonus: +2 if eliminated in turno 1
@@ -75,8 +75,8 @@ interface GameState {
   turno: number
   currentVotes: Record<string, number>
   eliminatedThisTurno: Player | null
-  mrWhiteGuessResult: 'correct' | 'wrong' | null
-  mrWhiteCorrectIds: string[]
+  camaleonteGuessResult: 'correct' | 'wrong' | null
+  camaleonteCorrectIds: string[]
   winner: 'civilians' | 'last_two' | null
   scores: Record<string, number>
   roundScores: Record<string, number>
@@ -89,7 +89,7 @@ interface GameState {
   advanceDeal: () => void
   castVote: (votes: Record<string, number>) => void
   confirmElimination: () => void
-  submitMrWhiteGuess: (guess: string) => void
+  submitCamaleonteGuess: (guess: string) => void
   nextTurno: () => void
   invalidateRound: () => void
   resetGame: () => void
@@ -100,15 +100,15 @@ interface GameState {
 export const useGameStore = create<GameState>((set, get) => ({
   screen: 'home',
   playerNames: [],
-  config: { mrWhiteCount: 1, infiltratoCount: 0, specialRoles: {} },
+  config: { camaleonteCount: 1, talpaCount: 0, specialRoles: {} },
   players: [],
   wordPair: null,
   dealIndex: 0,
   turno: 1,
   currentVotes: {},
   eliminatedThisTurno: null,
-  mrWhiteGuessResult: null,
-  mrWhiteCorrectIds: [],
+  camaleonteGuessResult: null,
+  camaleonteCorrectIds: [],
   winner: null,
   scores: {},
   roundScores: {},
@@ -148,8 +148,8 @@ export const useGameStore = create<GameState>((set, get) => ({
       turno: 1,
       currentVotes: {},
       eliminatedThisTurno: null,
-      mrWhiteGuessResult: null,
-      mrWhiteCorrectIds: [],
+      camaleonteGuessResult: null,
+      camaleonteCorrectIds: [],
       winner: null,
       roundScores: {},
       screen: 'deal',
@@ -180,7 +180,7 @@ export const useGameStore = create<GameState>((set, get) => ({
   },
 
   confirmElimination: () => {
-    const { eliminatedThisTurno, players, wordPair, scores, mrWhiteCorrectIds, turno } = get()
+    const { eliminatedThisTurno, players, wordPair, scores, camaleonteCorrectIds, turno } = get()
     if (!eliminatedThisTurno) return
 
     const updatedPlayers = players.map(p =>
@@ -188,50 +188,50 @@ export const useGameStore = create<GameState>((set, get) => ({
     )
     set({ players: updatedPlayers })
 
-    if (eliminatedThisTurno.role === 'mrwhite' && wordPair) {
-      set({ screen: 'mrwhite_guess', mrWhiteGuessResult: null })
+    if (eliminatedThisTurno.role === 'camaleonte' && wordPair) {
+      set({ screen: 'camaleonte_guess', camaleonteGuessResult: null, eliminatedThisTurno: null })
       return
     }
 
     const win = checkWinCondition(updatedPlayers, players.length)
     if (win) {
-      const correctSet = new Set(mrWhiteCorrectIds)
+      const correctSet = new Set(camaleonteCorrectIds)
       const { scores: newScores, roundScores } = calcFinalScores(updatedPlayers, win, correctSet, scores)
-      set({ winner: win, scores: newScores, roundScores, screen: 'result' })
+      set({ winner: win, scores: newScores, roundScores, screen: 'result', eliminatedThisTurno: null })
     } else {
-      set({ screen: 'round', turno: get().turno + 1, currentVotes: {} })
+      set({ screen: 'round', turno: get().turno + 1, currentVotes: {}, eliminatedThisTurno: null })
     }
   },
 
-  submitMrWhiteGuess: (guess) => {
-    const { wordPair, players, scores, mrWhiteCorrectIds, eliminatedThisTurno } = get()
+  submitCamaleonteGuess: (guess) => {
+    const { wordPair, players, scores, camaleonteCorrectIds, eliminatedThisTurno } = get()
     if (!wordPair || !eliminatedThisTurno) return
 
     const isCorrect = isWordMatch(guess, wordPair.civilian)
 
     if (isCorrect) {
       // Track this MW — points will be awarded by calcFinalScores at game end
-      const mwId = eliminatedThisTurno.id
-      const newCorrectIds = [...mrWhiteCorrectIds, mwId]
+      const camaleonteId = eliminatedThisTurno.id
+      const newCorrectIds = [...camaleonteCorrectIds, camaleonteId]
 
       // Check if game is over
       const win = checkWinCondition(players, players.length)
       if (win) {
         const correctSet = new Set(newCorrectIds)
         const { scores: finalScores, roundScores } = calcFinalScores(players, win, correctSet, scores)
-        set({ mrWhiteGuessResult: 'correct', mrWhiteCorrectIds: newCorrectIds, winner: win, scores: finalScores, roundScores })
+        set({ camaleonteGuessResult: 'correct', camaleonteCorrectIds: newCorrectIds, winner: win, scores: finalScores, roundScores })
       } else {
-        set({ mrWhiteGuessResult: 'correct', mrWhiteCorrectIds: newCorrectIds })
+        set({ camaleonteGuessResult: 'correct', camaleonteCorrectIds: newCorrectIds })
       }
       // GuessScreen shows feedback, then handleContinue navigates
     } else {
       const win = checkWinCondition(players, players.length)
       if (win) {
-        const correctSet = new Set(mrWhiteCorrectIds)
+        const correctSet = new Set(camaleonteCorrectIds)
         const { scores: newScores, roundScores } = calcFinalScores(players, win, correctSet, scores)
-        set({ mrWhiteGuessResult: 'wrong', winner: win, scores: newScores, roundScores })
+        set({ camaleonteGuessResult: 'wrong', winner: win, scores: newScores, roundScores })
       } else {
-        set({ mrWhiteGuessResult: 'wrong' })
+        set({ camaleonteGuessResult: 'wrong' })
       }
       // GuessScreen shows feedback, then handleContinue navigates
     }
@@ -256,8 +256,8 @@ export const useGameStore = create<GameState>((set, get) => ({
       turno: 1,
       currentVotes: {},
       eliminatedThisTurno: null,
-      mrWhiteGuessResult: null,
-      mrWhiteCorrectIds: [],
+      camaleonteGuessResult: null,
+      camaleonteCorrectIds: [],
       winner: null,
       roundScores: {},
       scores: {},
