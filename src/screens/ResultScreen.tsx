@@ -102,7 +102,7 @@ export default function ResultScreen() {
       {hasTalpa && isTalpaSurvived && (
         <Particles
           count={15}
-          colors={['#ca8a04', '#a16207', '#854d0e', '#713f12']}
+          colors={['#ea580c', '#c2410c', '#9a3412', '#7c2d12']}
           style="burst"
           origin="center"
         />
@@ -178,14 +178,14 @@ export default function ResultScreen() {
 
       {hasTalpa && isTalpaSurvived && (
         <motion.div
-          className="rounded-3xl px-6 py-6 text-center bg-gradient-to-br from-yellow-700 to-yellow-900 border border-white/10"
+          className="rounded-3xl px-6 py-6 text-center bg-gradient-to-br from-orange-800 to-orange-950 border border-white/10"
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ type: 'spring', stiffness: 200, damping: 20 }}
         >
           <img src={talpaPng} alt="La Talpa" className="w-12 h-12 mx-auto mb-2" />
           <h2 className="text-2xl font-black text-white">La Talpa vince!</h2>
-          <p className="text-yellow-300 text-sm mt-1">
+          <p className="text-orange-300 text-sm mt-1">
             È sopravvissuta fino alla fine.
           </p>
         </motion.div>
@@ -219,7 +219,7 @@ export default function ResultScreen() {
               <>
                 <div className="w-px bg-white/8" />
                 <div>
-                  <p className="text-xs text-yellow-500">Talpe</p>
+                  <p className="text-xs text-orange-500">Talpe</p>
                   <p className="text-white font-bold">{wordPair.undercover}</p>
                 </div>
               </>
@@ -281,13 +281,13 @@ export default function ResultScreen() {
                             {player.name}
                           </span>
                           {isTalpaSurvivor && (isTalpaSurvived || isBothSurvived) && (
-                            <span className="text-yellow-500 text-[10px] shrink-0">sopravvissuta!</span>
+                            <span className="text-orange-500 text-[10px] shrink-0">sopravvissuta!</span>
                           )}
                           {player.role === 'camaleonte' && !player.eliminated && isCamaleonteSurvived && (
                             <span className="text-teal-400 text-[10px] shrink-0">sopravvissuto!</span>
                           )}
                           {player.role === 'talpa' && player.eliminated && pts > 0 && (
-                            <span className="text-yellow-500/70 text-[10px] shrink-0">parziale</span>
+                            <span className="text-orange-500/70 text-[10px] shrink-0">parziale</span>
                           )}
                           {isCamaleonteCorrect && (
                             <span className="text-emerald-400 text-[10px] shrink-0">ha indovinato!</span>
@@ -424,7 +424,7 @@ export default function ResultScreen() {
                 )}
                 {hasTalpa && (
                   <div>
-                    <div className="text-yellow-500 font-semibold">La Talpa — {players.length <= 4 ? '3' : '5'}{'\u00A0'}pt sopravvive</div>
+                    <div className="text-orange-500 font-semibold">La Talpa — {players.length <= 4 ? '3' : '5'}{'\u00A0'}pt sopravvive</div>
                     <div className="text-slate-500 mt-0.5">Se eliminata: +1{'\u00A0'}pt per ogni civile eliminato (max 3{'\u00A0'}pt)</div>
                   </div>
                 )}

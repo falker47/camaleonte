@@ -351,7 +351,7 @@ export default function SetupScreen() {
             value={talpaCount}
             min={0}
             max={effectiveMaxTalpa}
-            color="yellow"
+            color="orange"
             onChange={handleTalpaChange}
           />
         </div>
@@ -383,7 +383,7 @@ export default function SetupScreen() {
               {talpaCount > 0 && (
                 <>
                   <span className="text-slate-600">·</span>
-                  <span className="text-yellow-500">{talpaCount} Talp{talpaCount === 1 ? 'a' : 'e'}</span>
+                  <span className="text-orange-500">{talpaCount} Talp{talpaCount === 1 ? 'a' : 'e'}</span>
                 </>
               )}
             </div>
@@ -586,12 +586,12 @@ interface RoleCounterProps {
   value: number
   min: number
   max: number
-  color: 'teal' | 'yellow'
+  color: 'teal' | 'orange'
   onChange: (v: number) => void
 }
 
 function RoleCounter({ label, description, value, min, max, color, onChange }: RoleCounterProps) {
-  const dotColor = color === 'teal' ? 'bg-teal-400' : 'bg-yellow-600'
+  const dotColor = color === 'teal' ? 'bg-teal-400' : 'bg-orange-600'
   return (
     <div className="flex items-center justify-between glass rounded-2xl px-4 py-3">
       <div className="flex items-center gap-3">
