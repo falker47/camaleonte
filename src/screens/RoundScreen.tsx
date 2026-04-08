@@ -68,7 +68,7 @@ export default function RoundScreen() {
         <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">
           Giocatori in gioco
         </p>
-        <div className="flex flex-col gap-2">
+        <div className="grid grid-cols-2 gap-2">
           {active.map((player) => {
             const originalIndex = players.indexOf(player)
             return (
