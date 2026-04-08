@@ -12,6 +12,7 @@ import VoteScreen from './screens/VoteScreen'
 import EliminationScreen from './screens/EliminationScreen'
 import GuessScreen from './screens/GuessScreen'
 import RiccioStrikeScreen from './screens/RiccioStrikeScreen'
+import OracoloRevealScreen from './screens/OracoloRevealScreen'
 import ResultScreen from './screens/ResultScreen'
 
 const SCREENS: Record<Screen, ComponentType> = {
@@ -23,14 +24,15 @@ const SCREENS: Record<Screen, ComponentType> = {
   elimination: EliminationScreen,
   camaleonte_guess: GuessScreen,
   riccio_strike: RiccioStrikeScreen,
+  oracolo_reveal: OracoloRevealScreen,
   result: ResultScreen,
 }
 
 const SCREEN_ORDER: Screen[] = [
-  'home', 'setup', 'deal', 'round', 'vote', 'elimination', 'camaleonte_guess', 'riccio_strike', 'result',
+  'home', 'setup', 'deal', 'round', 'vote', 'elimination', 'camaleonte_guess', 'riccio_strike', 'oracolo_reveal', 'result',
 ]
 
-const FADE_SCALE_SCREENS: Set<Screen> = new Set(['elimination', 'riccio_strike', 'result'])
+const FADE_SCALE_SCREENS: Set<Screen> = new Set(['elimination', 'riccio_strike', 'oracolo_reveal', 'result'])
 
 function getTransitionVariants(prev: Screen | null, current: Screen) {
   if (FADE_SCALE_SCREENS.has(current)) {
@@ -53,7 +55,7 @@ function getTransitionVariants(prev: Screen | null, current: Screen) {
   const currIdx = SCREEN_ORDER.indexOf(current)
 
   if ((prev === 'deal' && current === 'round') ||
-      ((prev === 'elimination' || prev === 'camaleonte_guess' || prev === 'riccio_strike') && current === 'round')) {
+      ((prev === 'elimination' || prev === 'camaleonte_guess' || prev === 'riccio_strike' || prev === 'oracolo_reveal') && current === 'round')) {
     return {
       initial: { opacity: 0 },
       animate: { opacity: 1 },
@@ -97,8 +99,8 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { error: string |
   }
 }
 
-const IN_GAME_SCREENS: Set<Screen> = new Set(['deal', 'round', 'vote', 'elimination', 'camaleonte_guess', 'riccio_strike'])
-const INVALIDATE_SCREENS: Set<Screen> = new Set(['deal', 'round', 'vote', 'elimination', 'camaleonte_guess', 'riccio_strike'])
+const IN_GAME_SCREENS: Set<Screen> = new Set(['deal', 'round', 'vote', 'elimination', 'camaleonte_guess', 'riccio_strike', 'oracolo_reveal'])
+const INVALIDATE_SCREENS: Set<Screen> = new Set(['deal', 'round', 'vote', 'elimination', 'camaleonte_guess', 'riccio_strike', 'oracolo_reveal'])
 
 function QuitButton({ onRequestQuit }: { onRequestQuit: () => void }) {
   const screen = useGameStore(s => s.screen)
@@ -203,7 +205,7 @@ export default function App() {
           title="Invalida round"
           description="Sei sicuro? Il round verrà invalidato e ne comincerà uno nuovo."
           confirmLabel="Invalida"
-          variant="warning"
+          variant="camaleonte"
           onConfirm={() => { setShowInvalidate(false); useGameStore.getState().invalidateRound() }}
           onCancel={() => setShowInvalidate(false)}
         />

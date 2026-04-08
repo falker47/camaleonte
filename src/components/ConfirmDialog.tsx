@@ -6,7 +6,7 @@ interface ConfirmDialogProps {
   cancelLabel?: string
   onConfirm: () => void
   onCancel: () => void
-  variant?: 'danger' | 'warning'
+  variant?: 'danger' | 'warning' | 'camaleonte'
 }
 
 export default function ConfirmDialog({
@@ -21,7 +21,9 @@ export default function ConfirmDialog({
 }: ConfirmDialogProps) {
   if (!open) return null
 
-  const confirmClass = variant === 'warning'
+  const confirmClass = variant === 'camaleonte'
+    ? 'bg-teal-500 hover:bg-teal-400 text-black'
+    : variant === 'warning'
     ? 'bg-amber-500 hover:bg-amber-400 text-black'
     : 'bg-rose-600 hover:bg-rose-500 text-white'
 
