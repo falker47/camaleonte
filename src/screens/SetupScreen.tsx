@@ -235,6 +235,8 @@ export default function SetupScreen() {
       setSlots([...slots, { id: nextSlotId++, name: trimmed }])
     }
     setCtaValue('')
+    // Re-focus CTA input – mobile browsers auto-advance to next input on Enter
+    requestAnimationFrame(() => ctaInputRef.current?.focus())
   }
 
   const handleStart = () => {
@@ -261,6 +263,7 @@ export default function SetupScreen() {
             value={ctaValue}
             onChange={e => { setCtaValue(e.target.value); setCtaError('') }}
             onKeyDown={handleCtaKeyDown}
+            enterKeyHint="send"
             placeholder="Aggiungi giocatore..."
             disabled={slots.length >= MAX_PLAYERS}
             className="w-full rounded-2xl pl-10 pr-12 py-4 text-base bg-teal-500/8 border-2 border-teal-400/45 text-white placeholder-slate-500 focus:outline-none focus:border-teal-400/70 focus:shadow-[0_0_30px_rgba(20,184,166,0.12)] disabled:opacity-40 disabled:cursor-not-allowed transition-all"
