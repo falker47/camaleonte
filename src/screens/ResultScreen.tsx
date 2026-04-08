@@ -62,7 +62,7 @@ export default function ResultScreen() {
       {isCiviliansWin && (
         <Particles
           count={20}
-          colors={['#818cf8', '#fbbf24', '#34d399', '#f43f5e', '#22d3ee']}
+          colors={['#2dd4bf', '#fbbf24', '#34d399', '#f43f5e', '#22d3ee']}
           style="fall"
           origin="top"
         />
@@ -356,7 +356,7 @@ export default function ResultScreen() {
       )}
 
       {/* Points legend (collapsible) */}
-      <div className="shrink-0 rounded-xl overflow-hidden bg-white/[0.07] border border-white/10 border-l-2 border-l-indigo-500">
+      <div className="shrink-0 rounded-xl overflow-hidden bg-white/[0.07] border border-white/10 border-l-2 border-l-teal-500">
         <button
           onClick={() => setShowLegend(v => !v)}
           className="w-full flex items-center justify-between px-4 py-3.5 text-slate-200 text-sm font-semibold"

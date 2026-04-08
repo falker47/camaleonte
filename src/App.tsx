@@ -135,11 +135,11 @@ function AmbientBlobs() {
     <>
       <div
         className="fixed pointer-events-none -top-40 -left-40 w-[500px] h-[500px] opacity-100"
-        style={{ background: 'radial-gradient(circle, rgba(99,102,241,0.15) 0%, transparent 70%)' }}
+        style={{ background: 'radial-gradient(circle, rgba(20,184,166,0.15) 0%, transparent 70%)' }}
       />
       <div
         className="fixed pointer-events-none -bottom-40 -right-40 w-[500px] h-[500px] opacity-100"
-        style={{ background: 'radial-gradient(circle, rgba(139,92,246,0.12) 0%, transparent 70%)' }}
+        style={{ background: 'radial-gradient(circle, rgba(13,148,136,0.12) 0%, transparent 70%)' }}
       />
     </>
   )

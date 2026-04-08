@@ -196,7 +196,7 @@ export default function SetupScreen() {
       {/* CTA Input */}
       <div>
         <div className="relative">
-          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-indigo-400 text-lg font-bold pointer-events-none">+</span>
+          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-teal-400 text-lg font-bold pointer-events-none">+</span>
           <input
             ref={ctaInputRef}
             type="text"
@@ -205,7 +205,7 @@ export default function SetupScreen() {
             onKeyDown={handleCtaKeyDown}
             placeholder="Aggiungi giocatore..."
             disabled={slots.length >= MAX_PLAYERS}
-            className="w-full rounded-2xl pl-10 pr-12 py-4 text-base bg-indigo-500/8 border-2 border-indigo-400/45 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-400/70 focus:shadow-[0_0_30px_rgba(99,102,241,0.12)] disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+            className="w-full rounded-2xl pl-10 pr-12 py-4 text-base bg-teal-500/8 border-2 border-teal-400/45 text-white placeholder-slate-500 focus:outline-none focus:border-teal-400/70 focus:shadow-[0_0_30px_rgba(20,184,166,0.12)] disabled:opacity-40 disabled:cursor-not-allowed transition-all"
             style={{ userSelect: 'text', touchAction: 'auto' }}
             maxLength={20}
           />
@@ -236,7 +236,7 @@ export default function SetupScreen() {
                 className="relative"
               >
                 <div className="relative">
-                  <span className="absolute left-2 top-1/2 -translate-y-1/2 text-indigo-400 text-xs font-bold pointer-events-none z-10">
+                  <span className="absolute left-2 top-1/2 -translate-y-1/2 text-teal-400 text-xs font-bold pointer-events-none z-10">
                     {i + 1}.
                   </span>
                   {slots.length > 3 && (
@@ -274,7 +274,7 @@ export default function SetupScreen() {
             </p>
             <button
               onClick={addPlayer}
-              className="mt-2 text-indigo-400 hover:text-indigo-300 text-sm py-2 transition-colors"
+              className="mt-2 text-teal-400 hover:text-teal-300 text-sm py-2 transition-colors"
             >
               + Aggiungi giocatore
             </button>
@@ -366,7 +366,7 @@ export default function SetupScreen() {
                 {(() => {
                   const active = [buffoneEnabled && validNames.length >= 5, mimoEnabled, spettroEnabled].filter(Boolean).length
                   return active > 0
-                    ? <p className="text-indigo-400 text-xs">{active} attiv{active === 1 ? 'o' : 'i'}</p>
+                    ? <p className="text-teal-400 text-xs">{active} attiv{active === 1 ? 'o' : 'i'}</p>
                     : <p className="text-slate-500 text-xs">Nessuno attivo</p>
                 })()}
               </div>

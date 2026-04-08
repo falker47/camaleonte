@@ -83,7 +83,7 @@ export default function Tutorial({ onClose }: { onClose: () => void }) {
             <button
               key={i}
               onClick={() => go(i)}
-              className={`w-2 h-2 rounded-full transition-all ${i === step ? 'bg-indigo-400 w-4' : 'bg-slate-600'
+              className={`w-2 h-2 rounded-full transition-all ${i === step ? 'bg-teal-400 w-4' : 'bg-slate-600'
                 }`}
               aria-label={`Step ${i + 1}`}
             />

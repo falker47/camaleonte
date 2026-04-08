@@ -146,7 +146,7 @@ export default function VoteScreen() {
         <div className="flex flex-col gap-2">
           <div className="h-2 bg-white/5 rounded-full border border-white/5 overflow-hidden">
             <motion.div
-              className={`h-full rounded-full ${allVoted ? 'bg-rose-500' : 'bg-indigo-500'}`}
+              className={`h-full rounded-full ${allVoted ? 'bg-rose-500' : 'bg-teal-500'}`}
               animate={{ width: `${progress}%` }}
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
             />

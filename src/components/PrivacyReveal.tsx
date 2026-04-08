@@ -224,7 +224,12 @@ export default function PrivacyReveal({ playerName, word, role, specialRole, onD
       {phase === 'hidden' && (
         <motion.button
           onClick={onDone}
-          className="w-full max-w-xs glass-button font-semibold py-4 rounded-2xl"
+          className="w-full max-w-xs font-semibold py-4 rounded-2xl text-white"
+          style={{
+            background: 'linear-gradient(135deg, rgba(99,102,241,0.8), rgba(79,70,229,0.9))',
+            border: '1px solid rgba(99,102,241,0.4)',
+            boxShadow: '0 8px 32px rgba(99,102,241,0.3), inset 0 1px 0 rgba(255,255,255,0.15)',
+          }}
           {...springTap}
         >
           {isLast ? 'Tutti pronti — Inizia!' : 'Prossimo giocatore →'}
