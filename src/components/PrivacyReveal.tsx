@@ -4,6 +4,7 @@ import type { Role, SpecialRole } from '../store/types'
 import Particles from './Particles'
 import { vibrate } from '../utils/vibrate'
 import { springTap } from '../constants/animations'
+import camaleontePng from '../assets/camaleonte.png'
 
 interface Props {
   playerName: string
@@ -16,17 +17,17 @@ interface Props {
 
 type Phase = 'waiting' | 'revealed' | 'hidden'
 
-// Infiltrato usa stessi colori del civile — non deve sapere di esserlo
+// La Talpa usa stessi colori del civile — non deve sapere di esserlo
 const ROLE_COLORS: Record<Role, string> = {
   civile: 'from-indigo-700 to-indigo-900',
-  infiltrato: 'from-indigo-700 to-indigo-900',
-  mrwhite: 'from-slate-200 to-slate-400',
+  talpa: 'from-indigo-700 to-indigo-900',
+  camaleonte: 'from-teal-700 to-teal-900',
 }
 
 const ROLE_TEXT_COLORS: Record<Role, string> = {
   civile: 'text-white',
-  infiltrato: 'text-white',
-  mrwhite: 'text-black',
+  talpa: 'text-white',
+  camaleonte: 'text-white',
 }
 
 export default function PrivacyReveal({ playerName, word, role, specialRole, onDone, isLast }: Props) {
@@ -115,14 +116,14 @@ export default function PrivacyReveal({ playerName, word, role, specialRole, onD
           <div
             className={`absolute inset-0 backface-hidden rotate-y-180 rounded-3xl bg-gradient-to-br ${roleColor} border border-white/10 flex flex-col items-center justify-center gap-3 shadow-2xl px-6`}
           >
-            {role === 'mrwhite' ? (
+            {role === 'camaleonte' ? (
               <>
-                <div className={`text-4xl font-black ${textColor}`}>🕵️</div>
-                <p className={`text-2xl font-black ${textColor}`}>Sei Mr. White</p>
+                <img src={camaleontePng} alt="Il Camaleonte" className="w-12 h-12" />
+                <p className={`text-2xl font-black ${textColor}`}>Sei Il Camaleonte</p>
                 <p className={`text-sm text-center ${textColor} opacity-80`}>Non hai nessuna parola. Bluffa!</p>
                 {specialRole === 'mimo' && (
                   <div className="mt-2 flex flex-col items-center gap-1">
-                    <span className="inline-block rounded-full bg-slate-800/30 border border-slate-600/30 text-slate-700 text-sm font-bold px-4 py-1">
+                    <span className="inline-block rounded-full bg-slate-800/30 border border-slate-600/30 text-slate-200 text-sm font-bold px-4 py-1">
                       🤫 Il Mimo
                     </span>
                     <p className={`text-xs text-center ${textColor} opacity-60`}>
@@ -132,7 +133,7 @@ export default function PrivacyReveal({ playerName, word, role, specialRole, onD
                 )}
                 {specialRole === 'spettro' && (
                   <div className="mt-2 flex flex-col items-center gap-1">
-                    <span className="inline-block rounded-full bg-cyan-800/30 border border-cyan-600/30 text-cyan-700 text-sm font-bold px-4 py-1">
+                    <span className="inline-block rounded-full bg-cyan-800/30 border border-cyan-600/30 text-cyan-200 text-sm font-bold px-4 py-1">
                       🎐 Lo Spettro
                     </span>
                     <p className={`text-xs text-center ${textColor} opacity-60`}>
@@ -186,18 +187,18 @@ export default function PrivacyReveal({ playerName, word, role, specialRole, onD
         {showParticles && (
           <>
             <Particles
-              colors={role === 'mrwhite'
-                ? ['#ffffff', '#e2e8f0', '#cbd5e1']
+              colors={role === 'camaleonte'
+                ? ['#2dd4bf', '#14b8a6', '#0d9488']
                 : ['#818cf8', '#6366f1', '#a5b4fc']
               }
               style="burst"
               origin="center"
             />
-            {role === 'mrwhite' && (
+            {role === 'camaleonte' && (
               <motion.div
-                className="absolute inset-0 rounded-3xl bg-white pointer-events-none"
+                className="absolute inset-0 rounded-3xl bg-teal-400 pointer-events-none"
                 initial={{ opacity: 0 }}
-                animate={{ opacity: [0, 0.3, 0] }}
+                animate={{ opacity: [0, 0.2, 0] }}
                 transition={{ duration: 0.6 }}
               />
             )}
