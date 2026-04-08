@@ -39,6 +39,7 @@ export default function SetupScreen() {
   const [spettroEnabled, setSpettroEnabled] = useState(false)
   const [duellantiEnabled, setDuellantiEnabled] = useState(false)
   const [romeoGiuliettaEnabled, setRomeoGiuliettaEnabled] = useState(false)
+  const [riccioEnabled, setRiccioEnabled] = useState(false)
   const [showSpecialRoles, setShowSpecialRoles] = useState(false)
 
   // Auto-focus CTA input on mount
@@ -189,7 +190,7 @@ export default function SetupScreen() {
   const handleStart = () => {
     const filtered = names.filter(n => n.trim().length > 0)
     setPlayerNames(filtered)
-    setConfig({ camaleonteCount, talpaCount, specialRoles: { buffone: buffoneEnabled && filtered.length >= 5, mimo: mimoEnabled, spettro: spettroEnabled, duellanti: duellantiEnabled, romeoGiulietta: romeoGiuliettaEnabled && filtered.length >= 5 } })
+    setConfig({ camaleonteCount, talpaCount, specialRoles: { buffone: buffoneEnabled && filtered.length >= 5, mimo: mimoEnabled, spettro: spettroEnabled, duellanti: duellantiEnabled, romeoGiulietta: romeoGiuliettaEnabled && filtered.length >= 5, riccio: riccioEnabled } })
     startGame()
   }
 
@@ -310,7 +311,7 @@ export default function SetupScreen() {
             value={talpaCount}
             min={0}
             max={effectiveMaxTalpa}
-            color="amber"
+            color="yellow"
             onChange={handleTalpaChange}
           />
         </div>
@@ -342,7 +343,7 @@ export default function SetupScreen() {
               {talpaCount > 0 && (
                 <>
                   <span className="text-slate-600">·</span>
-                  <span className="text-amber-400">{talpaCount} Talp{talpaCount === 1 ? 'a' : 'e'}</span>
+                  <span className="text-yellow-500">{talpaCount} Talp{talpaCount === 1 ? 'a' : 'e'}</span>
                 </>
               )}
             </div>
@@ -371,7 +372,7 @@ export default function SetupScreen() {
               <div className="text-left">
                 <p className="text-white text-sm font-semibold">Ruoli Speciali</p>
                 {(() => {
-                  const active = [buffoneEnabled && validNames.length >= 5, mimoEnabled, spettroEnabled, duellantiEnabled, romeoGiuliettaEnabled && validNames.length >= 5].filter(Boolean).length
+                  const active = [buffoneEnabled && validNames.length >= 5, mimoEnabled, spettroEnabled, duellantiEnabled, romeoGiuliettaEnabled && validNames.length >= 5, riccioEnabled].filter(Boolean).length
                   return active > 0
                     ? <p className="text-teal-400 text-xs">{active} attiv{active === 1 ? 'o' : 'i'}</p>
                     : <p className="text-slate-500 text-xs">Nessuno attivo</p>
@@ -380,7 +381,7 @@ export default function SetupScreen() {
             </div>
             <span className="text-slate-500 text-sm">›</span>
           </motion.button>
-          {(buffoneEnabled && validNames.length >= 5 || mimoEnabled || spettroEnabled || duellantiEnabled || romeoGiuliettaEnabled && validNames.length >= 5) && (
+          {(buffoneEnabled && validNames.length >= 5 || mimoEnabled || spettroEnabled || duellantiEnabled || romeoGiuliettaEnabled && validNames.length >= 5 || riccioEnabled) && (
             <div className="flex flex-wrap gap-1.5 px-4 pb-3">
               {buffoneEnabled && validNames.length >= 5 && (
                 <span className="inline-block rounded-full bg-red-500/20 border border-red-400/30 text-red-400 text-xs font-bold px-2.5 py-0.5">
@@ -405,6 +406,11 @@ export default function SetupScreen() {
               {romeoGiuliettaEnabled && validNames.length >= 5 && (
                 <span className="inline-block rounded-full bg-pink-500/20 border border-pink-400/30 text-pink-400 text-xs font-bold px-2.5 py-0.5">
                   💕 R&G
+                </span>
+              )}
+              {riccioEnabled && (
+                <span className="inline-block rounded-full bg-orange-500/20 border border-orange-400/30 text-orange-400 text-xs font-bold px-2.5 py-0.5">
+                  🦔 Riccio
                 </span>
               )}
             </div>
@@ -496,6 +502,19 @@ export default function SetupScreen() {
                 enabled: romeoGiuliettaEnabled,
                 minPlayers: 5,
               },
+              {
+                id: 'riccio',
+                label: 'Il Riccio',
+                emoji: '🦔',
+                description: 'Se eliminato, trascina un altro giocatore con sé.',
+                bgBase: 'bg-orange-500/10',
+                bgActive: 'bg-orange-500/25',
+                borderBase: 'border-orange-400/20',
+                borderActive: 'border-orange-400/50',
+                toggleColor: 'bg-orange-500',
+                enabled: riccioEnabled,
+                minPlayers: 3,
+              },
             ]}
             playerCount={validNames.length}
             onToggle={(id) => {
@@ -504,6 +523,7 @@ export default function SetupScreen() {
               if (id === 'spettro') setSpettroEnabled(v => !v)
               if (id === 'duellanti') setDuellantiEnabled(v => !v)
               if (id === 'romeoGiulietta') setRomeoGiuliettaEnabled(v => !v)
+              if (id === 'riccio') setRiccioEnabled(v => !v)
             }}
             onClose={() => setShowSpecialRoles(false)}
           />
@@ -519,12 +539,12 @@ interface RoleCounterProps {
   value: number
   min: number
   max: number
-  color: 'teal' | 'amber'
+  color: 'teal' | 'yellow'
   onChange: (v: number) => void
 }
 
 function RoleCounter({ label, description, value, min, max, color, onChange }: RoleCounterProps) {
-  const dotColor = color === 'teal' ? 'bg-teal-400' : 'bg-amber-400'
+  const dotColor = color === 'teal' ? 'bg-teal-400' : 'bg-yellow-600'
   return (
     <div className="flex items-center justify-between glass rounded-2xl px-4 py-3">
       <div className="flex items-center gap-3">

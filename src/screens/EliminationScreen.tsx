@@ -9,7 +9,7 @@ import camaleontePng from '../assets/camaleonte.png'
 
 const ROLE_FLASH_COLORS: Record<string, string> = {
   camaleonte: 'rgba(20,184,166,0.15)',
-  talpa: 'rgba(251,191,36,0.15)',
+  talpa: 'rgba(202,138,4,0.15)',
   civile: 'rgba(99,102,241,0.15)',
 }
 
@@ -27,6 +27,7 @@ export default function EliminationScreen() {
   const isCamaleonte = role === 'camaleonte'
   const isBuffoneBonus = eliminatedThisTurno.specialRole === 'buffone' && turno === 1
   const isSpettro = eliminatedThisTurno.specialRole === 'spettro'
+  const isRiccio = eliminatedThisTurno.specialRole === 'riccio'
   const isRomeoGiulietta = eliminatedThisTurno.specialRole === 'romeo' || eliminatedThisTurno.specialRole === 'giulietta'
   const linkedPartner = isRomeoGiulietta
     ? players.find(p => (p.specialRole === 'romeo' || p.specialRole === 'giulietta') && p.id !== eliminatedThisTurno.id && !p.eliminated)
@@ -42,7 +43,7 @@ export default function EliminationScreen() {
       {/* Background flash */}
       <motion.div
         className="absolute inset-0 pointer-events-none z-0"
-        style={{ backgroundColor: isBuffoneBonus ? 'rgba(239,68,68,0.2)' : ROLE_FLASH_COLORS[role] }}
+        style={{ backgroundColor: isBuffoneBonus ? 'rgba(239,68,68,0.2)' : isRiccio ? 'rgba(249,115,22,0.15)' : ROLE_FLASH_COLORS[role] }}
         initial={{ opacity: 0 }}
         animate={{ opacity: [0, 1, 0] }}
         transition={{ duration: 0.6 }}
@@ -55,7 +56,7 @@ export default function EliminationScreen() {
           animate={{ scale: 1 }}
           transition={{ type: 'spring', stiffness: 300, damping: 15 }}
         >
-          {isCamaleonte ? <img src={camaleontePng} alt="Il Camaleonte" className="w-12 h-12" /> : role === 'talpa' ? <img src={talpaPng} alt="La Talpa" className="w-12 h-12" /> : isBuffoneBonus ? '🃏' : isSpettro ? '🎐' : '😇'}
+          {isCamaleonte ? <img src={camaleontePng} alt="Il Camaleonte" className="w-12 h-12" /> : role === 'talpa' ? <img src={talpaPng} alt="La Talpa" className="w-12 h-12" /> : isBuffoneBonus ? '🃏' : isSpettro ? '🎐' : isRiccio ? '🦔' : '😇'}
         </motion.div>
         <p className="text-slate-400 text-sm uppercase tracking-widest">Eliminato</p>
         <motion.h2
@@ -83,6 +84,11 @@ export default function EliminationScreen() {
               🎐 Spettro
             </span>
           )}
+          {isRiccio && (
+            <span className="inline-block rounded-full bg-orange-500/20 border border-orange-400/30 text-orange-400 text-sm font-bold px-3 py-1">
+              🦔 Riccio
+            </span>
+          )}
         </motion.div>
       </div>
 
@@ -99,7 +105,7 @@ export default function EliminationScreen() {
             Potrà tentare di indovinare la parola dei civili per vincere ancora.
           </p>
           {remainingTalpe > 0 && (
-            <p className="text-amber-400/70 text-xs mt-2">
+            <p className="text-yellow-500/70 text-xs mt-2">
               Attenzione: {remainingTalpe === 1 ? 'c\'è ancora 1 talpa' : `ci sono ancora ${remainingTalpe} talpe`} in gioco!
             </p>
           )}
@@ -109,12 +115,12 @@ export default function EliminationScreen() {
       {role === 'talpa' && (
         <motion.div
           className="glass rounded-2xl px-6 py-4 text-center max-w-xs relative z-10"
-          style={{ borderColor: 'rgba(251, 191, 36, 0.2)' }}
+          style={{ borderColor: 'rgba(202, 138, 4, 0.2)' }}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
         >
-          <p className="text-amber-400 font-semibold">La Talpa scoperta!</p>
+          <p className="text-yellow-500 font-semibold">La Talpa scoperta!</p>
           {remainingImpostors > 0 ? (
             <p className="text-slate-400 text-sm mt-1">
               {remainingImpostors === 1 ? 'Resta ancora 1 impostore' : `Restano ancora ${remainingImpostors} impostori`} da trovare.
@@ -167,6 +173,21 @@ export default function EliminationScreen() {
             Continuerà a <span className="text-cyan-400 font-bold">votare</span> anche dall'aldilà.
           </p>
           <p className="text-slate-500 text-xs mt-2">Non darà indizi e non potrà essere votato.</p>
+        </motion.div>
+      )}
+
+      {isRiccio && (
+        <motion.div
+          className="glass rounded-2xl px-6 py-5 text-center max-w-xs relative z-10"
+          style={{ borderColor: 'rgba(249, 115, 22, 0.3)' }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+        >
+          <p className="text-orange-400 font-bold text-lg">Il Riccio colpisce!</p>
+          <p className="text-slate-300 text-sm mt-2">
+            Potrà scegliere un giocatore da <span className="text-orange-400 font-bold">eliminare</span> con sé.
+          </p>
         </motion.div>
       )}
 

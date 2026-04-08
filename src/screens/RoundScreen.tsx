@@ -40,6 +40,13 @@ export default function RoundScreen() {
         </div>
       )}
 
+      {active.some(p => p.specialRole === 'riccio') && isLastChance && (
+        <div className="glass rounded-xl px-4 py-3 border border-orange-400/20">
+          <p className="text-orange-400 text-sm font-semibold">🦔 Il Riccio non potrà colpire in questo turno</p>
+          <p className="text-slate-400 text-xs mt-1">La prossima eliminazione concluderà la partita.</p>
+        </div>
+      )}
+
       {isLastChance && (
         <div className="flex items-center gap-2.5 rounded-xl px-3.5 py-2.5"
           style={{ background: 'rgba(220,38,38,0.1)', border: '1px solid rgba(220,38,38,0.3)' }}>
@@ -64,7 +71,7 @@ export default function RoundScreen() {
         )}
         {talpe > 0 && (
           <div className="glass rounded-xl px-3 py-2 text-center flex-1">
-            <p className="text-amber-400 font-bold text-lg">{talpe}</p>
+            <p className="text-yellow-500 font-bold text-lg">{talpe}</p>
             <p className="text-slate-500 text-xs">talp{talpe === 1 ? 'a' : 'e'}</p>
           </div>
         )}

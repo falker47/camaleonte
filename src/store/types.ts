@@ -1,6 +1,6 @@
 export type Role = 'civile' | 'talpa' | 'camaleonte'
 
-export type SpecialRole = 'buffone' | 'mimo' | 'spettro' | 'duellante' | 'romeo' | 'giulietta'
+export type SpecialRole = 'buffone' | 'mimo' | 'spettro' | 'duellante' | 'romeo' | 'giulietta' | 'riccio'
 
 export type Screen =
   | 'home'
@@ -10,6 +10,7 @@ export type Screen =
   | 'vote'
   | 'elimination'
   | 'camaleonte_guess'
+  | 'riccio_strike'
   | 'result'
 
 export interface Player {
@@ -32,5 +33,5 @@ export interface WordPair {
 export interface GameConfig {
   camaleonteCount: number
   talpaCount: number
-  specialRoles?: { buffone?: boolean; mimo?: boolean; spettro?: boolean; duellanti?: boolean; romeoGiulietta?: boolean }
+  specialRoles?: { buffone?: boolean; mimo?: boolean; spettro?: boolean; duellanti?: boolean; romeoGiulietta?: boolean; riccio?: boolean }
 }

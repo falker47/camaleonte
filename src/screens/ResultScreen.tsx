@@ -102,7 +102,7 @@ export default function ResultScreen() {
       {hasTalpa && isTalpaSurvived && (
         <Particles
           count={15}
-          colors={['#fbbf24', '#f59e0b', '#d97706', '#b45309']}
+          colors={['#ca8a04', '#a16207', '#854d0e', '#713f12']}
           style="burst"
           origin="center"
         />
@@ -178,14 +178,14 @@ export default function ResultScreen() {
 
       {hasTalpa && isTalpaSurvived && (
         <motion.div
-          className="rounded-3xl px-6 py-6 text-center bg-gradient-to-br from-amber-600 to-amber-800 border border-white/10"
+          className="rounded-3xl px-6 py-6 text-center bg-gradient-to-br from-yellow-700 to-yellow-900 border border-white/10"
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ type: 'spring', stiffness: 200, damping: 20 }}
         >
           <img src={talpaPng} alt="La Talpa" className="w-12 h-12 mx-auto mb-2" />
           <h2 className="text-2xl font-black text-white">La Talpa vince!</h2>
-          <p className="text-amber-200 text-sm mt-1">
+          <p className="text-yellow-300 text-sm mt-1">
             È sopravvissuta fino alla fine.
           </p>
         </motion.div>
@@ -219,7 +219,7 @@ export default function ResultScreen() {
               <>
                 <div className="w-px bg-white/8" />
                 <div>
-                  <p className="text-xs text-amber-400">Talpe</p>
+                  <p className="text-xs text-yellow-500">Talpe</p>
                   <p className="text-white font-bold">{wordPair.undercover}</p>
                 </div>
               </>
@@ -276,17 +276,18 @@ export default function ResultScreen() {
                           {player.specialRole === 'spettro' && <span className="text-cyan-400 text-xs">🎐</span>}
                           {player.specialRole === 'duellante' && <span className="text-blue-400 text-xs">⚔️</span>}
                           {(player.specialRole === 'romeo' || player.specialRole === 'giulietta') && <span className="text-pink-400 text-xs">💕</span>}
+                          {player.specialRole === 'riccio' && <span className="text-orange-400 text-xs">🦔</span>}
                           <span className={`font-medium text-sm ${player.eliminated ? 'line-through text-slate-500' : 'text-white'}`}>
                             {player.name}
                           </span>
                           {isTalpaSurvivor && (isTalpaSurvived || isBothSurvived) && (
-                            <span className="text-amber-400 text-[10px] shrink-0">sopravvissuta!</span>
+                            <span className="text-yellow-500 text-[10px] shrink-0">sopravvissuta!</span>
                           )}
                           {player.role === 'camaleonte' && !player.eliminated && isCamaleonteSurvived && (
                             <span className="text-teal-400 text-[10px] shrink-0">sopravvissuto!</span>
                           )}
                           {player.role === 'talpa' && player.eliminated && pts > 0 && (
-                            <span className="text-amber-400/70 text-[10px] shrink-0">parziale</span>
+                            <span className="text-yellow-500/70 text-[10px] shrink-0">parziale</span>
                           )}
                           {isCamaleonteCorrect && (
                             <span className="text-emerald-400 text-[10px] shrink-0">ha indovinato!</span>
@@ -423,7 +424,7 @@ export default function ResultScreen() {
                 )}
                 {hasTalpa && (
                   <div>
-                    <div className="text-amber-400 font-semibold">La Talpa — {players.length <= 4 ? '3' : '5'}{'\u00A0'}pt sopravvive</div>
+                    <div className="text-yellow-500 font-semibold">La Talpa — {players.length <= 4 ? '3' : '5'}{'\u00A0'}pt sopravvive</div>
                     <div className="text-slate-500 mt-0.5">Se eliminata: +1{'\u00A0'}pt per ogni civile eliminato (max 3{'\u00A0'}pt)</div>
                   </div>
                 )}
@@ -449,6 +450,12 @@ export default function ResultScreen() {
                   <div>
                     <div className="text-pink-400 font-semibold">Romeo & Giulietta — legame fatale</div>
                     <div className="text-slate-500 mt-0.5">Due giocatori legati: se uno viene eliminato, anche l'altro cade.</div>
+                  </div>
+                )}
+                {players.some(p => p.specialRole === 'riccio') && (
+                  <div>
+                    <div className="text-orange-400 font-semibold">Il Riccio — colpo finale</div>
+                    <div className="text-slate-500 mt-0.5">Se eliminato, sceglie un giocatore da trascinare con sé.</div>
                   </div>
                 )}
               </div>

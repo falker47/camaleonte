@@ -11,6 +11,7 @@ import RoundScreen from './screens/RoundScreen'
 import VoteScreen from './screens/VoteScreen'
 import EliminationScreen from './screens/EliminationScreen'
 import GuessScreen from './screens/GuessScreen'
+import RiccioStrikeScreen from './screens/RiccioStrikeScreen'
 import ResultScreen from './screens/ResultScreen'
 
 const SCREENS: Record<Screen, ComponentType> = {
@@ -21,14 +22,15 @@ const SCREENS: Record<Screen, ComponentType> = {
   vote: VoteScreen,
   elimination: EliminationScreen,
   camaleonte_guess: GuessScreen,
+  riccio_strike: RiccioStrikeScreen,
   result: ResultScreen,
 }
 
 const SCREEN_ORDER: Screen[] = [
-  'home', 'setup', 'deal', 'round', 'vote', 'elimination', 'camaleonte_guess', 'result',
+  'home', 'setup', 'deal', 'round', 'vote', 'elimination', 'camaleonte_guess', 'riccio_strike', 'result',
 ]
 
-const FADE_SCALE_SCREENS: Set<Screen> = new Set(['elimination', 'result'])
+const FADE_SCALE_SCREENS: Set<Screen> = new Set(['elimination', 'riccio_strike', 'result'])
 
 function getTransitionVariants(prev: Screen | null, current: Screen) {
   if (FADE_SCALE_SCREENS.has(current)) {
@@ -51,7 +53,7 @@ function getTransitionVariants(prev: Screen | null, current: Screen) {
   const currIdx = SCREEN_ORDER.indexOf(current)
 
   if ((prev === 'deal' && current === 'round') ||
-      ((prev === 'elimination' || prev === 'camaleonte_guess') && current === 'round')) {
+      ((prev === 'elimination' || prev === 'camaleonte_guess' || prev === 'riccio_strike') && current === 'round')) {
     return {
       initial: { opacity: 0 },
       animate: { opacity: 1 },
@@ -95,8 +97,8 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { error: string |
   }
 }
 
-const IN_GAME_SCREENS: Set<Screen> = new Set(['deal', 'round', 'vote', 'elimination', 'camaleonte_guess'])
-const INVALIDATE_SCREENS: Set<Screen> = new Set(['deal', 'round', 'vote', 'elimination', 'camaleonte_guess'])
+const IN_GAME_SCREENS: Set<Screen> = new Set(['deal', 'round', 'vote', 'elimination', 'camaleonte_guess', 'riccio_strike'])
+const INVALIDATE_SCREENS: Set<Screen> = new Set(['deal', 'round', 'vote', 'elimination', 'camaleonte_guess', 'riccio_strike'])
 
 function QuitButton({ onRequestQuit }: { onRequestQuit: () => void }) {
   const screen = useGameStore(s => s.screen)

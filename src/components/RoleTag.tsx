@@ -12,7 +12,7 @@ const CONFIG: Record<Role, { label: string; classes: string }> = {
   },
   talpa: {
     label: 'La Talpa',
-    classes: 'bg-amber-500/20 border border-amber-400/30 text-amber-300',
+    classes: 'bg-yellow-600/20 border border-yellow-500/30 text-yellow-400',
   },
   camaleonte: {
     label: 'Il Camaleonte',

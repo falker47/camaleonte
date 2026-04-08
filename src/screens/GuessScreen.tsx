@@ -66,6 +66,11 @@ export default function GuessScreen() {
       timedOut.current = false
       return
     }
+    // If Riccio strike is pending, go to strike screen
+    if (store.riccioStrikeActive && !gameOver) {
+      store.goTo('riccio_strike')
+      return
+    }
     if (gameOver) {
       store.goTo('result')
     } else {

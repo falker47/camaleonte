@@ -106,6 +106,7 @@ interface GameState {
   winner: 'civilians' | 'last_two' | null
   scores: Record<string, number>
   roundScores: Record<string, number>
+  riccioStrikeActive: boolean
   usedPairIndices: number[]
 
   goTo: (screen: Screen) => void
@@ -115,6 +116,7 @@ interface GameState {
   advanceDeal: () => void
   castVote: (votes: Record<string, number>) => void
   confirmElimination: () => void
+  riccioStrike: (targetId: string) => void
   submitCamaleonteGuess: (guess: string) => void
   nextTurno: () => void
   invalidateRound: () => void
@@ -139,6 +141,7 @@ export const useGameStore = create<GameState>((set, get) => ({
   winner: null,
   scores: {},
   roundScores: {},
+  riccioStrikeActive: false,
   usedPairIndices: [],
 
   goTo: (screen) => set({ screen }),
@@ -180,6 +183,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       camaleonteCorrectIds: [],
       winner: null,
       roundScores: {},
+      riccioStrikeActive: false,
       screen: 'deal',
     })
   },
@@ -229,9 +233,13 @@ export const useGameStore = create<GameState>((set, get) => ({
       }
     }
 
-    set({ players: updatedPlayers, linkedEliminatedThisTurno: linkedPartner })
+    // Check if Riccio ability should activate (before camaleonte guess which doesn't change eliminations)
+    const isRiccio = eliminatedThisTurno.specialRole === 'riccio'
+    const riccioCanStrike = isRiccio && !checkWinCondition(updatedPlayers, players.length)
 
-    // Voted camaleonte gets a guess first
+    set({ players: updatedPlayers, linkedEliminatedThisTurno: linkedPartner, riccioStrikeActive: riccioCanStrike })
+
+    // Voted camaleonte gets a guess first (riccio strike will happen after via GuessScreen)
     if (eliminatedThisTurno.role === 'camaleonte' && wordPair) {
       set({ screen: 'camaleonte_guess', camaleonteGuessResult: null })
       return
@@ -243,6 +251,12 @@ export const useGameStore = create<GameState>((set, get) => ({
       return
     }
 
+    // Riccio strikes before win check
+    if (riccioCanStrike) {
+      set({ screen: 'riccio_strike' })
+      return
+    }
+
     const win = checkWinCondition(updatedPlayers, players.length)
     if (win) {
       const correctSet = new Set(camaleonteCorrectIds)
@@ -250,6 +264,52 @@ export const useGameStore = create<GameState>((set, get) => ({
       set({ winner: win, scores: newScores, roundScores, screen: 'result', eliminatedThisTurno: null, linkedEliminatedThisTurno: null })
     } else {
       set({ screen: 'round', turno: get().turno + 1, currentVotes: {}, eliminatedThisTurno: null, linkedEliminatedThisTurno: null })
+    }
+  },
+
+  riccioStrike: (targetId) => {
+    const { players, turno, scores, camaleonteCorrectIds, wordPair } = get()
+
+    let updatedPlayers = players.map(p =>
+      p.id === targetId ? { ...p, eliminated: true, eliminatedInTurno: turno } : p
+    )
+
+    // R&G linked elimination for target
+    const target = updatedPlayers.find(p => p.id === targetId)!
+    let linkedPartner: Player | null = null
+    if (target.specialRole === 'romeo' || target.specialRole === 'giulietta') {
+      const partnerRole = target.specialRole === 'romeo' ? 'giulietta' : 'romeo'
+      const partner = updatedPlayers.find(p => p.specialRole === partnerRole && !p.eliminated)
+      if (partner) {
+        linkedPartner = partner
+        updatedPlayers = updatedPlayers.map(p =>
+          p.id === partner.id ? { ...p, eliminated: true, eliminatedInTurno: turno } : p
+        )
+      }
+    }
+
+    set({ players: updatedPlayers, riccioStrikeActive: false, linkedEliminatedThisTurno: linkedPartner })
+
+    // If target is camaleonte, give them a guess
+    if (target.role === 'camaleonte' && wordPair) {
+      set({ eliminatedThisTurno: target, screen: 'camaleonte_guess', camaleonteGuessResult: null })
+      return
+    }
+
+    // If linked partner is camaleonte, give them a guess
+    if (linkedPartner?.role === 'camaleonte' && wordPair) {
+      set({ eliminatedThisTurno: linkedPartner, screen: 'camaleonte_guess', camaleonteGuessResult: null })
+      return
+    }
+
+    // Check win condition
+    const win = checkWinCondition(updatedPlayers, players.length)
+    if (win) {
+      const correctSet = new Set(camaleonteCorrectIds)
+      const { scores: newScores, roundScores } = calcFinalScores(updatedPlayers, win, correctSet, scores)
+      set({ winner: win, scores: newScores, roundScores, screen: 'result', eliminatedThisTurno: null, linkedEliminatedThisTurno: null })
+    } else {
+      set({ screen: 'round', turno: turno + 1, currentVotes: {}, eliminatedThisTurno: null, linkedEliminatedThisTurno: null })
     }
   },
 
@@ -311,6 +371,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       camaleonteCorrectIds: [],
       winner: null,
       roundScores: {},
+      riccioStrikeActive: false,
       scores: {},
       usedPairIndices: [],
     })

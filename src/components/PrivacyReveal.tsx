@@ -172,6 +172,16 @@ export default function PrivacyReveal({ playerName, word, role, specialRole, spe
                     </p>
                   </div>
                 )}
+                {specialRole === 'riccio' && (
+                  <div className="mt-2 flex flex-col items-center gap-1">
+                    <span className="inline-block rounded-full bg-orange-800/30 border border-orange-600/30 text-orange-200 text-sm font-bold px-4 py-1">
+                      🦔 Il Riccio
+                    </span>
+                    <p className={`text-xs text-center ${textColor} opacity-60`}>
+                      Se eliminato, trascini qualcuno con te.
+                    </p>
+                  </div>
+                )}
               </>
             ) : (
               <>
