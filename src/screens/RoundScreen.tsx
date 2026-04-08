@@ -1,7 +1,10 @@
-import { motion } from 'framer-motion'
+import { useState, useCallback } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useGameStore } from '../store/gameStore'
 import { AVATAR_COLORS } from '../constants/avatarColors'
 import { springTap } from '../constants/animations'
+import { getSurvivalThreshold } from '../utils/winCondition'
+import LastChanceOverlay from '../components/LastChanceOverlay'
 
 export default function RoundScreen() {
   const players = useGameStore(s => s.players)
@@ -11,16 +14,35 @@ export default function RoundScreen() {
   const active = players.filter(p => !p.eliminated)
   const eliminated = players.filter(p => p.eliminated)
 
+  const isLastChance = active.length === getSurvivalThreshold(players.length) + 1
+  const [showOverlay, setShowOverlay] = useState(isLastChance)
+  const dismissOverlay = useCallback(() => setShowOverlay(false), [])
+
   const civili = active.filter(p => p.role === 'civile').length
   const mrWhite = active.filter(p => p.role === 'mrwhite').length
   const infiltrati = active.filter(p => p.role === 'infiltrato').length
 
   return (
     <div className="flex flex-col flex-1 min-h-0 px-5 py-6 gap-5 overflow-y-auto">
+      <AnimatePresence>
+        {showOverlay && <LastChanceOverlay onDismiss={dismissOverlay} />}
+      </AnimatePresence>
+
       <div>
         <h2 className="text-2xl font-black text-white">Turno {turno}</h2>
         <p className="text-slate-400 text-sm">Ogni giocatore dà un indizio</p>
       </div>
+
+      {isLastChance && (
+        <div className="flex items-center gap-2.5 rounded-xl px-3.5 py-2.5"
+          style={{ background: 'rgba(220,38,38,0.1)', border: '1px solid rgba(220,38,38,0.3)' }}>
+          <span className="text-lg">⚠</span>
+          <div>
+            <p className="text-red-500 font-bold text-[13px]">Ultima possibilità</p>
+            <p className="text-red-400/70 text-[11px]">Un errore e gli impostori vincono</p>
+          </div>
+        </div>
+      )}
 
       <div className="flex gap-2">
         <div className="glass rounded-xl px-3 py-2 text-center flex-1">
@@ -82,8 +104,10 @@ export default function RoundScreen() {
       )}
 
       <div className="mt-auto">
-        <p className="text-slate-400 text-sm text-center mb-4">
-          Dopo che tutti hanno dato il loro indizio, passate al voto
+        <p className={`text-sm text-center mb-4 ${isLastChance ? 'text-red-400/70' : 'text-slate-400'}`}>
+          {isLastChance
+            ? 'Scegliete bene — non ci saranno altre occasioni'
+            : 'Dopo che tutti hanno dato il loro indizio, passate al voto'}
         </p>
         <motion.button
           onClick={() => goTo('vote')}
