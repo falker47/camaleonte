@@ -66,9 +66,14 @@ export default function GuessScreen() {
       timedOut.current = false
       return
     }
-    // If Riccio strike is pending, go to strike screen
-    if (store.riccioStrikeActive && !gameOver) {
+    // If Riccio strike is pending, go to strike screen (even if last_two triggered — Riccio can invalidate it)
+    if (store.riccioStrikeActive) {
       store.goTo('riccio_strike')
+      return
+    }
+    // If Oracolo reveal is pending, go to reveal screen
+    if (store.oracoloRevealActive && !gameOver) {
+      store.goTo('oracolo_reveal')
       return
     }
     if (gameOver) {

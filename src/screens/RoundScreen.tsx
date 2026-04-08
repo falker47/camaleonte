@@ -1,15 +1,31 @@
 import { useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useGameStore } from '../store/gameStore'
+import type { Role } from '../store/types'
 import { AVATAR_COLORS } from '../constants/avatarColors'
 import { springTap } from '../constants/animations'
 import { getSurvivalThreshold } from '../utils/winCondition'
 import LastChanceOverlay from '../components/LastChanceOverlay'
+import talpaPng from '../assets/talpa.png'
+import camaleontePng from '../assets/camaleonte.png'
+
+const ROLE_BORDER_COLORS: Record<Role, string> = {
+  civile: 'border-indigo-400/40',
+  talpa: 'border-yellow-500/40',
+  camaleonte: 'border-teal-400/40',
+}
+
+const ROLE_AVATAR_BG: Record<Role, string> = {
+  civile: 'from-indigo-600 to-indigo-800',
+  talpa: 'from-yellow-600 to-yellow-800',
+  camaleonte: 'from-teal-600 to-teal-800',
+}
 
 export default function RoundScreen() {
   const players = useGameStore(s => s.players)
   const turno = useGameStore(s => s.turno)
   const goTo = useGameStore(s => s.goTo)
+  const oracoloRevealedIds = useGameStore(s => s.oracoloRevealedIds)
 
   const active = players.filter(p => !p.eliminated)
   const eliminated = players.filter(p => p.eliminated)
@@ -41,8 +57,8 @@ export default function RoundScreen() {
       )}
 
       {active.some(p => p.specialRole === 'riccio') && isLastChance && (
-        <div className="glass rounded-xl px-4 py-3 border border-orange-400/20">
-          <p className="text-orange-400 text-sm font-semibold">🦔 Il Riccio non potrà colpire in questo turno</p>
+        <div className="glass rounded-xl px-4 py-3 border border-yellow-400/20">
+          <p className="text-yellow-400 text-sm font-semibold">🦔 Il Riccio non potrà colpire in questo turno</p>
           <p className="text-slate-400 text-xs mt-1">La prossima eliminazione concluderà la partita.</p>
         </div>
       )}
@@ -85,18 +101,28 @@ export default function RoundScreen() {
         <div className="grid grid-cols-2 gap-2">
           {active.map((player) => {
             const originalIndex = players.indexOf(player)
+            const isRevealed = oracoloRevealedIds.includes(player.id)
             return (
               <div
                 key={player.id}
-                className="flex items-center gap-3 glass rounded-2xl px-4 py-3"
+                className={`flex items-center gap-3 glass rounded-2xl px-4 py-3 ${isRevealed ? ROLE_BORDER_COLORS[player.role] : ''}`}
               >
-                <div className={`w-8 h-8 rounded-full bg-gradient-to-br ${AVATAR_COLORS[originalIndex % AVATAR_COLORS.length]} flex items-center justify-center text-sm font-bold text-white shrink-0`}>
-                  {originalIndex + 1}
-                </div>
-                <span className="text-white font-medium">{player.name}</span>
-                {player.specialRole === 'mimo' && (
-                  <span className="text-slate-300 text-xs">🤫</span>
+                {isRevealed ? (
+                  <div className={`w-8 h-8 rounded-full bg-gradient-to-br ${ROLE_AVATAR_BG[player.role]} flex items-center justify-center shrink-0`}>
+                    {player.role === 'camaleonte' ? (
+                      <img src={camaleontePng} alt="" className="w-5 h-5" />
+                    ) : player.role === 'talpa' ? (
+                      <img src={talpaPng} alt="" className="w-5 h-5" />
+                    ) : (
+                      <span className="text-sm">😇</span>
+                    )}
+                  </div>
+                ) : (
+                  <div className={`w-8 h-8 rounded-full bg-gradient-to-br ${AVATAR_COLORS[originalIndex % AVATAR_COLORS.length]} flex items-center justify-center text-sm font-bold text-white shrink-0`}>
+                    {originalIndex + 1}
+                  </div>
                 )}
+                <span className="text-white font-medium">{player.name}</span>
               </div>
             )
           })}

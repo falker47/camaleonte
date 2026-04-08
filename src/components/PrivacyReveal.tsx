@@ -122,16 +122,6 @@ export default function PrivacyReveal({ playerName, word, role, specialRole, spe
                 <img src={camaleontePng} alt="Il Camaleonte" className="w-12 h-12" />
                 <p className={`text-2xl font-black ${textColor}`}>Sei Il Camaleonte</p>
                 <p className={`text-sm text-center ${textColor} opacity-80`}>Non hai nessuna parola. Bluffa!</p>
-                {specialRole === 'mimo' && (
-                  <div className="mt-2 flex flex-col items-center gap-1">
-                    <span className="inline-block rounded-full bg-slate-800/30 border border-slate-600/30 text-slate-200 text-sm font-bold px-4 py-1">
-                      🤫 Il Mimo
-                    </span>
-                    <p className={`text-xs text-center ${textColor} opacity-60`}>
-                      Devi mimare! No parole.
-                    </p>
-                  </div>
-                )}
                 {specialRole === 'spettro' && (
                   <div className="mt-2 flex flex-col items-center gap-1">
                     <span className="inline-block rounded-full bg-cyan-800/30 border border-cyan-600/30 text-cyan-200 text-sm font-bold px-4 py-1">
@@ -174,11 +164,21 @@ export default function PrivacyReveal({ playerName, word, role, specialRole, spe
                 )}
                 {specialRole === 'riccio' && (
                   <div className="mt-2 flex flex-col items-center gap-1">
-                    <span className="inline-block rounded-full bg-orange-800/30 border border-orange-600/30 text-orange-200 text-sm font-bold px-4 py-1">
+                    <span className="inline-block rounded-full bg-yellow-800/30 border border-yellow-600/30 text-yellow-200 text-sm font-bold px-4 py-1">
                       🦔 Il Riccio
                     </span>
                     <p className={`text-xs text-center ${textColor} opacity-60`}>
                       Se eliminato, trascini qualcuno con te.
+                    </p>
+                  </div>
+                )}
+                {specialRole === 'oracolo' && (
+                  <div className="mt-2 flex flex-col items-center gap-1">
+                    <span className="inline-block rounded-full bg-purple-800/30 border border-purple-600/30 text-purple-200 text-sm font-bold px-4 py-1">
+                      🔮 L'Oracolo
+                    </span>
+                    <p className={`text-xs text-center ${textColor} opacity-60`}>
+                      Se eliminato, sveli il ruolo di un giocatore.
                     </p>
                   </div>
                 )}
@@ -196,16 +196,6 @@ export default function PrivacyReveal({ playerName, word, role, specialRole, spe
                     </span>
                     <p className={`text-sm text-center ${textColor} opacity-60`}>
                       Se vieni eliminato al turno 1, guadagni +2 pt bonus!
-                    </p>
-                  </div>
-                )}
-                {specialRole === 'mimo' && (
-                  <div className="mt-3 flex flex-col items-center gap-1.5">
-                    <span className="inline-block rounded-full bg-slate-700/30 border border-slate-400/30 text-slate-200 text-sm font-bold px-4 py-1">
-                      🤫 Il Mimo
-                    </span>
-                    <p className={`text-sm text-center ${textColor} opacity-60`}>
-                      Devi mimare i tuoi indizi! No parole, no labiale, no lettere nell'aria.
                     </p>
                   </div>
                 )}
@@ -246,6 +236,26 @@ export default function PrivacyReveal({ playerName, word, role, specialRole, spe
                     </span>
                     <p className={`text-sm text-center ${textColor} opacity-60`}>
                       Il tuo destino è legato a Romeo. Se uno di voi viene eliminato, anche l'altro lo sarà.
+                    </p>
+                  </div>
+                )}
+                {specialRole === 'riccio' && (
+                  <div className="mt-3 flex flex-col items-center gap-1.5">
+                    <span className="inline-block rounded-full bg-yellow-500/20 border border-yellow-400/30 text-yellow-400 text-sm font-bold px-4 py-1">
+                      🦔 Il Riccio
+                    </span>
+                    <p className={`text-sm text-center ${textColor} opacity-60`}>
+                      Se vieni eliminato, potrai scegliere un giocatore da eliminare con te.
+                    </p>
+                  </div>
+                )}
+                {specialRole === 'oracolo' && (
+                  <div className="mt-3 flex flex-col items-center gap-1.5">
+                    <span className="inline-block rounded-full bg-purple-500/20 border border-purple-400/30 text-purple-400 text-sm font-bold px-4 py-1">
+                      🔮 L'Oracolo
+                    </span>
+                    <p className={`text-sm text-center ${textColor} opacity-60`}>
+                      Se vieni eliminato, potrai svelare il ruolo di un giocatore a tua scelta.
                     </p>
                   </div>
                 )}

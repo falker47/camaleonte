@@ -107,6 +107,8 @@ interface GameState {
   scores: Record<string, number>
   roundScores: Record<string, number>
   riccioStrikeActive: boolean
+  oracoloRevealActive: boolean
+  oracoloRevealedIds: string[]
   usedPairIndices: number[]
 
   goTo: (screen: Screen) => void
@@ -117,6 +119,7 @@ interface GameState {
   castVote: (votes: Record<string, number>) => void
   confirmElimination: () => void
   riccioStrike: (targetId: string) => void
+  oracoloReveal: (targetId: string) => void
   submitCamaleonteGuess: (guess: string) => void
   nextTurno: () => void
   invalidateRound: () => void
@@ -142,6 +145,8 @@ export const useGameStore = create<GameState>((set, get) => ({
   scores: {},
   roundScores: {},
   riccioStrikeActive: false,
+  oracoloRevealActive: false,
+  oracoloRevealedIds: [],
   usedPairIndices: [],
 
   goTo: (screen) => set({ screen }),
@@ -184,6 +189,8 @@ export const useGameStore = create<GameState>((set, get) => ({
       winner: null,
       roundScores: {},
       riccioStrikeActive: false,
+      oracoloRevealActive: false,
+      oracoloRevealedIds: [],
       screen: 'deal',
     })
   },
@@ -233,11 +240,17 @@ export const useGameStore = create<GameState>((set, get) => ({
       }
     }
 
-    // Check if Riccio ability should activate (before camaleonte guess which doesn't change eliminations)
+    // Check if Riccio ability should activate
+    // Riccio strikes even on 'last_two' — can invalidate impostor survival by eliminating one
+    // Only skips on 'civilians' (all impostors already gone, nothing to change)
     const isRiccio = eliminatedThisTurno.specialRole === 'riccio'
-    const riccioCanStrike = isRiccio && !checkWinCondition(updatedPlayers, players.length)
+    const riccioCanStrike = isRiccio && checkWinCondition(updatedPlayers, players.length) !== 'civilians'
 
-    set({ players: updatedPlayers, linkedEliminatedThisTurno: linkedPartner, riccioStrikeActive: riccioCanStrike })
+    // Check if Oracolo ability should activate
+    const isOracolo = eliminatedThisTurno.specialRole === 'oracolo'
+    const oracoloCanReveal = isOracolo && !checkWinCondition(updatedPlayers, players.length)
+
+    set({ players: updatedPlayers, linkedEliminatedThisTurno: linkedPartner, riccioStrikeActive: riccioCanStrike, oracoloRevealActive: oracoloCanReveal })
 
     // Voted camaleonte gets a guess first (riccio strike will happen after via GuessScreen)
     if (eliminatedThisTurno.role === 'camaleonte' && wordPair) {
@@ -254,6 +267,12 @@ export const useGameStore = create<GameState>((set, get) => ({
     // Riccio strikes before win check
     if (riccioCanStrike) {
       set({ screen: 'riccio_strike' })
+      return
+    }
+
+    // Oracolo reveals before win check
+    if (oracoloCanReveal) {
+      set({ screen: 'oracolo_reveal' })
       return
     }
 
@@ -313,37 +332,54 @@ export const useGameStore = create<GameState>((set, get) => ({
     }
   },
 
+  oracoloReveal: (targetId) => {
+    const { players, turno, scores, camaleonteCorrectIds, oracoloRevealedIds } = get()
+
+    set({ oracoloRevealActive: false, oracoloRevealedIds: [...oracoloRevealedIds, targetId] })
+
+    const win = checkWinCondition(players, players.length)
+    if (win) {
+      const correctSet = new Set(camaleonteCorrectIds)
+      const { scores: newScores, roundScores } = calcFinalScores(players, win, correctSet, scores)
+      set({ winner: win, scores: newScores, roundScores, screen: 'result', eliminatedThisTurno: null, linkedEliminatedThisTurno: null })
+    } else {
+      set({ screen: 'round', turno: turno + 1, currentVotes: {}, eliminatedThisTurno: null, linkedEliminatedThisTurno: null })
+    }
+  },
+
   submitCamaleonteGuess: (guess) => {
-    const { wordPair, players, scores, camaleonteCorrectIds, eliminatedThisTurno } = get()
+    const { wordPair, players, scores, camaleonteCorrectIds, eliminatedThisTurno, riccioStrikeActive } = get()
     if (!wordPair || !eliminatedThisTurno) return
 
     const isCorrect = isWordMatch(guess, wordPair.civilian)
 
     if (isCorrect) {
-      // Track this MW — points will be awarded by calcFinalScores at game end
       const camaleonteId = eliminatedThisTurno.id
       const newCorrectIds = [...camaleonteCorrectIds, camaleonteId]
 
-      // Check if game is over
-      const win = checkWinCondition(players, players.length)
-      if (win) {
-        const correctSet = new Set(newCorrectIds)
-        const { scores: finalScores, roundScores } = calcFinalScores(players, win, correctSet, scores)
-        set({ camaleonteGuessResult: 'correct', camaleonteCorrectIds: newCorrectIds, winner: win, scores: finalScores, roundScores })
-      } else {
-        set({ camaleonteGuessResult: 'correct', camaleonteCorrectIds: newCorrectIds })
+      // Defer scoring if Riccio strike is pending — final state not yet determined
+      if (!riccioStrikeActive) {
+        const win = checkWinCondition(players, players.length)
+        if (win) {
+          const correctSet = new Set(newCorrectIds)
+          const { scores: finalScores, roundScores } = calcFinalScores(players, win, correctSet, scores)
+          set({ camaleonteGuessResult: 'correct', camaleonteCorrectIds: newCorrectIds, winner: win, scores: finalScores, roundScores })
+          return
+        }
       }
-      // GuessScreen shows feedback, then handleContinue navigates
+      set({ camaleonteGuessResult: 'correct', camaleonteCorrectIds: newCorrectIds })
     } else {
-      const win = checkWinCondition(players, players.length)
-      if (win) {
-        const correctSet = new Set(camaleonteCorrectIds)
-        const { scores: newScores, roundScores } = calcFinalScores(players, win, correctSet, scores)
-        set({ camaleonteGuessResult: 'wrong', winner: win, scores: newScores, roundScores })
-      } else {
-        set({ camaleonteGuessResult: 'wrong' })
+      // Defer scoring if Riccio strike is pending
+      if (!riccioStrikeActive) {
+        const win = checkWinCondition(players, players.length)
+        if (win) {
+          const correctSet = new Set(camaleonteCorrectIds)
+          const { scores: newScores, roundScores } = calcFinalScores(players, win, correctSet, scores)
+          set({ camaleonteGuessResult: 'wrong', winner: win, scores: newScores, roundScores })
+          return
+        }
       }
-      // GuessScreen shows feedback, then handleContinue navigates
+      set({ camaleonteGuessResult: 'wrong' })
     }
   },
 
@@ -372,6 +408,8 @@ export const useGameStore = create<GameState>((set, get) => ({
       winner: null,
       roundScores: {},
       riccioStrikeActive: false,
+      oracoloRevealActive: false,
+      oracoloRevealedIds: [],
       scores: {},
       usedPairIndices: [],
     })

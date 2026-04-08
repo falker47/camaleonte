@@ -19,7 +19,7 @@ export default function RiccioStrikeScreen() {
     <div className="flex flex-col flex-1 min-h-0 px-5 py-6 gap-5 overflow-y-auto">
       <div className="flex flex-col items-center gap-2">
         <span className="text-5xl">🦔</span>
-        <h2 className="text-2xl font-black text-orange-400">Il Riccio colpisce!</h2>
+        <h2 className="text-2xl font-black text-yellow-400">Il Riccio colpisce!</h2>
         <p className="text-slate-400 text-sm text-center">
           {eliminatedThisTurno?.name} puo' trascinare qualcuno con se'
         </p>
@@ -32,11 +32,11 @@ export default function RiccioStrikeScreen() {
             <motion.button
               key={player.id}
               onClick={() => setSelectedId(player.id)}
-              className="flex items-center gap-3 glass rounded-2xl px-4 py-3 hover:bg-orange-500/10 transition-colors border border-transparent hover:border-orange-400/20"
+              className="flex items-center gap-3 glass rounded-2xl px-4 py-3 hover:bg-yellow-500/10 transition-colors border border-transparent hover:border-yellow-400/20"
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: i * 0.05 }}
               {...springTap}
+              transition={{ ...springTap.transition, delay: i * 0.05 }}
             >
               <div className={`w-8 h-8 rounded-full bg-gradient-to-br ${AVATAR_COLORS[originalIndex % AVATAR_COLORS.length]} flex items-center justify-center text-sm font-bold text-white shrink-0`}>
                 {originalIndex + 1}

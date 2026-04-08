@@ -35,7 +35,6 @@ export default function SetupScreen() {
   const [ctaValue, setCtaValue] = useState('')
   const [ctaError, setCtaError] = useState('')
   const [buffoneEnabled, setBuffoneEnabled] = useState(false)
-  const [mimoEnabled, setMimoEnabled] = useState(false)
   const [spettroEnabled, setSpettroEnabled] = useState(false)
   const [duellantiEnabled, setDuellantiEnabled] = useState(false)
   const [romeoGiuliettaEnabled, setRomeoGiuliettaEnabled] = useState(false)
@@ -97,14 +96,13 @@ export default function SetupScreen() {
   const specialRoleSlotsUsed = useMemo(() => {
     let slots = 0
     if (buffoneEnabled && validNames.length >= 5) slots += 1
-    if (mimoEnabled) slots += 1
     if (spettroEnabled) slots += 1
     if (duellantiEnabled && validNames.length >= 4) slots += 2
     if (romeoGiuliettaEnabled && validNames.length >= 5) slots += 2
     if (riccioEnabled && validNames.length >= 5) slots += 1
     if (oracoloEnabled && validNames.length >= 4) slots += 1
     return slots
-  }, [buffoneEnabled, mimoEnabled, spettroEnabled, duellantiEnabled, romeoGiuliettaEnabled, riccioEnabled, oracoloEnabled, validNames.length])
+  }, [buffoneEnabled, spettroEnabled, duellantiEnabled, romeoGiuliettaEnabled, riccioEnabled, oracoloEnabled, validNames.length])
 
   const slotsRemaining = validNames.length - specialRoleSlotsUsed
 
@@ -118,7 +116,6 @@ export default function SetupScreen() {
       { enabled: romeoGiuliettaEnabled, cost: 2, disable: () => setRomeoGiuliettaEnabled(false) },
       { enabled: duellantiEnabled, cost: 2, disable: () => setDuellantiEnabled(false) },
       { enabled: spettroEnabled, cost: 1, disable: () => setSpettroEnabled(false) },
-      { enabled: mimoEnabled, cost: 1, disable: () => setMimoEnabled(false) },
       { enabled: buffoneEnabled, cost: 1, disable: () => setBuffoneEnabled(false) },
     ]
     let excess = specialRoleSlotsUsed - validNames.length
@@ -233,7 +230,7 @@ export default function SetupScreen() {
   const handleStart = () => {
     const filtered = names.filter(n => n.trim().length > 0)
     setPlayerNames(filtered)
-    setConfig({ camaleonteCount, talpaCount, specialRoles: { buffone: buffoneEnabled && filtered.length >= 5, mimo: mimoEnabled, spettro: spettroEnabled, duellanti: duellantiEnabled, romeoGiulietta: romeoGiuliettaEnabled && filtered.length >= 5, riccio: riccioEnabled && filtered.length >= 5, oracolo: oracoloEnabled && filtered.length >= 4 } })
+    setConfig({ camaleonteCount, talpaCount, specialRoles: { buffone: buffoneEnabled && filtered.length >= 5, spettro: spettroEnabled, duellanti: duellantiEnabled, romeoGiulietta: romeoGiuliettaEnabled && filtered.length >= 5, riccio: riccioEnabled && filtered.length >= 5, oracolo: oracoloEnabled && filtered.length >= 4 } })
     startGame()
   }
 
@@ -415,7 +412,7 @@ export default function SetupScreen() {
               <div className="text-left">
                 <p className="text-white text-sm font-semibold">Ruoli Speciali</p>
                 {(() => {
-                  const active = [buffoneEnabled && validNames.length >= 5, mimoEnabled, spettroEnabled, duellantiEnabled, romeoGiuliettaEnabled && validNames.length >= 5, riccioEnabled && validNames.length >= 5, oracoloEnabled && validNames.length >= 4].filter(Boolean).length
+                  const active = [buffoneEnabled && validNames.length >= 5, spettroEnabled, duellantiEnabled, romeoGiuliettaEnabled && validNames.length >= 5, riccioEnabled && validNames.length >= 5, oracoloEnabled && validNames.length >= 4].filter(Boolean).length
                   return active > 0
                     ? <p className="text-teal-400 text-xs">{active} attiv{active === 1 ? 'o' : 'i'}</p>
                     : <p className="text-slate-500 text-xs">Nessuno attivo</p>
@@ -424,16 +421,11 @@ export default function SetupScreen() {
             </div>
             <span className="text-slate-500 text-sm">›</span>
           </motion.button>
-          {(buffoneEnabled && validNames.length >= 5 || mimoEnabled || spettroEnabled || duellantiEnabled || romeoGiuliettaEnabled && validNames.length >= 5 || riccioEnabled && validNames.length >= 5 || oracoloEnabled && validNames.length >= 4) && (
+          {(buffoneEnabled && validNames.length >= 5 || spettroEnabled || duellantiEnabled || romeoGiuliettaEnabled && validNames.length >= 5 || riccioEnabled && validNames.length >= 5 || oracoloEnabled && validNames.length >= 4) && (
             <div className="flex flex-wrap gap-1.5 px-4 pb-3">
               {buffoneEnabled && validNames.length >= 5 && (
                 <span className="inline-block rounded-full bg-red-500/20 border border-red-400/30 text-red-400 text-xs font-bold px-2.5 py-0.5">
                   🃏 Buffone
-                </span>
-              )}
-              {mimoEnabled && (
-                <span className="inline-block rounded-full bg-slate-500/20 border border-slate-400/30 text-slate-200 text-xs font-bold px-2.5 py-0.5">
-                  🤫 Mimo
                 </span>
               )}
               {spettroEnabled && (
@@ -497,20 +489,6 @@ export default function SetupScreen() {
                 toggleColor: 'bg-red-500',
                 enabled: buffoneEnabled,
                 minPlayers: 5,
-                slotCost: 1,
-              },
-              {
-                id: 'mimo',
-                label: 'Il Mimo',
-                emoji: '🤫',
-                description: 'Un giocatore deve mimare gli indizi anziché parlare.',
-                bgBase: 'bg-slate-500/10',
-                bgActive: 'bg-slate-500/25',
-                borderBase: 'border-slate-400/20',
-                borderActive: 'border-slate-400/50',
-                toggleColor: 'bg-slate-400',
-                enabled: mimoEnabled,
-                minPlayers: 3,
                 slotCost: 1,
               },
               {
@@ -588,7 +566,6 @@ export default function SetupScreen() {
             slotsRemaining={slotsRemaining}
             onToggle={(id) => {
               if (id === 'buffone') setBuffoneEnabled(v => !v)
-              if (id === 'mimo') setMimoEnabled(v => !v)
               if (id === 'spettro') setSpettroEnabled(v => !v)
               if (id === 'duellanti') setDuellantiEnabled(v => !v)
               if (id === 'romeoGiulietta') setRomeoGiuliettaEnabled(v => !v)

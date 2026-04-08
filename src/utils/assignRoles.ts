@@ -39,16 +39,6 @@ export function assignRoles(
     }
   }
 
-  if (config.specialRoles?.mimo) {
-    const eligible = result
-      .map((p, i) => ({ p, i }))
-      .filter(({ p }) => !p.specialRole)
-    if (eligible.length > 0) {
-      const chosen = shuffle(eligible)[0]
-      result[chosen.i] = { ...result[chosen.i], specialRole: 'mimo' }
-    }
-  }
-
   if (config.specialRoles?.spettro) {
     const eligible = result
       .map((p, i) => ({ p, i }))
@@ -81,13 +71,23 @@ export function assignRoles(
     }
   }
 
-  if (config.specialRoles?.riccio) {
+  if (config.specialRoles?.riccio && names.length >= 5) {
     const eligible = result
       .map((p, i) => ({ p, i }))
       .filter(({ p }) => !p.specialRole)
     if (eligible.length > 0) {
       const chosen = shuffle(eligible)[0]
       result[chosen.i] = { ...result[chosen.i], specialRole: 'riccio' }
+    }
+  }
+
+  if (config.specialRoles?.oracolo && names.length >= 4) {
+    const eligible = result
+      .map((p, i) => ({ p, i }))
+      .filter(({ p }) => !p.specialRole)
+    if (eligible.length > 0) {
+      const chosen = shuffle(eligible)[0]
+      result[chosen.i] = { ...result[chosen.i], specialRole: 'oracolo' }
     }
   }
 

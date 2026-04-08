@@ -272,11 +272,11 @@ export default function ResultScreen() {
                         >
                           {player.eliminated && <span className="text-slate-500 text-xs">✕</span>}
                           {player.specialRole === 'buffone' && <span className="text-red-400 text-xs">🃏</span>}
-                          {player.specialRole === 'mimo' && <span className="text-slate-300 text-xs">🤫</span>}
                           {player.specialRole === 'spettro' && <span className="text-cyan-400 text-xs">🎐</span>}
                           {player.specialRole === 'duellante' && <span className="text-blue-400 text-xs">⚔️</span>}
                           {(player.specialRole === 'romeo' || player.specialRole === 'giulietta') && <span className="text-pink-400 text-xs">💕</span>}
-                          {player.specialRole === 'riccio' && <span className="text-orange-400 text-xs">🦔</span>}
+                          {player.specialRole === 'riccio' && <span className="text-yellow-400 text-xs">🦔</span>}
+                          {player.specialRole === 'oracolo' && <span className="text-purple-400 text-xs">🔮</span>}
                           <span className={`font-medium text-sm ${player.eliminated ? 'line-through text-slate-500' : 'text-white'}`}>
                             {player.name}
                           </span>
@@ -454,8 +454,14 @@ export default function ResultScreen() {
                 )}
                 {players.some(p => p.specialRole === 'riccio') && (
                   <div>
-                    <div className="text-orange-400 font-semibold">Il Riccio — colpo finale</div>
+                    <div className="text-yellow-400 font-semibold">Il Riccio — colpo finale</div>
                     <div className="text-slate-500 mt-0.5">Se eliminato, sceglie un giocatore da trascinare con sé.</div>
+                  </div>
+                )}
+                {players.some(p => p.specialRole === 'oracolo') && (
+                  <div>
+                    <div className="text-purple-400 font-semibold">L'Oracolo — rivelazione</div>
+                    <div className="text-slate-500 mt-0.5">Se eliminato, svela il ruolo di un giocatore a sua scelta.</div>
                   </div>
                 )}
               </div>

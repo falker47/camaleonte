@@ -28,6 +28,7 @@ export default function EliminationScreen() {
   const isBuffoneBonus = eliminatedThisTurno.specialRole === 'buffone' && turno === 1
   const isSpettro = eliminatedThisTurno.specialRole === 'spettro'
   const isRiccio = eliminatedThisTurno.specialRole === 'riccio'
+  const isOracolo = eliminatedThisTurno.specialRole === 'oracolo'
   const isRomeoGiulietta = eliminatedThisTurno.specialRole === 'romeo' || eliminatedThisTurno.specialRole === 'giulietta'
   const linkedPartner = isRomeoGiulietta
     ? players.find(p => (p.specialRole === 'romeo' || p.specialRole === 'giulietta') && p.id !== eliminatedThisTurno.id && !p.eliminated)
@@ -43,7 +44,7 @@ export default function EliminationScreen() {
       {/* Background flash */}
       <motion.div
         className="absolute inset-0 pointer-events-none z-0"
-        style={{ backgroundColor: isBuffoneBonus ? 'rgba(239,68,68,0.2)' : isRiccio ? 'rgba(249,115,22,0.15)' : ROLE_FLASH_COLORS[role] }}
+        style={{ backgroundColor: isBuffoneBonus ? 'rgba(239,68,68,0.2)' : isRiccio ? 'rgba(234,179,8,0.15)' : isOracolo ? 'rgba(168,85,247,0.15)' : ROLE_FLASH_COLORS[role] }}
         initial={{ opacity: 0 }}
         animate={{ opacity: [0, 1, 0] }}
         transition={{ duration: 0.6 }}
@@ -56,7 +57,7 @@ export default function EliminationScreen() {
           animate={{ scale: 1 }}
           transition={{ type: 'spring', stiffness: 300, damping: 15 }}
         >
-          {isCamaleonte ? <img src={camaleontePng} alt="Il Camaleonte" className="w-12 h-12" /> : role === 'talpa' ? <img src={talpaPng} alt="La Talpa" className="w-12 h-12" /> : isBuffoneBonus ? '🃏' : isSpettro ? '🎐' : isRiccio ? '🦔' : '😇'}
+          {isCamaleonte ? <img src={camaleontePng} alt="Il Camaleonte" className="w-12 h-12" /> : role === 'talpa' ? <img src={talpaPng} alt="La Talpa" className="w-12 h-12" /> : isBuffoneBonus ? '🃏' : isSpettro ? '🎐' : isRiccio ? '🦔' : isOracolo ? '🔮' : '😇'}
         </motion.div>
         <p className="text-slate-400 text-sm uppercase tracking-widest">Eliminato</p>
         <motion.h2
@@ -85,8 +86,13 @@ export default function EliminationScreen() {
             </span>
           )}
           {isRiccio && (
-            <span className="inline-block rounded-full bg-orange-500/20 border border-orange-400/30 text-orange-400 text-sm font-bold px-3 py-1">
+            <span className="inline-block rounded-full bg-yellow-500/20 border border-yellow-400/30 text-yellow-400 text-sm font-bold px-3 py-1">
               🦔 Riccio
+            </span>
+          )}
+          {isOracolo && (
+            <span className="inline-block rounded-full bg-purple-500/20 border border-purple-400/30 text-purple-400 text-sm font-bold px-3 py-1">
+              🔮 Oracolo
             </span>
           )}
         </motion.div>
@@ -179,14 +185,29 @@ export default function EliminationScreen() {
       {isRiccio && (
         <motion.div
           className="glass rounded-2xl px-6 py-5 text-center max-w-xs relative z-10"
-          style={{ borderColor: 'rgba(249, 115, 22, 0.3)' }}
+          style={{ borderColor: 'rgba(234, 179, 8, 0.3)' }}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
         >
-          <p className="text-orange-400 font-bold text-lg">Il Riccio colpisce!</p>
+          <p className="text-yellow-400 font-bold text-lg">Il Riccio colpisce!</p>
           <p className="text-slate-300 text-sm mt-2">
-            Potrà scegliere un giocatore da <span className="text-orange-400 font-bold">eliminare</span> con sé.
+            Potrà scegliere un giocatore da <span className="text-yellow-400 font-bold">eliminare</span> con sé.
+          </p>
+        </motion.div>
+      )}
+
+      {isOracolo && (
+        <motion.div
+          className="glass rounded-2xl px-6 py-5 text-center max-w-xs relative z-10"
+          style={{ borderColor: 'rgba(168, 85, 247, 0.3)' }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+        >
+          <p className="text-purple-400 font-bold text-lg">L'Oracolo rivela!</p>
+          <p className="text-slate-300 text-sm mt-2">
+            Potrà svelare il <span className="text-purple-400 font-bold">ruolo</span> di un giocatore a sua scelta.
           </p>
         </motion.div>
       )}

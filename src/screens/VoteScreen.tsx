@@ -12,6 +12,8 @@ export default function VoteScreen() {
   const castVote = useGameStore(s => s.castVote)
   const goTo = useGameStore(s => s.goTo)
 
+  const oracoloRevealedIds = useGameStore(s => s.oracoloRevealedIds)
+
   const active = players.filter(p => !p.eliminated)
   const eliminatedSpettro = players.find(p => p.eliminated && p.specialRole === 'spettro')
   const voterCount = active.length + (eliminatedSpettro ? 1 : 0)
@@ -209,6 +211,7 @@ export default function VoteScreen() {
           voterCount={voterCount}
           onVote={handleVote}
           disabled={votersLeft <= 0}
+          revealedIds={oracoloRevealedIds}
         />
 
         {/* Confirm button */}
