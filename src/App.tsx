@@ -96,7 +96,7 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { error: string |
 }
 
 const IN_GAME_SCREENS: Set<Screen> = new Set(['deal', 'round', 'vote', 'elimination', 'camaleonte_guess'])
-const INVALIDATE_SCREENS: Set<Screen> = new Set(['round', 'vote', 'elimination', 'camaleonte_guess'])
+const INVALIDATE_SCREENS: Set<Screen> = new Set(['deal', 'round', 'vote', 'elimination', 'camaleonte_guess'])
 
 function QuitButton({ onRequestQuit }: { onRequestQuit: () => void }) {
   const screen = useGameStore(s => s.screen)
