@@ -2,12 +2,13 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 const STEPS = [
-  { emoji: '🎭', title: 'I tre ruoli', text: 'Ogni partita ha Civili, Talpe e Camaleonti. I Civili ricevono una parola, le Talpe una simile ma diversa, e il Camaleonte non riceve nulla!' },
-  { emoji: '🔤', title: 'Le parole', text: 'Civili e Talpe ricevono parole della stessa categoria (es. Pizza e Focaccia), ma non sanno quale delle due hanno. Il Camaleonte deve bluffare senza parola.' },
+  { emoji: '🎭', title: 'I tre ruoli', text: 'Ogni partita ha Civili, Talpa e Camaleonte. I Civili ricevono una parola, la Talpa una simile ma diversa, e il Camaleonte non riceve nulla!' },
+  { emoji: '🔤', title: 'Le parole', text: 'Civili e Talpa ricevono parole della stessa categoria (es. Pizza e Focaccia), ma non sanno quale delle due hanno. Il Camaleonte deve bluffare senza parola.' },
   { emoji: '💬', title: 'Dai un indizio', text: 'A turno, ognuno dice una parola o frase breve per descrivere la propria parola. Attenti a non rivelare troppo... e a non tradirvi!' },
   { emoji: '🗳️', title: 'Votate', text: 'Dopo il giro di indizi, votate chi eliminare. In caso di parità si rivota o si procede con eliminazione casuale.' },
   { emoji: '🎯', title: 'Obiettivi', text: 'I Civili devono eliminare tutti gli impostori. La Talpa e il Camaleonte vincono se sopravvivono abbastanza a lungo \u2014 più siete, più turni dovranno resistere!' },
   { emoji: '🦎', title: 'L\'ultima chance', text: 'Se il Camaleonte viene eliminato, può tentare di indovinare la parola dei Civili. Se ci riesce, vince comunque!' },
+  { emoji: '⭐', title: 'Ruoli Speciali', text: 'Nel setup puoi attivare ruoli speciali pensati per giocatori già rodati che vogliono aggiungere un tocco di pepe in più alle loro partite!' },
   { emoji: '🏆', title: 'Punteggi', text: 'Civili: 2\u00A0pt se eliminano tutti gli impostori. Il Camaleonte guadagna di più sopravvivendo in partite lunghe, di più indovinando in quelle brevi. La Talpa prende punti parziali per ogni civile eliminato. Dettagli nella schermata risultati!' },
 ]
 
