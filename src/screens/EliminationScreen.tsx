@@ -15,6 +15,7 @@ export default function EliminationScreen() {
   const eliminatedThisTurno = useGameStore(s => s.eliminatedThisTurno)
   const confirmElimination = useGameStore(s => s.confirmElimination)
   const players = useGameStore(s => s.players)
+  const turno = useGameStore(s => s.turno)
 
   const processing = useRef(false)
 
@@ -22,6 +23,7 @@ export default function EliminationScreen() {
 
   const { name, role } = eliminatedThisTurno
   const isMrWhite = role === 'mrwhite'
+  const isBuffoneBonus = eliminatedThisTurno.specialRole === 'buffone' && turno === 1
 
   // Count remaining impostors (excluding the one being eliminated right now)
   const remainingMrWhite = players.filter(p => !p.eliminated && p.role === 'mrwhite' && p.id !== eliminatedThisTurno.id).length
@@ -33,7 +35,7 @@ export default function EliminationScreen() {
       {/* Background flash */}
       <motion.div
         className="absolute inset-0 pointer-events-none z-0"
-        style={{ backgroundColor: ROLE_FLASH_COLORS[role] }}
+        style={{ backgroundColor: isBuffoneBonus ? 'rgba(239,68,68,0.2)' : ROLE_FLASH_COLORS[role] }}
         initial={{ opacity: 0 }}
         animate={{ opacity: [0, 1, 0] }}
         transition={{ duration: 0.6 }}
@@ -46,7 +48,7 @@ export default function EliminationScreen() {
           animate={{ scale: 1 }}
           transition={{ type: 'spring', stiffness: 300, damping: 15 }}
         >
-          {isMrWhite ? '🕵️' : role === 'infiltrato' ? '🎭' : '😇'}
+          {isMrWhite ? '🕵️' : role === 'infiltrato' ? '🎭' : isBuffoneBonus ? '🃏' : '😇'}
         </motion.div>
         <p className="text-slate-400 text-sm uppercase tracking-widest">Eliminato</p>
         <motion.h2
@@ -61,8 +63,14 @@ export default function EliminationScreen() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
+          className="flex items-center gap-2"
         >
           <RoleTag role={role} size="lg" />
+          {isBuffoneBonus && (
+            <span className="inline-block rounded-full bg-red-500/20 border border-red-400/30 text-red-400 text-sm font-bold px-3 py-1">
+              🃏 Buffone
+            </span>
+          )}
         </motion.div>
       </div>
 
@@ -105,7 +113,23 @@ export default function EliminationScreen() {
         </motion.div>
       )}
 
-      {role === 'civile' && (
+      {role === 'civile' && isBuffoneBonus && (
+        <motion.div
+          className="glass rounded-2xl px-6 py-5 text-center max-w-xs relative z-10"
+          style={{ borderColor: 'rgba(239, 68, 68, 0.3)' }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+        >
+          <p className="text-red-400 font-bold text-lg">Il Buffone ride!</p>
+          <p className="text-slate-300 text-sm mt-2">
+            Eliminato al primo turno — guadagna <span className="text-red-400 font-bold">+2 punti bonus</span>!
+          </p>
+          <p className="text-slate-500 text-xs mt-2">Era proprio quello che voleva...</p>
+        </motion.div>
+      )}
+
+      {role === 'civile' && !isBuffoneBonus && (
         <motion.div
           className="glass rounded-2xl px-6 py-4 text-center max-w-xs relative z-10"
           style={{ borderColor: 'rgba(244, 63, 94, 0.2)' }}

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import type { Role } from '../store/types'
+import type { Role, SpecialRole } from '../store/types'
 import Particles from './Particles'
 import { vibrate } from '../utils/vibrate'
 import { springTap } from '../constants/animations'
@@ -9,6 +9,7 @@ interface Props {
   playerName: string
   word: string | null
   role: Role
+  specialRole?: SpecialRole
   onDone: () => void
   isLast?: boolean
 }
@@ -28,7 +29,7 @@ const ROLE_TEXT_COLORS: Record<Role, string> = {
   mrwhite: 'text-black',
 }
 
-export default function PrivacyReveal({ playerName, word, role, onDone, isLast }: Props) {
+export default function PrivacyReveal({ playerName, word, role, specialRole, onDone, isLast }: Props) {
   const [phase, setPhase] = useState<Phase>('waiting')
   const [showHide, setShowHide] = useState(false)
   const [showParticles, setShowParticles] = useState(false)
@@ -119,6 +120,16 @@ export default function PrivacyReveal({ playerName, word, role, onDone, isLast }
                 <div className={`text-4xl font-black ${textColor}`}>🕵️</div>
                 <p className={`text-2xl font-black ${textColor}`}>Sei Mr. White</p>
                 <p className={`text-sm text-center ${textColor} opacity-80`}>Non hai nessuna parola. Bluffa!</p>
+                {specialRole === 'mimo' && (
+                  <div className="mt-2 flex flex-col items-center gap-1">
+                    <span className="inline-block rounded-full bg-slate-800/30 border border-slate-600/30 text-slate-700 text-sm font-bold px-4 py-1">
+                      🤫 Il Mimo
+                    </span>
+                    <p className={`text-xs text-center ${textColor} opacity-60`}>
+                      Devi mimare! No parole.
+                    </p>
+                  </div>
+                )}
               </>
             ) : (
               <>
@@ -126,6 +137,26 @@ export default function PrivacyReveal({ playerName, word, role, onDone, isLast }
                   La tua parola
                 </p>
                 <p className={`text-3xl font-black text-center ${textColor}`}>{word}</p>
+                {specialRole === 'buffone' && (
+                  <div className="mt-3 flex flex-col items-center gap-1.5">
+                    <span className="inline-block rounded-full bg-red-500/20 border border-red-400/30 text-red-400 text-sm font-bold px-4 py-1">
+                      🃏 Il Buffone
+                    </span>
+                    <p className={`text-sm text-center ${textColor} opacity-60`}>
+                      Se vieni eliminato al turno 1, guadagni +2 pt bonus!
+                    </p>
+                  </div>
+                )}
+                {specialRole === 'mimo' && (
+                  <div className="mt-3 flex flex-col items-center gap-1.5">
+                    <span className="inline-block rounded-full bg-slate-700/30 border border-slate-400/30 text-slate-200 text-sm font-bold px-4 py-1">
+                      🤫 Il Mimo
+                    </span>
+                    <p className={`text-sm text-center ${textColor} opacity-60`}>
+                      Devi mimare i tuoi indizi! No parole, no labiale, no lettere nell'aria.
+                    </p>
+                  </div>
+                )}
               </>
             )}
           </div>

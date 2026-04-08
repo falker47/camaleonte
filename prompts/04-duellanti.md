@@ -7,80 +7,161 @@ Undercover e' un party game di deduzione. I giocatori ricevono una parola segret
 - **Infiltrato**: riceve una parola diversa (non sa di essere infiltrato), vuole sopravvivere
 - **Mr. White**: non ha parola, deve bluffare, puo' tentare di indovinare la parola se eliminato
 
-Ogni turno: tutti danno un indizio -> si vota -> il piu' votato viene eliminato -> si controlla la win condition.
-
-**Punteggio attuale:**
-- Civili vincono: civili +2 pts ciascuno (0 se MW indovina)
+**Punteggio attuale** (`src/store/gameStore.ts` -> `calcFinalScores`):
+- Civili vincono: +2 pts ciascuno (0 se MW indovina)
 - MW indovina: +3/4 pts | MW sopravvive: +3/5 pts
-- Infiltrato sopravvive: +3/5 pts | Infiltrato eliminato: +1 pt per civile eliminato (max 3)
+- Infiltrato sopravvive: +3/5 pts | eliminato: +1 pt per civile eliminato (max 3)
+- Buffone eliminato al T1: +2 pts bonus (sempre)
 
-Il gioco supporta ruoli speciali facoltativi. Il tipo `SpecialRole` e il campo `specialRole?: SpecialRole` sul `Player` esistono gia'. Anche `specialRoles` in `GameConfig` esiste gia'.
+## Infrastruttura esistente
+
+**Tipi** (`src/store/types.ts`):
+- `SpecialRole` e' un union type (contiene ruoli gia' implementati)
+- `Player` ha `specialRole?: SpecialRole`
+- `GameConfig.specialRoles` ha campi boolean opzionali per ogni ruolo
+
+**Assegnazione** (`src/utils/assignRoles.ts`):
+- Pattern: `eligible = result.filter(p => !p.specialRole)` -> shuffle -> pick
+
+**SetupScreen** (`src/screens/SetupScreen.tsx`):
+- Stato locale per ogni ruolo (es. `buffoneEnabled`)
+- `SpecialRolesOverlay` riceve array `roles: SpecialRoleConfig[]` con config visiva
+- Badge attivi sotto il bottone "Ruoli Speciali"
+- `handleStart` passa tutti i flag in `specialRoles: { ... }`
+
+**PrivacyReveal** (`src/components/PrivacyReveal.tsx`):
+- Riceve `specialRole?: SpecialRole`
+- Badge + spiegazione sotto la parola (civile/infiltrato) o sotto "Bluffa!" (MW)
+
+**ResultScreen** (`src/screens/ResultScreen.tsx`):
+- Emoji del ruolo speciale nei player chips
+- Badge bonus se attivato
+- Legenda punti collassabile
 
 ## Il ruolo: I Duellanti
 
 ### Specifica
-- **Assegnazione**: Due giocatori qualsiasi (possono essere civili, infiltrati, MW, qualsiasi combinazione)
-- **Minimo giocatori**: nessun vincolo aggiuntivo
-- **Meccanica**: I due duellanti sono nemici. **Entrambi sanno chi e' il proprio nemico** (vedono il nome sulla carta), ma NON sanno il ruolo dell'altro. Il primo dei due a essere eliminato perde **2 punti** e li da' al nemico sopravvissuto
-- **Punti**: Trasferimento di 2 punti a fine partita. **Punteggi negativi CONSENTITI** (il giocatore puo' andare sotto zero)
-- **Se entrambi eliminati nello stesso turno** (es. via Romeo & Giulietta): nessun trasferimento, il duello finisce in pareggio
-- **Il trasferimento si applica a fine partita**, sommato ai punti normali del round
+- **Assegnazione**: Qualsiasi due giocatori (entrambi conoscono chi e' il nemico)
+- **Minimo giocatori**: 3 (nessun vincolo aggiuntivo)
+- **Meccanica**: Il primo dei due a essere eliminato perde **2 punti** e li da' al nemico
+- **Punti**: Trasferimento di 2 punti. **Punteggi negativi CONSENTITI**
+- **Se entrambi eliminati stesso turno**: nessun trasferimento (pareggio)
+- **REGOLA FONDAMENTALE**: I ruoli speciali NON sono cumulabili
 
 ### Cosa modificare
 
 #### 1. `src/store/types.ts`
 - Aggiungi `'duellante'` al tipo `SpecialRole`
 - Aggiungi `duellanti?: boolean` a `specialRoles` in `GameConfig`
+- Aggiungi campo opzionale `duelOpponentId?: string` all'interfaccia `Player` (per sapere chi e' il nemico)
 
 #### 2. `src/utils/assignRoles.ts`
-- Dopo l'assegnazione dei ruoli base, se `config.specialRoles?.duellanti` e' attivo:
-  - Scegli due giocatori a caso (preferibilmente senza altri ruoli speciali, ma se non possibile va bene sovrascrivere)
-  - Assegna `specialRole: 'duellante'` a entrambi
-  - Per far sapere a ciascun duellante chi e' il nemico, salva l'id del nemico nel Player. Aggiungi un campo opzionale `duelOpponentId?: string` all'interfaccia `Player`
+- Aggiungi un nuovo blocco DOPO i ruoli precedenti:
+  ```
+  if (config.specialRoles?.duellanti) {
+    const eligible = result.map((p, i) => ({ p, i })).filter(({ p }) => !p.specialRole)
+    if (eligible.length >= 2) {
+      const chosen = shuffle(eligible).slice(0, 2)
+      result[chosen[0].i] = { ...result[chosen[0].i], specialRole: 'duellante', duelOpponentId: result[chosen[1].i].id }
+      result[chosen[1].i] = { ...result[chosen[1].i], specialRole: 'duellante', duelOpponentId: result[chosen[0].i].id }
+    }
+  }
+  ```
 
 #### 3. `src/store/gameStore.ts` - funzione `calcFinalScores`
-- Dopo il calcolo dei punti normali, cerca i duellanti:
-  1. Trova i due giocatori con `specialRole === 'duellante'`
-  2. Se uno e' eliminato e l'altro no: il primo perde 2 pts, il secondo guadagna +2 pts
-  3. Se entrambi eliminati: confronta `eliminatedInTurno` - chi e' stato eliminato PRIMA perde 2 pts e l'altro guadagna +2
-  4. Se entrambi eliminati nello stesso turno (`eliminatedInTurno` uguale): nessun trasferimento
-  5. Se entrambi vivi a fine partita: nessun trasferimento (il duello non si e' risolto)
-  6. I punti negativi sono consentiti: se un giocatore ha 0 pts e perde 2, va a -2
+- Dopo il calcolo dei punti normali e il bonus Buffone, gestisci i Duellanti:
+  ```
+  // Duellanti: trasferimento punti
+  const duellanti = players.filter(p => p.specialRole === 'duellante')
+  if (duellanti.length === 2) {
+    const [a, b] = duellanti
+    let loser: Player | null = null
+    let winnerId: string | null = null
+    
+    if (a.eliminated && !b.eliminated) {
+      loser = a; winnerId = b.id
+    } else if (b.eliminated && !a.eliminated) {
+      loser = b; winnerId = a.id
+    } else if (a.eliminated && b.eliminated && a.eliminatedInTurno !== b.eliminatedInTurno) {
+      // Entrambi eliminati in turni diversi: chi e' stato eliminato prima perde
+      loser = (a.eliminatedInTurno! < b.eliminatedInTurno!) ? a : b
+      winnerId = loser === a ? b.id : a.id
+    }
+    // Se entrambi vivi o eliminati nello stesso turno: nessun trasferimento
+    
+    if (loser && winnerId) {
+      roundScores[loser.name] = (roundScores[loser.name] ?? 0) - 2
+      scores[loser.name] = (scores[loser.name] ?? 0) - 2
+      const winnerName = players.find(p => p.id === winnerId)!.name
+      roundScores[winnerName] = (roundScores[winnerName] ?? 0) + 2
+      scores[winnerName] = (scores[winnerName] ?? 0) + 2
+    }
+  }
+  ```
 
 #### 4. `src/screens/SetupScreen.tsx`
-- Aggiungi un toggle per "I Duellanti" nella sezione "Ruoli Speciali"
-- Descrizione: "Due nemici: il primo eliminato perde 2 punti e li da' all'altro"
-- Passa il valore al `config`
+- Aggiungi stato: `const [duellantiEnabled, setDuellantiEnabled] = useState(false)`
+- Aggiungi all'array `roles` dell'overlay:
+  ```
+  {
+    id: 'duellanti',
+    label: 'I Duellanti',
+    emoji: '⚔️',
+    description: 'Due nemici: il primo eliminato perde 2 punti e li da\' all\'altro.',
+    bgBase: 'bg-amber-800/10',
+    bgActive: 'bg-amber-800/25',
+    borderBase: 'border-amber-700/20',
+    borderActive: 'border-amber-700/50',
+    toggleColor: 'bg-amber-700',
+    enabled: duellantiEnabled,
+    minPlayers: 3,
+  }
+  ```
+- `onToggle`: `if (id === 'duellanti') setDuellantiEnabled(v => !v)`
+- Badge: `bg-amber-800/20 border-amber-700/30 text-amber-600` con emoji ⚔️
+- In `handleStart`: `duellanti: duellantiEnabled` in `specialRoles`
+- Aggiorna conteggio ruoli attivi
 
-#### 5. `src/screens/DealScreen.tsx` / `src/components/PrivacyReveal.tsx`
-- Se il giocatore ha `specialRole === 'duellante'`, mostra sulla carta:
-  - "Sei un Duellante! Il tuo nemico e': **[nome nemico]**"
-  - "Se vieni eliminato prima del tuo nemico, perdi 2 punti e li dai a lui!"
-  - Trova il nome del nemico usando `duelOpponentId` e la lista `players`
+#### 5. `src/components/PrivacyReveal.tsx`
+- Per i Duellanti, serve mostrare il nome del nemico. Il componente riceve gia' `specialRole` ma non ha accesso alla lista giocatori. Aggiungi una prop opzionale `specialRoleExtra?: string` per passare info aggiuntive (come il nome del nemico)
+- In `DealScreen.tsx`, calcola il nome del nemico e passalo:
+  ```
+  const duelOpponentName = current.specialRole === 'duellante' && current.duelOpponentId
+    ? players.find(p => p.id === current.duelOpponentId)?.name ?? null
+    : null
+  // ...
+  <PrivacyReveal specialRoleExtra={duelOpponentName ?? undefined} ... />
+  ```
+- In `PrivacyReveal`, per `specialRole === 'duellante'`:
+  - Badge: `bg-amber-800/20 border-amber-700/30 text-amber-600` con "⚔️ Duellante"
+  - Testo: "Il tuo nemico e': **[specialRoleExtra]**. Se vieni eliminato prima di lui, perdi 2 punti!"
+  - Mostra anche su carta MW
 
 #### 6. `src/screens/ResultScreen.tsx`
-- Nella sezione "Ruoli e punti partita":
-  - Se un duellante ha perso il duello, mostra un tag tipo "duello perso -2" in rosso
-  - Se un duellante ha vinto il duello, mostra un tag tipo "duello vinto +2" in verde
-  - Se pareggio (stesso turno o entrambi vivi), mostra "duello pari" in grigio
-- Nella leaderboard generale, i punti negativi devono essere mostrati (es. "-2 pt" in rosso)
-- Nella legenda punti, aggiungi la spiegazione dei Duellanti se il ruolo era attivo
-- **IMPORTANTE**: Il componente `AnimatedCounter` e `AnimatedScore` devono gestire numeri negativi. Verifica che funzionino con valori < 0
+- Emoji nei player chips: `{player.specialRole === 'duellante' && <span className="text-amber-600 text-xs">⚔️</span>}`
+- Badge risultato duello:
+  - Se il duellante ha perso (roundScores negativo dal duello): `<span className="text-rose-400 text-[10px]">duello perso</span>`
+  - Se ha vinto: `<span className="text-emerald-400 text-[10px]">duello vinto</span>`
+  - Se pareggio: `<span className="text-slate-500 text-[10px]">duello pari</span>`
+  - Per determinarlo: confronta i due duellanti e chi ha subito il -2
+- **IMPORTANTE: Gestione punteggi negativi**:
+  - `AnimatedCounter`: se il valore e' negativo, mostra il segno meno. Attualmente mostra `+{value}` per positivi e `0` per zero. Aggiungi: se `value < 0`, mostra `{value}` (il segno meno e' incluso nel numero)
+  - `AnimatedScore`: deve gestire valori negativi nella leaderboard (es. "-2 pt" in rosso)
+  - Nella leaderboard, i punteggi negativi devono avere colore `text-rose-400`
+- Legenda punti: aggiungi spiegazione Duellanti se attivi
 
-#### 7. Gestione punti negativi nella leaderboard
-- La leaderboard in `ResultScreen.tsx` ordina per punteggio decrescente. Assicurati che i punteggi negativi siano mostrati correttamente (es. "-2 pt" con colore rosso)
-- Nella logica di `AnimatedCounter`: se il valore e' negativo, mostra il segno meno anziche' il "+"
+#### 7. Nessuna modifica al flusso di eliminazione
+I Duellanti non modificano il flusso di gioco - il trasferimento punti avviene solo in `calcFinalScores`.
 
 ### Stile UI
-- Per i Duellanti usa **marrone chiaro / stile Far West** (`text-amber-600`, `bg-amber-800/20`, `border-amber-700/30`) — un tono caldo e sabbioso che evoca il duello western
-- Il tag del nemico sulla carta puo' avere un bordo amber-700 per evidenziare la rivalita'
-- Il tag "duello perso" usa `text-rose-400`, "duello vinto" usa `text-emerald-400`
+- Colore: **marrone chiaro / Far West** (`text-amber-600`, `bg-amber-800/20`, `border-amber-700/30`, toggle `bg-amber-700`)
+- Emoji: ⚔️
 
 ### Verifica
-1. Attiva i Duellanti nella SetupScreen
-2. Verifica che esattamente 2 giocatori ricevano `specialRole: 'duellante'`
-3. Nella DealScreen, verifica che ogni duellante veda il nome del nemico
-4. Elimina un duellante -> a fine partita verifica: -2 al perdente, +2 al vincitore
-5. Elimina entrambi nello stesso turno -> verifica che non ci sia trasferimento
-6. Testa un caso dove il perdente va in negativo (es. civile duellante eliminato per primo, civili perdono -> 0 - 2 = -2)
-7. Verifica che la leaderboard mostri correttamente i punteggi negativi
+1. Attiva i Duellanti -> verifica che 2 giocatori ricevano il ruolo
+2. Nella DealScreen, verifica che ogni duellante veda il nome del nemico
+3. Elimina un duellante -> a fine partita: -2 al perdente, +2 al vincitore
+4. Elimina entrambi stesso turno -> nessun trasferimento
+5. Testa punteggio negativo: civile duellante eliminato per primo, civili perdono -> 0 - 2 = -2
+6. Verifica che la leaderboard mostri correttamente i negativi
+7. Verifica che `AnimatedCounter` mostri valori negativi senza "+"

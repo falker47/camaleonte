@@ -253,6 +253,8 @@ export default function ResultScreen() {
                           transition={{ delay: gi * 0.08 + idx * 0.03 }}
                         >
                           {player.eliminated && <span className="text-slate-500 text-xs">✕</span>}
+                          {player.specialRole === 'buffone' && <span className="text-red-400 text-xs">🃏</span>}
+                          {player.specialRole === 'mimo' && <span className="text-slate-300 text-xs">🤫</span>}
                           <span className={`font-medium text-sm ${player.eliminated ? 'line-through text-slate-500' : 'text-white'}`}>
                             {player.name}
                           </span>
@@ -267,6 +269,9 @@ export default function ResultScreen() {
                           )}
                           {isMwCorrect && (
                             <span className="text-emerald-400 text-[10px] shrink-0">ha indovinato!</span>
+                          )}
+                          {player.specialRole === 'buffone' && player.eliminatedInTurno === 1 && (
+                            <span className="text-red-400 text-[10px] shrink-0">bonus buffone!</span>
                           )}
                           <span className={`text-xs font-bold ${pts > 0 ? 'text-emerald-400' : 'text-slate-600'}`}>
                             <AnimatedCounter value={pts} />
@@ -392,6 +397,12 @@ export default function ResultScreen() {
                   <div>
                     <div className="text-amber-400 font-semibold">Infiltrato — {players.length <= 4 ? '3' : '5'}{'\u00A0'}pt sopravvive</div>
                     <div className="text-slate-500 mt-0.5">Se eliminato: +1{'\u00A0'}pt per ogni civile eliminato (max 3{'\u00A0'}pt)</div>
+                  </div>
+                )}
+                {players.some(p => p.specialRole === 'buffone') && (
+                  <div>
+                    <div className="text-red-400 font-semibold">Il Buffone — +2{'\u00A0'}pt bonus</div>
+                    <div className="text-slate-500 mt-0.5">Se eliminato al primo turno di votazione</div>
                   </div>
                 )}
               </div>

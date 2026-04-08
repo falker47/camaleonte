@@ -55,6 +55,9 @@ function calcFinalScores(
       if (p.role === 'infiltrato' && p.eliminated) pts = getInfiltratoPartialPoints(players)
     }
 
+    // Buffone bonus: +2 if eliminated in turno 1
+    if (p.specialRole === 'buffone' && p.eliminatedInTurno === 1) pts += 2
+
     roundScores[p.name] = pts
     scores[p.name] = (scores[p.name] ?? 0) + pts
   }
@@ -97,7 +100,7 @@ interface GameState {
 export const useGameStore = create<GameState>((set, get) => ({
   screen: 'home',
   playerNames: [],
-  config: { mrWhiteCount: 1, infiltratoCount: 0 },
+  config: { mrWhiteCount: 1, infiltratoCount: 0, specialRoles: {} },
   players: [],
   wordPair: null,
   dealIndex: 0,

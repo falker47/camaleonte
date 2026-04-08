@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useGameStore } from '../store/gameStore'
 import BackButton from '../components/BackButton'
+import SpecialRolesOverlay from '../components/SpecialRolesOverlay'
 import { springTap } from '../constants/animations'
 import { MAX_PLAYERS, MAX_MR_WHITE, MAX_INFILTRATI } from '../constants/gameConfig'
 
@@ -33,6 +34,9 @@ export default function SetupScreen() {
   const ctaInputRef = useRef<HTMLInputElement | null>(null)
   const [ctaValue, setCtaValue] = useState('')
   const [ctaError, setCtaError] = useState('')
+  const [buffoneEnabled, setBuffoneEnabled] = useState(false)
+  const [mimoEnabled, setMimoEnabled] = useState(false)
+  const [showSpecialRoles, setShowSpecialRoles] = useState(false)
 
   // Auto-focus CTA input on mount
   useEffect(() => {
@@ -69,6 +73,11 @@ export default function SetupScreen() {
     if (clampedMw !== mrWhiteCount) setMrWhiteCount(clampedMw)
     if (clampedInf !== infiltratoCount) setInfiltratoCount(clampedInf)
   }, [validNames.length, mrWhiteCount, infiltratoCount])
+
+  // Auto-disable buffone if not enough players
+  useEffect(() => {
+    if (validNames.length < 5) setBuffoneEnabled(false)
+  }, [validNames.length])
 
   const handleMrWhiteChange = (v: number) => {
     setManualOverride(true)
@@ -172,7 +181,7 @@ export default function SetupScreen() {
   const handleStart = () => {
     const filtered = names.filter(n => n.trim().length > 0)
     setPlayerNames(filtered)
-    setConfig({ mrWhiteCount, infiltratoCount })
+    setConfig({ mrWhiteCount, infiltratoCount, specialRoles: { buffone: buffoneEnabled && filtered.length >= 5, mimo: mimoEnabled } })
     startGame()
   }
 
@@ -305,43 +314,80 @@ export default function SetupScreen() {
         )}
 
         {/* Validation errors */}
-        {impostorCount === 0 && (
-          <p className="text-rose-400 text-xs mt-2">Aggiungi almeno 1 impostore</p>
-        )}
-        {impostorCount > 0 && validNames.length < 3 && (
+        {validNames.length < 3 && (
           <p className="text-rose-400 text-xs mt-2">Servono almeno 3 giocatori</p>
+        )}
+        {validNames.length >= 3 && impostorCount === 0 && (
+          <p className="text-rose-400 text-xs mt-2">Aggiungi almeno 1 impostore</p>
         )}
         {hasDuplicates && (
           <p className="text-rose-400 text-xs mt-2">Ci sono nomi duplicati</p>
         )}
-      </div>
 
-      {/* Info box */}
-      {validNames.length >= 3 && impostorCount >= 1 && (
-        <div className="glass rounded-2xl px-4 py-3">
-          <div className="flex flex-wrap gap-x-3 gap-y-1 text-sm">
-            <span className="text-indigo-400">{civilianCount} Civili</span>
-            <span className="text-slate-600">·</span>
-            <span className="text-white">{mrWhiteCount} Mr. White</span>
+        {/* Info box */}
+        {validNames.length >= 3 && impostorCount >= 1 && (
+          <div className="glass rounded-2xl px-4 py-3 mt-3">
+            <div className="flex flex-wrap gap-x-3 gap-y-1 text-sm">
+              <span className="text-indigo-400">{civilianCount} Civili</span>
+              <span className="text-slate-600">·</span>
+              <span className="text-white">{mrWhiteCount} Mr. White</span>
+              {infiltratoCount > 0 && (
+                <>
+                  <span className="text-slate-600">·</span>
+                  <span className="text-amber-400">{infiltratoCount} Infiltrat{infiltratoCount === 1 ? 'o' : 'i'}</span>
+                </>
+              )}
+            </div>
             {infiltratoCount > 0 && (
-              <>
-                <span className="text-slate-600">·</span>
-                <span className="text-amber-400">{infiltratoCount} Infiltrat{infiltratoCount === 1 ? 'o' : 'i'}</span>
-              </>
+              <p className="text-slate-500 text-xs mt-1.5">
+                L'infiltrato riceve una parola diversa ma non sa di esserlo!
+              </p>
+            )}
+            {mrWhiteCount > 0 && (
+              <p className="text-slate-500 text-xs mt-1">
+                Mr. White non ha nessuna parola e deve bluffare.
+              </p>
             )}
           </div>
-          {infiltratoCount > 0 && (
-            <p className="text-slate-500 text-xs mt-1.5">
-              L'infiltrato riceve una parola diversa ma non sa di esserlo!
-            </p>
-          )}
-          {mrWhiteCount > 0 && (
-            <p className="text-slate-500 text-xs mt-1">
-              Mr. White non ha nessuna parola e deve bluffare.
-            </p>
+        )}
+
+        {/* Special roles button */}
+        <div className="glass rounded-2xl overflow-hidden mt-3">
+          <motion.button
+            onClick={() => setShowSpecialRoles(true)}
+            className="w-full px-4 py-3 flex items-center justify-between"
+            {...springTap}
+          >
+            <div className="flex items-center gap-3">
+              <span className="text-lg">🎭</span>
+              <div className="text-left">
+                <p className="text-white text-sm font-semibold">Ruoli Speciali</p>
+                {(() => {
+                  const active = [buffoneEnabled && validNames.length >= 5, mimoEnabled].filter(Boolean).length
+                  return active > 0
+                    ? <p className="text-indigo-400 text-xs">{active} attiv{active === 1 ? 'o' : 'i'}</p>
+                    : <p className="text-slate-500 text-xs">Nessuno attivo</p>
+                })()}
+              </div>
+            </div>
+            <span className="text-slate-500 text-sm">›</span>
+          </motion.button>
+          {(buffoneEnabled && validNames.length >= 5 || mimoEnabled) && (
+            <div className="flex flex-wrap gap-1.5 px-4 pb-3">
+              {buffoneEnabled && validNames.length >= 5 && (
+                <span className="inline-block rounded-full bg-red-500/20 border border-red-400/30 text-red-400 text-xs font-bold px-2.5 py-0.5">
+                  🃏 Buffone
+                </span>
+              )}
+              {mimoEnabled && (
+                <span className="inline-block rounded-full bg-slate-500/20 border border-slate-400/30 text-slate-200 text-xs font-bold px-2.5 py-0.5">
+                  🤫 Mimo
+                </span>
+              )}
+            </div>
           )}
         </div>
-      )}
+      </div>
 
       <motion.button
         onClick={handleStart}
@@ -357,6 +403,47 @@ export default function SetupScreen() {
       >
         Inizia Partita
       </motion.button>
+
+      <AnimatePresence>
+        {showSpecialRoles && (
+          <SpecialRolesOverlay
+            roles={[
+              {
+                id: 'buffone',
+                label: 'Il Buffone',
+                emoji: '🃏',
+                description: 'Un civile che guadagna +2 punti se eliminato al primo turno.',
+                bgBase: 'bg-red-500/10',
+                bgActive: 'bg-red-500/25',
+                borderBase: 'border-red-400/20',
+                borderActive: 'border-red-400/50',
+                toggleColor: 'bg-red-500',
+                enabled: buffoneEnabled,
+                minPlayers: 5,
+              },
+              {
+                id: 'mimo',
+                label: 'Il Mimo',
+                emoji: '🤫',
+                description: 'Un giocatore deve mimare gli indizi anziché parlare.',
+                bgBase: 'bg-slate-500/10',
+                bgActive: 'bg-slate-500/25',
+                borderBase: 'border-slate-400/20',
+                borderActive: 'border-slate-400/50',
+                toggleColor: 'bg-slate-400',
+                enabled: mimoEnabled,
+                minPlayers: 3,
+              },
+            ]}
+            playerCount={validNames.length}
+            onToggle={(id) => {
+              if (id === 'buffone') setBuffoneEnabled(v => !v)
+              if (id === 'mimo') setMimoEnabled(v => !v)
+            }}
+            onClose={() => setShowSpecialRoles(false)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   )
 }

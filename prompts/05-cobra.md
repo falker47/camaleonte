@@ -7,40 +7,53 @@ Undercover e' un party game di deduzione. I giocatori ricevono una parola segret
 - **Infiltrato**: riceve una parola diversa (non sa di essere infiltrato), vuole sopravvivere
 - **Mr. White**: non ha parola, deve bluffare, puo' tentare di indovinare la parola se eliminato
 
-Ogni turno: tutti danno un indizio -> si vota -> il piu' votato viene eliminato -> si controlla la win condition.
-
-**Win conditions (da `src/utils/winCondition.ts`):**
+**Win conditions** (`src/utils/winCondition.ts`):
 - `'civilians'`: tutti gli impostori eliminati
-- `'last_two'`: giocatori attivi <= soglia con almeno 1 impostore vivo
-- Soglia: 2 (3-5 giocatori), 3 (6-8), 4 (9+)
+- `'last_two'`: giocatori attivi <= soglia (2 per 3-5, 3 per 6-8, 4 per 9+) con almeno 1 impostore vivo
+- `getSurvivalThreshold(totalPlayers)` restituisce la soglia
 
-**Flusso eliminazione attuale (da `src/store/gameStore.ts`):**
-1. `castVote(votes)` -> determina eliminato -> va a schermata `elimination`
-2. `confirmElimination()` -> segna `eliminated: true` -> se MW va a `mrwhite_guess`, altrimenti controlla win condition -> se vinta va a `result`, altrimenti `round` con turno+1
+**Flusso eliminazione attuale** (`src/store/gameStore.ts` -> `confirmElimination()`):
+1. Segna eliminato come `eliminated: true, eliminatedInTurno: turno`
+2. Se ha R&G (`specialRole === 'romeo'|'giulietta'`), elimina anche il partner (potrebbe non essere ancora implementato - controlla)
+3. Se e' MW -> `mrwhite_guess`
+4. Altrimenti -> `checkWinCondition()` -> `result` o `round + turno+1`
 
-Il gioco supporta ruoli speciali facoltativi. Il tipo `SpecialRole` e il campo `specialRole?: SpecialRole` sul `Player` esistono gia'. Anche `specialRoles` in `GameConfig` esiste gia'.
+## Infrastruttura esistente
 
-**IMPORTANTE**: Potrebbero essere gia' implementati altri ruoli speciali (Buffone, Mimo, Romeo & Giulietta, Duellanti). Controlla lo stato attuale dei file prima di modificarli per non sovrascrivere implementazioni esistenti.
+**Tipi** (`src/store/types.ts`):
+- `SpecialRole` union type, `Player.specialRole?: SpecialRole`
+- `GameConfig.specialRoles` oggetto con boolean opzionali
+- `Screen` union type per le schermate
+
+**Assegnazione** (`src/utils/assignRoles.ts`):
+- Pattern: `eligible = result.filter(p => !p.specialRole)` -> shuffle -> pick
+
+**SetupScreen**: overlay generico `SpecialRolesOverlay`, stati locali per toggle, badge sotto bottone
+
+**PrivacyReveal**: prop `specialRole`, badge + spiegazione sulla carta
+
+**IMPORTANTE**: Controlla lo stato attuale dei file prima di modificarli. Potrebbero essere gia' implementati Buffone, Mimo, R&G, Duellanti.
 
 ## Il ruolo: Il Cobra
 
 ### Specifica
 - **Assegnazione**: Qualsiasi giocatore
-- **Minimo giocatori**: nessun vincolo aggiuntivo
-- **Meccanica**: Quando il Cobra viene eliminato dal voto, sceglie un giocatore attivo da eliminare immediatamente
+- **Minimo giocatori**: 3 (nessun vincolo aggiuntivo)
+- **Meccanica**: Quando il Cobra viene eliminato dal voto, sceglie un giocatore attivo da eliminare
 - **Punti**: Nessuna modifica al punteggio base
-- **Regola anti-catena**: Se il Cobra elimina un altro Cobra, il secondo NON attiva la propria abilita'
-- **Condizione di attivazione**: L'abilita' si attiva SOLO se dopo l'eliminazione del Cobra la partita non e' gia' finita. Se l'eliminazione del Cobra fa scattare la win condition, il Cobra NON puo' colpire
-- **Avviso in-game**: A inizio turno, se il Cobra e' vivo e il turno corrente e' l'ultimo possibile (cioe' la prossima eliminazione concluderebbe la partita), mostrare un avviso
-- **Interazione con MW**: Se un MW viene eliminato dal Cobra, ha comunque diritto al tentativo di indovinare la parola
-- **Interazione con Romeo & Giulietta**: Se il Cobra elimina un Romeo/Giulietta, si attiva il legame e anche l'altro viene eliminato
+- **Regola anti-catena**: Se il Cobra elimina un altro Cobra, il secondo NON attiva l'abilita'
+- **Condizione di attivazione**: L'abilita' si attiva SOLO se dopo l'eliminazione del Cobra la partita non e' gia' finita
+- **Avviso in-game**: A inizio turno, se il Cobra e' vivo e siamo all'ultimo turno possibile, mostrare avviso
+- **Interazione con MW**: Se un MW viene eliminato dal Cobra, ha diritto al tentativo di indovinare
+- **Interazione con R&G**: Se il Cobra elimina un R&G, il partner viene eliminato per legame
+- **REGOLA FONDAMENTALE**: I ruoli speciali NON sono cumulabili
 
 ### Flusso di gioco modificato
 
-Il Cobra introduce un nuovo step nel flusso di eliminazione:
+Il Cobra introduce una nuova schermata `cobra_strike` nel flusso:
 
 ```
-voto -> eliminazione -> [se MW: guess] -> [se Cobra E gioco non finito: scelta bersaglio Cobra] -> [se bersaglio e' MW: guess MW] -> [se bersaglio e' R&G: elimina partner] -> check win condition -> result o round
+voto -> eliminazione -> [se MW: guess] -> [se Cobra E gioco non finito: cobra_strike] -> [se bersaglio MW: guess] -> [se bersaglio R&G: elimina partner] -> check win -> result o round
 ```
 
 ### Cosa modificare
@@ -48,91 +61,223 @@ voto -> eliminazione -> [se MW: guess] -> [se Cobra E gioco non finito: scelta b
 #### 1. `src/store/types.ts`
 - Aggiungi `'cobra'` al tipo `SpecialRole`
 - Aggiungi `cobra?: boolean` a `specialRoles` in `GameConfig`
-- Aggiungi una nuova Screen: `'cobra_strike'` al tipo `Screen`
+- Aggiungi `'cobra_strike'` al tipo `Screen`
 
 #### 2. `src/utils/assignRoles.ts`
-- Dopo l'assegnazione dei ruoli base, se `config.specialRoles?.cobra` e' attivo:
-  - Scegli un giocatore a caso (preferibilmente senza altri ruoli speciali)
-  - Assegna `specialRole: 'cobra'`
+- Aggiungi blocco:
+  ```
+  if (config.specialRoles?.cobra) {
+    const eligible = result.map((p, i) => ({ p, i })).filter(({ p }) => !p.specialRole)
+    if (eligible.length > 0) {
+      const chosen = shuffle(eligible)[0]
+      result[chosen.i] = { ...result[chosen.i], specialRole: 'cobra' }
+    }
+  }
+  ```
 
 #### 3. `src/store/gameStore.ts`
 
-**Modifica `confirmElimination()`:**
-Dopo l'eliminazione normale e dopo l'eventuale MW guess, prima di controllare la win condition:
+**Aggiungi stato:**
+- `cobraStrikeActive: boolean` (default false) - indica che il Cobra deve colpire
+- Resetta in `startGame`, `resetGame`, `rematch`, `nextTurno`
 
-1. Controlla se il giocatore appena eliminato ha `specialRole === 'cobra'`
-2. Controlla se il gioco NON e' gia' finito (la win condition con i giocatori aggiornati restituisce `null`)
-3. Se entrambe le condizioni sono vere:
-   - Salva lo stato del Cobra (es. `cobraStrikeActive: true` nello store)
-   - Vai alla schermata `cobra_strike` invece di proseguire
-4. Se il gioco e' gia' finito, il Cobra non colpisce
+**Modifica `confirmElimination()`:**
+Dopo l'eliminazione (e dopo eventuale MW guess se il Cobra era MW), prima di controllare la win condition finale:
+
+```
+// Controlla se il Cobra deve colpire
+const eliminated = updatedPlayers.find(p => p.id === eliminatedThisTurno.id)!
+if (eliminated.specialRole === 'cobra') {
+  // Controlla se il gioco non e' gia' finito
+  const win = checkWinCondition(updatedPlayers, players.length)
+  if (!win) {
+    // Il Cobra puo' colpire!
+    set({ cobraStrikeActive: true, screen: 'cobra_strike' })
+    return
+  }
+}
+// Procedi normalmente con win check...
+```
+
+**ATTENZIONE al caso Cobra + MW**: Se il Cobra e' anche un MW, il flusso e':
+1. Cobra-MW viene eliminato
+2. Va a `mrwhite_guess` (e' MW)
+3. Dopo il guess (in `submitMrWhiteGuess` -> nella navigazione successiva), controlla se era anche Cobra
+4. Se il gioco non e' finito dopo il guess -> vai a `cobra_strike`
+5. Gestisci questo nel punto dove si naviga dopo il guess (probabilmente in `GuessScreen.tsx` -> `handleContinue`, o nel flusso dello store)
 
 **Aggiungi azione `cobraStrike(targetId: string)`:**
-1. Trova il giocatore bersaglio e segnalo come `eliminated: true`, `eliminatedInTurno: turno`
-2. **Anti-catena**: Se il bersaglio ha `specialRole === 'cobra'`, NON attivare la sua abilita'
-3. Se il bersaglio e' un MW, salva che deve fare il tentativo di guess -> vai a `mrwhite_guess`
-4. Se il bersaglio ha `specialRole === 'romeo'` o `'giulietta'`, elimina anche il partner (il partner MW per legame NON ha diritto al guess, come specificato nel ruolo R&G)
-5. Controlla la win condition e procedi di conseguenza
-
-**IMPORTANTE sul flusso MW + Cobra:**
-Il flusso complesso e':
-- Cobra (che e' MW) viene eliminato -> prima fa il MW guess -> poi se il gioco non e' finito -> Cobra strike
-- Cobra colpisce un MW -> quel MW fa il guess
-- Gestisci entrambi i casi
-
-**Aggiungi logica per l'avviso "ultimo turno":**
-- Aggiungi una funzione helper `isLastTurn(players, totalPlayers)` che controlla: se si elimina un qualsiasi giocatore attivo, la win condition scatterebbe per tutti i possibili eliminati?
-- In pratica: `attivi - 1 <= soglia` (per il caso last_two) OPPURE eliminando qualsiasi impostore rimasto tutti gli impostori sarebbero eliminati (per il caso civilians, ma questo dipende da chi viene eliminato)
-- Approccio semplificato: mostra l'avviso se `attivi - 1 <= soglia` (cioe' siamo a soglia+1 giocatori attivi). Non serve coprire il caso "ultimo impostore" perche' in quel caso i civili vincono e il Cobra-impostore non avrebbe comunque interesse a colpire
+```
+cobraStrike: (targetId: string) => {
+  const { players, turno, scores, mrWhiteCorrectIds } = get()
+  
+  // Elimina il bersaglio
+  let updatedPlayers = players.map(p =>
+    p.id === targetId ? { ...p, eliminated: true, eliminatedInTurno: turno } : p
+  )
+  
+  // Se bersaglio ha R&G, elimina anche il partner (se implementato)
+  const target = updatedPlayers.find(p => p.id === targetId)!
+  if (target.specialRole === 'romeo' || target.specialRole === 'giulietta') {
+    const partnerRole = target.specialRole === 'romeo' ? 'giulietta' : 'romeo'
+    updatedPlayers = updatedPlayers.map(p =>
+      p.specialRole === partnerRole && !p.eliminated 
+        ? { ...p, eliminated: true, eliminatedInTurno: turno } 
+        : p
+    )
+  }
+  
+  set({ players: updatedPlayers, cobraStrikeActive: false })
+  
+  // Se bersaglio e' MW -> va al tentativo di guess
+  if (target.role === 'mrwhite') {
+    set({ eliminatedThisTurno: target, screen: 'mrwhite_guess', mrWhiteGuessResult: null })
+    return
+  }
+  
+  // Check win condition
+  const win = checkWinCondition(updatedPlayers, players.length)
+  if (win) {
+    const correctSet = new Set(mrWhiteCorrectIds)
+    const { scores: newScores, roundScores } = calcFinalScores(updatedPlayers, win, correctSet, scores)
+    set({ winner: win, scores: newScores, roundScores, screen: 'result' })
+  } else {
+    set({ screen: 'round', turno: turno + 1, currentVotes: {} })
+  }
+}
+```
 
 #### 4. `src/screens/CobraStrikeScreen.tsx` (NUOVO FILE)
-Crea una nuova schermata per la scelta del bersaglio del Cobra:
+Schermata per la scelta del bersaglio:
 
-- Header: "Il Cobra colpisce!" con un'icona serpente (emoji cobra: nope, non esiste. Usa l'emoji serpente unicode)
-- Sottotitolo: "[Nome Cobra] e' stato eliminato ma puo' trascinare qualcuno con se'!"
-- Mostra la lista dei giocatori attivi (escluso il Cobra stesso, gia' eliminato) come bottoni cliccabili
-- Ogni bottone mostra il nome del giocatore
-- Al click, chiedi conferma con un dialog: "Vuoi eliminare [nome]? Questa scelta e' definitiva."
-- Alla conferma, chiama `cobraStrike(targetId)`
-- Stile: usa tema scuro con accenti verdi (verde veleno/tossico: `text-lime-400`, `bg-lime-500/20`) per dare un feeling "velenoso"
-- Animazioni: i giocatori appaiono con stagger animation
+```tsx
+import { useState } from 'react'
+import { motion } from 'framer-motion'
+import { useGameStore } from '../store/gameStore'
+import ConfirmDialog from '../components/ConfirmDialog'
+import { AVATAR_COLORS } from '../constants/avatarColors'
+import { springTap } from '../constants/animations'
+
+export default function CobraStrikeScreen() {
+  const players = useGameStore(s => s.players)
+  const eliminatedThisTurno = useGameStore(s => s.eliminatedThisTurno)
+  const cobraStrike = useGameStore(s => s.cobraStrike)
+  
+  const [selectedId, setSelectedId] = useState<string | null>(null)
+  
+  // Giocatori attivi (escluso il Cobra appena eliminato)
+  const targets = players.filter(p => !p.eliminated)
+  const selectedPlayer = selectedId ? players.find(p => p.id === selectedId) : null
+  
+  return (
+    <div className="flex flex-col flex-1 min-h-0 px-5 py-6 gap-5 overflow-y-auto">
+      <div className="flex flex-col items-center gap-2">
+        <span className="text-5xl">🐍</span>
+        <h2 className="text-2xl font-black text-lime-400">Il Cobra colpisce!</h2>
+        <p className="text-slate-400 text-sm text-center">
+          {eliminatedThisTurno?.name} puo' trascinare qualcuno con se'
+        </p>
+      </div>
+      
+      <div className="flex flex-col gap-2">
+        {targets.map((player, i) => {
+          const originalIndex = players.indexOf(player)
+          return (
+            <motion.button
+              key={player.id}
+              onClick={() => setSelectedId(player.id)}
+              className="flex items-center gap-3 glass rounded-2xl px-4 py-3 hover:bg-lime-500/10 transition-colors border border-transparent hover:border-lime-400/20"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: i * 0.05 }}
+              {...springTap}
+            >
+              <div className={`w-8 h-8 rounded-full bg-gradient-to-br ${AVATAR_COLORS[originalIndex % AVATAR_COLORS.length]} flex items-center justify-center text-sm font-bold text-white shrink-0`}>
+                {originalIndex + 1}
+              </div>
+              <span className="text-white font-medium">{player.name}</span>
+            </motion.button>
+          )
+        })}
+      </div>
+      
+      <ConfirmDialog
+        open={selectedId !== null}
+        title="Conferma eliminazione"
+        description={`Vuoi eliminare ${selectedPlayer?.name}? Questa scelta e' definitiva.`}
+        confirmLabel="Elimina"
+        onConfirm={() => { if (selectedId) cobraStrike(selectedId) }}
+        onCancel={() => setSelectedId(null)}
+      />
+    </div>
+  )
+}
+```
 
 #### 5. `src/App.tsx`
 - Importa `CobraStrikeScreen`
-- Aggiungilo alla mappa `SCREENS` con chiave `'cobra_strike'`
-- Aggiungilo a `SCREEN_ORDER` dopo `'mrwhite_guess'`
-- Aggiungilo a `IN_GAME_SCREENS` e `INVALIDATE_SCREENS`
+- Aggiungi a `SCREENS`: `cobra_strike: CobraStrikeScreen`
+- Aggiungi a `SCREEN_ORDER` dopo `'mrwhite_guess'`
+- Aggiungi a `IN_GAME_SCREENS` e `INVALIDATE_SCREENS`
 
 #### 6. `src/screens/SetupScreen.tsx`
-- Aggiungi un toggle per "Il Cobra" nella sezione "Ruoli Speciali"
-- Descrizione: "Se eliminato, trascina un altro giocatore con se'"
+- Stato: `const [cobraEnabled, setCobraEnabled] = useState(false)`
+- Array roles overlay:
+  ```
+  {
+    id: 'cobra',
+    label: 'Il Cobra',
+    emoji: '🐍',
+    description: 'Se eliminato, trascina un altro giocatore con se\'.',
+    bgBase: 'bg-lime-500/10',
+    bgActive: 'bg-lime-500/25',
+    borderBase: 'border-lime-400/20',
+    borderActive: 'border-lime-400/50',
+    toggleColor: 'bg-lime-500',
+    enabled: cobraEnabled,
+    minPlayers: 3,
+  }
+  ```
+- `onToggle`: `if (id === 'cobra') setCobraEnabled(v => !v)`
+- Badge: `bg-lime-500/20 border-lime-400/30 text-lime-400` con 🐍
+- `handleStart`: `cobra: cobraEnabled` in `specialRoles`
 
-#### 7. `src/screens/DealScreen.tsx` / `src/components/PrivacyReveal.tsx`
-- Se il giocatore ha `specialRole === 'cobra'`, mostra sulla carta:
-  - "Sei il Cobra! Se vieni eliminato, potrai scegliere un giocatore da eliminare con te."
-  - Usa il tema verde velenoso
+#### 7. `src/components/PrivacyReveal.tsx`
+- Per `specialRole === 'cobra'` (sia civile/infiltrato che MW):
+  - Badge: `bg-lime-500/20 border-lime-400/30 text-lime-400` con "🐍 Il Cobra"
+  - Testo: "Se vieni eliminato, potrai scegliere un giocatore da eliminare con te."
 
 #### 8. `src/screens/RoundScreen.tsx`
-- Se il Cobra e' vivo E siamo all'ultimo turno possibile (usa la funzione helper), mostra un banner di avviso:
-  - "Il Cobra non potra' colpire in questo turno" con icona serpente
-  - Stile: glass box con bordo lime/verde
+- Aggiungi logica per l'avviso "ultimo turno":
+  ```
+  const cobraAlive = players.some(p => !p.eliminated && p.specialRole === 'cobra')
+  const active = players.filter(p => !p.eliminated)
+  const threshold = getSurvivalThreshold(players.length)
+  const isLastTurn = active.length - 1 <= threshold
+  ```
+  - Se `cobraAlive && isLastTurn`, mostra banner:
+    ```
+    <div className="glass rounded-xl px-4 py-3 border border-lime-400/20">
+      <p className="text-lime-400 text-sm font-semibold">🐍 Il Cobra non potra' colpire in questo turno</p>
+      <p className="text-slate-400 text-xs mt-1">La prossima eliminazione concludera' la partita.</p>
+    </div>
+    ```
+  - Importa `getSurvivalThreshold` da `../utils/winCondition`
 
 #### 9. `src/screens/ResultScreen.tsx`
-- Mostra il tag "Cobra" accanto al nome del giocatore
-- Se il Cobra ha colpito qualcuno, mostra chi ha colpito (es. "ha colpito [nome]!")
+- Emoji: `{player.specialRole === 'cobra' && <span className="text-lime-400 text-xs">🐍</span>}`
 
 ### Stile UI
-- Per il Cobra usa **verde lime/velenoso** (`text-lime-400`, `bg-lime-500/20`, `border-lime-400/30`)
-- La schermata CobraStrike deve avere un'atmosfera "pericolosa": sfondo piu' scuro, accenti verdi
-- Mantieni lo stile glass morphism
+- Colore: **verde lime / velenoso** (`text-lime-400`, `bg-lime-500/20`, `border-lime-400/30`, toggle `bg-lime-500`)
+- Emoji: 🐍
 
 ### Verifica
-1. Attiva il Cobra nella SetupScreen
-2. Elimina il Cobra -> verifica che appaia la schermata di scelta bersaglio
-3. Scegli un bersaglio -> verifica che venga eliminato
-4. Testa: Cobra eliminato quando il gioco finirebbe (ultimo impostore o soglia raggiunta) -> il Cobra NON deve colpire
-5. Testa: Cobra colpisce un MW -> il MW deve avere il tentativo di guess
-6. Testa: Cobra colpisce un Romeo/Giulietta -> il partner viene eliminato per legame
-7. Testa: Cobra colpisce un altro Cobra -> il secondo Cobra NON attiva l'abilita'
+1. Attiva il Cobra -> verifica assegnazione
+2. Elimina il Cobra -> verifica che appaia `CobraStrikeScreen`
+3. Scegli un bersaglio -> verifica eliminazione e conferma dialog
+4. Testa: Cobra eliminato quando il gioco finirebbe -> il Cobra NON colpisce (niente `cobra_strike`)
+5. Testa: Cobra colpisce un MW -> il MW ha il tentativo di guess
+6. Testa: Cobra colpisce un R&G -> partner eliminato per legame (se R&G implementato)
+7. Testa: Cobra colpisce un altro Cobra -> il secondo NON attiva l'abilita'
 8. Testa l'avviso "ultimo turno" nel RoundScreen
-9. Testa: Cobra che e' anche MW -> prima fa il guess, poi (se gioco non finito) colpisce
+9. Testa: Cobra che e' anche MW -> prima guess, poi (se gioco non finito) cobra_strike

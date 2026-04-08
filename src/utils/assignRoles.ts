@@ -16,7 +16,7 @@ export function assignRoles(
   if (shuffledRoles[0] === 'mrwhite' && Math.random() < 0.5) {
     shuffledRoles = shuffle(roles)
   }
-  return names.map((name, i) => {
+  const result = names.map((name, i) => {
     const role = shuffledRoles[i]
     return {
       id: crypto.randomUUID(),
@@ -25,6 +25,29 @@ export function assignRoles(
       word: role === 'civile' ? pair.civilian : role === 'infiltrato' ? pair.undercover : null,
       eliminated: false,
       eliminatedInTurno: null,
-    }
+    } as Player
   })
+
+  // Assign special roles
+  if (config.specialRoles?.buffone && names.length >= 5) {
+    const eligible = result
+      .map((p, i) => ({ p, i }))
+      .filter(({ p }) => p.role === 'civile' && !p.specialRole)
+    if (eligible.length > 0) {
+      const chosen = shuffle(eligible)[0]
+      result[chosen.i] = { ...result[chosen.i], specialRole: 'buffone' }
+    }
+  }
+
+  if (config.specialRoles?.mimo) {
+    const eligible = result
+      .map((p, i) => ({ p, i }))
+      .filter(({ p }) => !p.specialRole)
+    if (eligible.length > 0) {
+      const chosen = shuffle(eligible)[0]
+      result[chosen.i] = { ...result[chosen.i], specialRole: 'mimo' }
+    }
+  }
+
+  return result
 }

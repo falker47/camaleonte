@@ -33,8 +33,10 @@ Ogni turno: tutti danno un indizio -> si vota -> il piu' votato viene eliminato 
 - Aggiungi campo opzionale `specialRoles?: { buffone?: boolean }` all'interfaccia `GameConfig` (o un approccio simile per tracciare quali ruoli speciali sono attivi)
 
 #### 2. `src/utils/assignRoles.ts`
+- **REGOLA FONDAMENTALE**: I ruoli speciali NON sono cumulabili. Ogni giocatore puo' avere al massimo un `specialRole`. Assegna solo a giocatori che non hanno gia' un ruolo speciale.
 - Dopo l'assegnazione dei ruoli base, se `config.specialRoles?.buffone` e' attivo E ci sono almeno 5 giocatori:
-  - Scegli un giocatore civile a caso e assegnagli `specialRole: 'buffone'`
+  - Scegli un giocatore civile a caso **che non ha gia' un `specialRole`** e assegnagli `specialRole: 'buffone'`
+  - Se non ci sono civili disponibili (tutti hanno gia' un ruolo speciale), il Buffone non viene assegnato
 
 #### 3. `src/store/gameStore.ts` - funzione `calcFinalScores`
 - Nella funzione `calcFinalScores`, dopo il calcolo dei punti normali, controlla se il giocatore ha `specialRole === 'buffone'` E `eliminatedInTurno === 1`

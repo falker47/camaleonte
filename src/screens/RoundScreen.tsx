@@ -80,6 +80,9 @@ export default function RoundScreen() {
                   {originalIndex + 1}
                 </div>
                 <span className="text-white font-medium">{player.name}</span>
+                {player.specialRole === 'mimo' && (
+                  <span className="text-slate-300 text-xs">🤫</span>
+                )}
               </div>
             )
           })}

@@ -56,6 +56,7 @@ export default function DealScreen() {
         playerName={current.name}
         word={current.word}
         role={current.role}
+        specialRole={current.specialRole}
         onDone={advanceDeal}
         isLast={dealIndex === total - 1}
       />
