@@ -189,7 +189,7 @@ export const useGameStore = create<GameState>((set, get) => ({
     set({ players: updatedPlayers })
 
     if (eliminatedThisTurno.role === 'camaleonte' && wordPair) {
-      set({ screen: 'camaleonte_guess', camaleonteGuessResult: null, eliminatedThisTurno: null })
+      set({ screen: 'camaleonte_guess', camaleonteGuessResult: null })
       return
     }
 
