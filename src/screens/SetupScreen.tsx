@@ -421,7 +421,7 @@ export default function SetupScreen() {
             {...springTap}
           >
             <div className="flex items-center gap-3">
-              <span className="text-lg">🎭</span>
+              <span className="text-lg">⭐</span>
               <div className="text-left">
                 <p className="text-white text-sm font-semibold">Ruoli Speciali</p>
                 {(() => {
