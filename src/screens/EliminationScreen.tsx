@@ -18,6 +18,8 @@ export default function EliminationScreen() {
   const confirmElimination = useGameStore(s => s.confirmElimination)
   const players = useGameStore(s => s.players)
   const turno = useGameStore(s => s.turno)
+  const postRiccioStrike = useGameStore(s => s.postRiccioStrike)
+  const storeLinkedPartner = useGameStore(s => s.linkedEliminatedThisTurno)
 
   const processing = useRef(false)
 
@@ -31,7 +33,8 @@ export default function EliminationScreen() {
   const isOracolo = eliminatedThisTurno.specialRole === 'oracolo'
   const isRomeoGiulietta = eliminatedThisTurno.specialRole === 'romeo' || eliminatedThisTurno.specialRole === 'giulietta'
   const linkedPartner = isRomeoGiulietta
-    ? players.find(p => (p.specialRole === 'romeo' || p.specialRole === 'giulietta') && p.id !== eliminatedThisTurno.id && !p.eliminated)
+    ? (players.find(p => (p.specialRole === 'romeo' || p.specialRole === 'giulietta') && p.id !== eliminatedThisTurno.id && !p.eliminated)
+      ?? storeLinkedPartner)
     : null
 
   // Count remaining impostors (excluding the one being eliminated right now)
@@ -59,7 +62,9 @@ export default function EliminationScreen() {
         >
           {isCamaleonte ? <img src={camaleontePng} alt="Il Camaleonte" className="w-12 h-12" /> : role === 'talpa' ? <img src={talpaPng} alt="La Talpa" className="w-12 h-12" /> : isBuffoneBonus ? '🃏' : isSpettro ? '🎐' : isRiccio ? '🦔' : isOracolo ? '🔮' : '😇'}
         </motion.div>
-        <p className="text-slate-400 text-sm uppercase tracking-widest">Eliminato</p>
+        <p className="text-slate-400 text-sm uppercase tracking-widest">
+          {postRiccioStrike ? '🦔 Eliminato dal Riccio' : 'Eliminato'}
+        </p>
         <motion.h2
           className="text-4xl font-black text-white"
           initial={{ scale: 0.5, filter: 'blur(8px)' }}
@@ -182,7 +187,7 @@ export default function EliminationScreen() {
         </motion.div>
       )}
 
-      {isRiccio && (
+      {isRiccio && !postRiccioStrike && (
         <motion.div
           className="glass rounded-2xl px-6 py-5 text-center max-w-xs relative z-10"
           style={{ borderColor: 'rgba(234, 179, 8, 0.3)' }}

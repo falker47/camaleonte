@@ -107,6 +107,7 @@ interface GameState {
   scores: Record<string, number>
   roundScores: Record<string, number>
   riccioStrikeActive: boolean
+  postRiccioStrike: boolean
   oracoloRevealActive: boolean
   oracoloRevealedIds: string[]
   usedPairIndices: number[]
@@ -145,6 +146,7 @@ export const useGameStore = create<GameState>((set, get) => ({
   scores: {},
   roundScores: {},
   riccioStrikeActive: false,
+  postRiccioStrike: false,
   oracoloRevealActive: false,
   oracoloRevealedIds: [],
   usedPairIndices: [],
@@ -189,6 +191,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       winner: null,
       roundScores: {},
       riccioStrikeActive: false,
+      postRiccioStrike: false,
       oracoloRevealActive: false,
       oracoloRevealedIds: [],
       screen: 'deal',
@@ -219,8 +222,40 @@ export const useGameStore = create<GameState>((set, get) => ({
   },
 
   confirmElimination: () => {
-    const { eliminatedThisTurno, players, wordPair, scores, camaleonteCorrectIds, turno } = get()
+    const { eliminatedThisTurno, players, wordPair, scores, camaleonteCorrectIds, turno, postRiccioStrike, linkedEliminatedThisTurno } = get()
     if (!eliminatedThisTurno) return
+
+    // Post-riccio: elimination already done in riccioStrike(), only handle navigation
+    if (postRiccioStrike) {
+      set({ postRiccioStrike: false })
+
+      if (eliminatedThisTurno.role === 'camaleonte' && wordPair) {
+        set({ screen: 'camaleonte_guess', camaleonteGuessResult: null })
+        return
+      }
+      if (linkedEliminatedThisTurno?.role === 'camaleonte' && wordPair) {
+        set({ eliminatedThisTurno: linkedEliminatedThisTurno, screen: 'camaleonte_guess', camaleonteGuessResult: null })
+        return
+      }
+
+      // Oracolo ability triggers even when eliminated by Riccio
+      const isOracolo = eliminatedThisTurno.specialRole === 'oracolo'
+      const oracoloCanReveal = isOracolo && !checkWinCondition(players, players.length)
+      if (oracoloCanReveal) {
+        set({ oracoloRevealActive: true, screen: 'oracolo_reveal' })
+        return
+      }
+
+      const win = checkWinCondition(players, players.length)
+      if (win) {
+        const correctSet = new Set(camaleonteCorrectIds)
+        const { scores: newScores, roundScores } = calcFinalScores(players, win, correctSet, scores)
+        set({ winner: win, scores: newScores, roundScores, screen: 'result', eliminatedThisTurno: null, linkedEliminatedThisTurno: null })
+      } else {
+        set({ screen: 'round', turno: turno + 1, currentVotes: {}, eliminatedThisTurno: null, linkedEliminatedThisTurno: null })
+      }
+      return
+    }
 
     let updatedPlayers = players.map(p =>
       p.id === eliminatedThisTurno.id ? { ...p, eliminated: true, eliminatedInTurno: turno } : p
@@ -287,7 +322,7 @@ export const useGameStore = create<GameState>((set, get) => ({
   },
 
   riccioStrike: (targetId) => {
-    const { players, turno, scores, camaleonteCorrectIds, wordPair } = get()
+    const { players, turno } = get()
 
     let updatedPlayers = players.map(p =>
       p.id === targetId ? { ...p, eliminated: true, eliminatedInTurno: turno } : p
@@ -307,29 +342,15 @@ export const useGameStore = create<GameState>((set, get) => ({
       }
     }
 
-    set({ players: updatedPlayers, riccioStrikeActive: false, linkedEliminatedThisTurno: linkedPartner })
-
-    // If target is camaleonte, give them a guess
-    if (target.role === 'camaleonte' && wordPair) {
-      set({ eliminatedThisTurno: target, screen: 'camaleonte_guess', camaleonteGuessResult: null })
-      return
-    }
-
-    // If linked partner is camaleonte, give them a guess
-    if (linkedPartner?.role === 'camaleonte' && wordPair) {
-      set({ eliminatedThisTurno: linkedPartner, screen: 'camaleonte_guess', camaleonteGuessResult: null })
-      return
-    }
-
-    // Check win condition
-    const win = checkWinCondition(updatedPlayers, players.length)
-    if (win) {
-      const correctSet = new Set(camaleonteCorrectIds)
-      const { scores: newScores, roundScores } = calcFinalScores(updatedPlayers, win, correctSet, scores)
-      set({ winner: win, scores: newScores, roundScores, screen: 'result', eliminatedThisTurno: null, linkedEliminatedThisTurno: null })
-    } else {
-      set({ screen: 'round', turno: turno + 1, currentVotes: {}, eliminatedThisTurno: null, linkedEliminatedThisTurno: null })
-    }
+    // Show elimination screen for the target — navigation handled by confirmElimination()
+    set({
+      players: updatedPlayers,
+      riccioStrikeActive: false,
+      postRiccioStrike: true,
+      eliminatedThisTurno: target,
+      linkedEliminatedThisTurno: linkedPartner,
+      screen: 'elimination',
+    })
   },
 
   oracoloReveal: (targetId) => {
@@ -408,6 +429,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       winner: null,
       roundScores: {},
       riccioStrikeActive: false,
+      postRiccioStrike: false,
       oracoloRevealActive: false,
       oracoloRevealedIds: [],
       scores: {},
