@@ -4,6 +4,7 @@ import { useGameStore } from '../store/gameStore'
 import { usePwaInstall } from '../hooks/usePwaInstall'
 import Tutorial from '../components/Tutorial'
 import camaleontePng from '../assets/camaleonte.png'
+import { Bunting, TropicalFoliage } from '../components/HomeDecorations'
 
 const stagger = {
   hidden: {},
@@ -33,6 +34,8 @@ export default function HomeScreen() {
       initial="hidden"
       animate="show"
     >
+      <Bunting />
+
       {/* Ambient blobs */}
       <div className="blob blob-1" />
       <div className="blob blob-2" />
@@ -41,35 +44,40 @@ export default function HomeScreen() {
       {/* Center glow */}
       <div className="center-glow" />
 
-      {/* Floating particles */}
-      <div className="particle particle-1" />
-      <div className="particle particle-2" />
-      <div className="particle particle-3" />
-      <div className="particle particle-4" />
-      <div className="particle particle-5" />
-      <div className="particle particle-6" />
-      <div className="particle particle-7" />
-      <div className="particle particle-8" />
-      <div className="particle particle-9" />
-      <div className="particle particle-10" />
-      <div className="particle particle-11" />
-      <div className="particle particle-12" />
-      <div className="particle particle-13" />
-      <div className="particle particle-14" />
-      <div className="particle particle-15" />
+      {/* Confetti — mostly on the sides */}
+      <div className="confetti confetti-1" />
+      <div className="confetti confetti-2" />
+      <div className="confetti confetti-3" />
+      <div className="confetti confetti-4" />
+      <div className="confetti confetti-5" />
+      <div className="confetti confetti-6" />
+      <div className="confetti confetti-7" />
+      <div className="confetti confetti-8" />
+      <div className="confetti confetti-9" />
+      <div className="confetti confetti-10" />
+      <div className="confetti confetti-11" />
+      <div className="confetti confetti-12" />
+      <div className="confetti confetti-13" />
+      <div className="confetti confetti-14" />
+      <div className="confetti confetti-15" />
+      <div className="confetti confetti-16" />
 
       {/* Camaleonte icon */}
-      <motion.div
-        className="z-10"
-        style={{ filter: 'drop-shadow(0 0 30px rgba(45,212,191,0.5))' }}
-        variants={fadeUp}
-      >
-        <img src={camaleontePng} alt="Camaleonte" className="w-[90px] h-[90px] object-contain" />
+      <motion.div className="z-10" variants={fadeUp}>
+        <img
+          src={camaleontePng}
+          alt="Camaleonte"
+          className="w-[160px] h-[160px] object-contain"
+          style={{
+            filter:
+              'drop-shadow(0 0 30px rgba(45,212,191,0.5)) drop-shadow(0 0 50px rgba(139,92,246,0.3)) drop-shadow(0 0 20px rgba(74,222,128,0.3))',
+          }}
+        />
       </motion.div>
 
       {/* Title */}
       <motion.h1
-        className="text-5xl text-white z-10 mt-3 title-glow"
+        className="text-5xl z-10 mt-3 title-glow bg-gradient-to-r from-green-400 via-teal-300 to-violet-400 bg-clip-text text-transparent"
         style={{ fontFamily: "'Bangers', cursive" }}
         variants={fadeUp}
       >
@@ -78,7 +86,7 @@ export default function HomeScreen() {
 
       {/* Tagline */}
       <motion.p
-        className="text-teal-300 tracking-[2px] text-sm z-10 mt-2"
+        className="text-teal-200 tracking-[2px] text-base z-10 mt-2"
         style={{ fontFamily: "'Permanent Marker', cursive" }}
         variants={fadeUp}
       >
@@ -96,17 +104,17 @@ export default function HomeScreen() {
       <motion.div className="flex gap-6 z-10" variants={fadeUp}>
         <div className="text-center">
           <div className="text-xl font-extrabold text-white">3-12</div>
-          <div className="text-[10px] text-slate-400 uppercase tracking-[1.5px]">Giocatori</div>
+          <div className="text-[10px] text-teal-400/70 uppercase tracking-[1.5px]">Giocatori</div>
         </div>
         <div className="w-px bg-white/10 self-stretch" />
         <div className="text-center">
           <div className="text-xl font-extrabold text-white">5-15</div>
-          <div className="text-[10px] text-slate-400 uppercase tracking-[1.5px]">Minuti</div>
+          <div className="text-[10px] text-teal-400/70 uppercase tracking-[1.5px]">Minuti</div>
         </div>
         <div className="w-px bg-white/10 self-stretch" />
         <div className="text-center">
           <div className="text-xl font-extrabold text-white">1</div>
-          <div className="text-[10px] text-slate-400 uppercase tracking-[1.5px]">Device</div>
+          <div className="text-[10px] text-teal-400/70 uppercase tracking-[1.5px]">Device</div>
         </div>
       </motion.div>
 
@@ -115,9 +123,9 @@ export default function HomeScreen() {
         onClick={() => goTo('setup')}
         className="z-10 mt-7 font-bold py-4 px-14 rounded-2xl text-lg transition-colors text-white"
         style={{
-          background: 'linear-gradient(135deg, rgba(20,184,166,0.8), rgba(13,148,136,0.9))',
-          border: '1px solid rgba(45,212,191,0.4)',
-          boxShadow: '0 8px 32px rgba(20,184,166,0.3), inset 0 1px 0 rgba(255,255,255,0.15)',
+          background: 'linear-gradient(135deg, rgba(20,184,166,0.85), rgba(16,185,129,0.9))',
+          border: '1px solid rgba(45,212,191,0.5)',
+          boxShadow: '0 8px 32px rgba(20,184,166,0.35), 0 0 60px rgba(139,92,246,0.15), inset 0 1px 0 rgba(255,255,255,0.15)',
         }}
         variants={fadeUp}
         {...springTap}
@@ -147,6 +155,8 @@ export default function HomeScreen() {
           </motion.button>
         )}
       </motion.div>
+
+      <TropicalFoliage />
 
       {/* Footer */}
       <motion.a
