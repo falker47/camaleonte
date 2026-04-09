@@ -11,6 +11,7 @@ import {
   getTalpaWinPoints,
   MAX_TALPA_PARTIAL_POINTS,
   CIVILE_WIN_POINTS,
+  CIVILE_POISONED_POINTS,
   BUFFONE_BONUS_POINTS,
   DUELLANTE_TRANSFER_POINTS,
 } from '../constants/gameConfig'
@@ -37,7 +38,7 @@ function calcFinalScores(
     let pts = 0
 
     if (winner === 'civilians') {
-      if (p.role === 'civile' && !camaleontePoisoned) pts = CIVILE_WIN_POINTS
+      if (p.role === 'civile') pts = camaleontePoisoned ? CIVILE_POISONED_POINTS : CIVILE_WIN_POINTS
       if (p.role === 'camaleonte' && camaleonteCorrectIds.has(p.id)) pts = getCamaleonteGuessPoints(totalPlayers)
       // Talpa eliminata → punti parziali
       if (p.role === 'talpa' && p.eliminated) pts = getTalpaPartialPoints(players, p.eliminatedInTurno ?? 0)
@@ -172,9 +173,8 @@ export const useGameStore = create<GameState>((set, get) => ({
 
     const chosen = shuffle(available)[0]
     const raw = chosen.pair
-    const pair = Math.random() < 0.5
-      ? { ...raw, civilian: raw.undercover, undercover: raw.civilian }
-      : raw
+    const words = shuffle([raw.civilian, raw.undercover, raw.undercover2])
+    const pair: WordPair = { civilian: words[0], undercover: words[1], undercover2: words[2], category: raw.category }
     const players = assignRoles(playerNames, config, pair)
     set({
       players,

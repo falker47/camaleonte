@@ -28,6 +28,7 @@ export interface Player {
 export interface WordPair {
   civilian: string
   undercover: string
+  undercover2: string
   category?: string
 }
 

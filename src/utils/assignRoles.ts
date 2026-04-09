@@ -16,13 +16,18 @@ export function assignRoles(
   if (shuffledRoles[0] === 'camaleonte' && Math.random() < 0.5) {
     shuffledRoles = shuffle(roles)
   }
+  const talpaWords = shuffle([pair.undercover, pair.undercover2])
+  let talpaIndex = 0
   const result = names.map((name, i) => {
     const role = shuffledRoles[i]
+    let word: string | null = null
+    if (role === 'civile') word = pair.civilian
+    else if (role === 'talpa') word = talpaWords[talpaIndex++] ?? pair.undercover
     return {
       id: crypto.randomUUID(),
       name,
       role,
-      word: role === 'civile' ? pair.civilian : role === 'talpa' ? pair.undercover : null,
+      word,
       eliminated: false,
       eliminatedInTurno: null,
     } as Player

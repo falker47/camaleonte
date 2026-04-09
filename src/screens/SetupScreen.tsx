@@ -8,10 +8,10 @@ import { MAX_PLAYERS, MAX_CAMALEONTE, MAX_TALPE } from '../constants/gameConfig'
 
 const SUGGESTED_ROLES: Record<number, [number, number]> = {
   3: [1, 0], 4: [1, 0],
-  5: [1, 1], 6: [1, 1],
-  7: [1, 2], 8: [1, 2],
-  9: [1, 3], 10: [1, 3],
-  11: [2, 3], 12: [2, 3],
+  5: [1, 0], 6: [1, 1],
+  7: [1, 1], 8: [1, 2],
+  9: [1, 2], 10: [1, 2],
+  11: [2, 2], 12: [2, 2],
 }
 
 interface Slot { id: number; name: string }
@@ -522,7 +522,7 @@ export default function SetupScreen() {
                 id: 'duellanti',
                 label: 'I Duellanti',
                 emoji: '⚔️',
-                description: 'Due nemici: chi viene eliminato per primo cede 2 punti all\'altro.',
+                description: 'Due nemici: chi viene eliminato per primo cede 1 punto all\'altro.',
                 bgBase: 'bg-blue-900/10',
                 bgActive: 'bg-blue-900/25',
                 borderBase: 'border-blue-700/20',

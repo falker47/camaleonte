@@ -319,7 +319,9 @@ export default function ResultScreen() {
                 <div className="w-px bg-white/8" />
                 <div>
                   <p className="text-xs text-orange-500">Talpe</p>
-                  <p className="text-white font-bold">{wordPair.undercover}</p>
+                  {[...new Set(players.filter(p => p.role === 'talpa').map(p => p.word))].map((w, i) => (
+                    <p key={i} className="text-white font-bold">{w}</p>
+                  ))}
                 </div>
               </>
             )}
@@ -517,13 +519,13 @@ export default function ResultScreen() {
                 </div>
                 {hasCamaleonte && (
                   <div>
-                    <div className="text-teal-400 font-semibold">Il Camaleonte — {players.length <= 4 ? '4' : '3'}{'\u00A0'}pt indovina / {players.length <= 3 ? '3' : players.length <= 4 ? '4' : '5'}{'\u00A0'}pt sopravvive</div>
+                    <div className="text-teal-400 font-semibold">Il Camaleonte — {players.length <= 4 ? '4' : '3'}{'\u00A0'}pt indovina / {players.length <= 4 ? '3' : '4'}{'\u00A0'}pt sopravvive</div>
                     <div className="text-slate-500 mt-0.5">Se eliminato, può tentare di indovinare la parola dei civili</div>
                   </div>
                 )}
                 {hasTalpa && (
                   <div>
-                    <div className="text-orange-500 font-semibold">La Talpa — {players.length <= 4 ? '3' : '5'}{'\u00A0'}pt sopravvive</div>
+                    <div className="text-orange-500 font-semibold">La Talpa — {players.length <= 4 ? '3' : '4'}{'\u00A0'}pt sopravvive</div>
                     <div className="text-slate-500 mt-0.5">Se eliminata: +1{'\u00A0'}pt per ogni civile eliminato (max 3{'\u00A0'}pt)</div>
                   </div>
                 )}
@@ -541,8 +543,8 @@ export default function ResultScreen() {
                 )}
                 {players.some(p => p.specialRole === 'duellante') && (
                   <div>
-                    <div className="text-blue-400 font-semibold">I Duellanti — ±2{'\u00A0'}pt trasferimento</div>
-                    <div className="text-slate-500 mt-0.5">Il primo dei due eliminato perde 2 pt, l'avversario ne guadagna 2. Pareggio se eliminati nello stesso turno.</div>
+                    <div className="text-blue-400 font-semibold">I Duellanti — ±1{'\u00A0'}pt trasferimento</div>
+                    <div className="text-slate-500 mt-0.5">Il primo dei due eliminato perde 1 pt, l'avversario ne guadagna 1. Pareggio se eliminati nello stesso turno.</div>
                   </div>
                 )}
                 {players.some(p => p.specialRole === 'romeo' || p.specialRole === 'giulietta') && (
