@@ -226,6 +226,13 @@ export const useGameStore = create<GameState>((set, get) => ({
     if (postRiccioStrike) {
       set({ postRiccioStrike: false })
 
+      // Compute oracolo upfront — camaleonte guess may return early but oracolo must still activate after
+      const isOracolo = eliminatedThisTurno.specialRole === 'oracolo' || linkedEliminatedThisTurno?.specialRole === 'oracolo'
+      const oracoloCanReveal = isOracolo && !checkWinCondition(players, players.length)
+      if (oracoloCanReveal) {
+        set({ oracoloRevealActive: true })
+      }
+
       if (eliminatedThisTurno.role === 'camaleonte' && wordPair) {
         set({ screen: 'camaleonte_guess', camaleonteGuessResult: null })
         return
@@ -235,11 +242,9 @@ export const useGameStore = create<GameState>((set, get) => ({
         return
       }
 
-      // Oracolo ability triggers even when eliminated by Riccio
-      const isOracolo = eliminatedThisTurno.specialRole === 'oracolo'
-      const oracoloCanReveal = isOracolo && !checkWinCondition(players, players.length)
+      // Oracolo ability triggers even when eliminated by Riccio (no camaleonte to guess first)
       if (oracoloCanReveal) {
-        set({ oracoloRevealActive: true, screen: 'oracolo_reveal' })
+        set({ screen: 'oracolo_reveal' })
         return
       }
 
@@ -272,14 +277,14 @@ export const useGameStore = create<GameState>((set, get) => ({
       }
     }
 
-    // Check if Riccio ability should activate
+    // Check if Riccio ability should activate (voted player OR linked partner)
     // Riccio strikes even on 'last_two' — can invalidate impostor survival by eliminating one
     // Only skips on 'civilians' (all impostors already gone, nothing to change)
-    const isRiccio = eliminatedThisTurno.specialRole === 'riccio'
+    const isRiccio = eliminatedThisTurno.specialRole === 'riccio' || linkedPartner?.specialRole === 'riccio'
     const riccioCanStrike = isRiccio && checkWinCondition(updatedPlayers, players.length) !== 'civilians'
 
-    // Check if Oracolo ability should activate
-    const isOracolo = eliminatedThisTurno.specialRole === 'oracolo'
+    // Check if Oracolo ability should activate (voted player OR linked partner)
+    const isOracolo = eliminatedThisTurno.specialRole === 'oracolo' || linkedPartner?.specialRole === 'oracolo'
     const oracoloCanReveal = isOracolo && !checkWinCondition(updatedPlayers, players.length)
 
     set({ players: updatedPlayers, linkedEliminatedThisTurno: linkedPartner, riccioStrikeActive: riccioCanStrike, oracoloRevealActive: oracoloCanReveal })
