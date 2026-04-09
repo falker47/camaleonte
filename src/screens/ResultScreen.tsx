@@ -49,7 +49,8 @@ export default function ResultScreen() {
   const hasTalpaSurvivor = activePlayers.some(p => p.role === 'talpa')
 
   const isCamaleonteSurvived = winner === 'last_two' && hasCamaleonteSurvivor && !hasTalpaSurvivor
-  const isTalpaSurvived = winner === 'last_two' && hasTalpaSurvivor && !hasCamaleonteSurvivor
+  const isTalpaSurvivedAndPoisoned = winner === 'last_two' && hasTalpaSurvivor && !hasCamaleonteSurvivor && camaleontePoisoned
+  const isTalpaSurvived = winner === 'last_two' && hasTalpaSurvivor && !hasCamaleonteSurvivor && !camaleontePoisoned
   const isBothSurvived = winner === 'last_two' && hasCamaleonteSurvivor && hasTalpaSurvivor
 
   // Leaderboard sorted by cumulative score
@@ -77,20 +78,40 @@ export default function ResultScreen() {
     <div className="relative flex flex-col flex-1 min-h-0 px-5 py-6 gap-4 overflow-y-auto">
       {/* Confetti / Particles */}
       {isCiviliansWin && (
-        <Particles
-          count={20}
-          colors={['#2dd4bf', '#fbbf24', '#34d399', '#f43f5e', '#22d3ee']}
-          style="fall"
-          origin="top"
-        />
+        <>
+          <Particles
+            count={20}
+            colors={['#6366f1', '#818cf8', '#a5b4fc']}
+            style="burst"
+            origin="center"
+          />
+          <Particles
+            count={20}
+            colors={['#fbbf24', '#6366f1', '#34d399', '#818cf8', '#22d3ee']}
+            style="fall"
+            origin="top"
+          />
+          <motion.div
+            className="absolute inset-0 bg-indigo-400 pointer-events-none z-40"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: [0, 0.12, 0] }}
+            transition={{ duration: 0.5 }}
+          />
+        </>
       )}
       {hasCamaleonte && isCamaleonteSurvived && (
         <>
           <Particles
-            count={15}
+            count={20}
             colors={['#2dd4bf', '#14b8a6', '#0d9488']}
             style="burst"
             origin="center"
+          />
+          <Particles
+            count={15}
+            colors={['#2dd4bf', '#5eead4', '#99f6e4']}
+            style="fall"
+            origin="top"
           />
           <motion.div
             className="absolute inset-0 bg-teal-400 pointer-events-none z-40"
@@ -101,33 +122,89 @@ export default function ResultScreen() {
         </>
       )}
       {hasTalpa && isTalpaSurvived && (
-        <Particles
-          count={15}
-          colors={['#ea580c', '#c2410c', '#9a3412', '#7c2d12']}
-          style="burst"
-          origin="center"
-        />
+        <>
+          <Particles
+            count={20}
+            colors={['#ea580c', '#c2410c', '#9a3412']}
+            style="burst"
+            origin="center"
+          />
+          <Particles
+            count={15}
+            colors={['#fb923c', '#ea580c', '#fdba74']}
+            style="fall"
+            origin="top"
+          />
+          <motion.div
+            className="absolute inset-0 bg-orange-500 pointer-events-none z-40"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: [0, 0.15, 0] }}
+            transition={{ duration: 0.6 }}
+          />
+        </>
       )}
       {hasCamaleonte && hasTalpa && isBothSurvived && (
-        <Particles
-          count={15}
-          colors={['#ef4444', '#f59e0b', '#dc2626', '#d97706']}
-          style="burst"
-          origin="center"
-        />
+        <>
+          <Particles
+            count={20}
+            colors={['#14b8a6', '#ea580c', '#0d9488', '#c2410c']}
+            style="burst"
+            origin="center"
+          />
+          <Particles
+            count={15}
+            colors={['#2dd4bf', '#fb923c', '#5eead4', '#fdba74']}
+            style="fall"
+            origin="top"
+          />
+          <motion.div
+            className="absolute inset-0 bg-amber-500 pointer-events-none z-40"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: [0, 0.15, 0] }}
+            transition={{ duration: 0.6 }}
+          />
+        </>
       )}
       {hasCamaleonte && isPoisoned && (
         <>
           <Particles
-            count={15}
+            count={20}
             colors={['#2dd4bf', '#14b8a6', '#0d9488']}
             style="burst"
             origin="center"
           />
+          <Particles
+            count={15}
+            colors={['#5eead4', '#2dd4bf', '#99f6e4']}
+            style="fall"
+            origin="top"
+          />
           <motion.div
             className="absolute inset-0 bg-teal-400 pointer-events-none z-40"
             initial={{ opacity: 0 }}
-            animate={{ opacity: [0, 0.2, 0] }}
+            animate={{ opacity: [0, 0.22, 0] }}
+            transition={{ duration: 0.6 }}
+          />
+        </>
+      )}
+      {hasCamaleonte && hasTalpa && isTalpaSurvivedAndPoisoned && (
+        <>
+          <Particles
+            count={20}
+            colors={['#14b8a6', '#ea580c', '#0d9488', '#c2410c']}
+            style="burst"
+            origin="center"
+          />
+          <Particles
+            count={15}
+            colors={['#2dd4bf', '#fb923c', '#5eead4', '#fdba74']}
+            style="fall"
+            origin="top"
+          />
+          <motion.div
+            className="absolute inset-0 bg-amber-500 pointer-events-none z-40"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: [0, 0.15, 0] }}
             transition={{ duration: 0.6 }}
           />
         </>
@@ -194,15 +271,36 @@ export default function ResultScreen() {
 
       {hasCamaleonte && hasTalpa && isBothSurvived && (
         <motion.div
-          className="rounded-3xl px-6 py-6 text-center bg-gradient-to-br from-rose-700 to-rose-900 border border-white/10"
+          className="rounded-3xl px-6 py-6 text-center bg-gradient-to-br from-teal-700 to-orange-800 border border-white/10"
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ type: 'spring', stiffness: 200, damping: 20 }}
         >
-          <div className="text-5xl mb-2">😈</div>
+          <div className="flex justify-center gap-2 mb-2">
+            <img src={camaleontePng} alt="Il Camaleonte" className="w-12 h-12" />
+            <img src={talpaPng} alt="La Talpa" className="w-12 h-12" />
+          </div>
           <h2 className="text-2xl font-black text-white">Gli impostori vincono!</h2>
-          <p className="text-rose-200 text-sm mt-1">
+          <p className="text-amber-100 text-sm mt-1">
             Sono sopravvissuti fino alla fine.
+          </p>
+        </motion.div>
+      )}
+
+      {hasCamaleonte && hasTalpa && isTalpaSurvivedAndPoisoned && (
+        <motion.div
+          className="rounded-3xl px-6 py-6 text-center bg-gradient-to-br from-teal-700 to-orange-800 border border-white/10"
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ type: 'spring', stiffness: 200, damping: 20 }}
+        >
+          <div className="flex justify-center gap-2 mb-2">
+            <img src={camaleontePng} alt="Il Camaleonte" className="w-12 h-12" />
+            <img src={talpaPng} alt="La Talpa" className="w-12 h-12" />
+          </div>
+          <h2 className="text-2xl font-black text-white">Gli impostori vincono!</h2>
+          <p className="text-amber-100 text-sm mt-1">
+            La Talpa è sopravvissuta e il Camaleonte ha indovinato la parola.
           </p>
         </motion.div>
       )}
