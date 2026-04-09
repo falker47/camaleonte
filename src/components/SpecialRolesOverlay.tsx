@@ -14,11 +14,13 @@ interface SpecialRoleConfig {
   toggleColor: string
   enabled: boolean
   minPlayers: number
+  slotCost?: number
 }
 
 interface Props {
   roles: SpecialRoleConfig[]
   playerCount: number
+  slotsRemaining: number
   onToggle: (id: string) => void
   onClose: () => void
 }

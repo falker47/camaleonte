@@ -107,8 +107,8 @@ export default function OracoloRevealScreen() {
           className="w-full max-w-xs glass-button font-bold py-5 rounded-2xl text-lg relative z-10"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.6 }}
           {...springTap}
+          transition={{ ...springTap.transition, delay: 0.6 }}
         >
           Continua →
         </motion.button>
