@@ -578,12 +578,21 @@ export default function SetupScreen() {
             playerCount={validNames.length}
             slotsRemaining={slotsRemaining}
             onToggle={(id) => {
-              if (id === 'buffone') setBuffoneEnabled(v => !v)
-              if (id === 'spettro') setSpettroEnabled(v => !v)
-              if (id === 'duellanti') setDuellantiEnabled(v => !v)
-              if (id === 'romeoGiulietta') setRomeoGiuliettaEnabled(v => !v)
-              if (id === 'riccio') setRiccioEnabled(v => !v)
-              if (id === 'oracolo') setOracoloEnabled(v => !v)
+              const roleMap: Record<string, { enabled: boolean; set: (v: boolean | ((prev: boolean) => boolean)) => void; cost: number }> = {
+                buffone: { enabled: buffoneEnabled, set: setBuffoneEnabled, cost: 1 },
+                spettro: { enabled: spettroEnabled, set: setSpettroEnabled, cost: 1 },
+                duellanti: { enabled: duellantiEnabled, set: setDuellantiEnabled, cost: 2 },
+                romeoGiulietta: { enabled: romeoGiuliettaEnabled, set: setRomeoGiuliettaEnabled, cost: 2 },
+                riccio: { enabled: riccioEnabled, set: setRiccioEnabled, cost: 1 },
+                oracolo: { enabled: oracoloEnabled, set: setOracoloEnabled, cost: 1 },
+              }
+              const role = roleMap[id]
+              if (!role) return
+              if (role.enabled) {
+                role.set(false)
+              } else if (slotsRemaining >= role.cost) {
+                role.set(true)
+              }
             }}
             onClose={() => setShowSpecialRoles(false)}
           />

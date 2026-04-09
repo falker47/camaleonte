@@ -25,8 +25,14 @@ interface Props {
   onClose: () => void
 }
 
-export default function SpecialRolesOverlay({ roles, playerCount, onToggle, onClose }: Props) {
+export default function SpecialRolesOverlay({ roles, playerCount, slotsRemaining, onToggle, onClose }: Props) {
   const activeCount = roles.filter(r => r.enabled && playerCount >= r.minPlayers).length
+
+  const sortedRoles = [...roles].sort((a, b) => {
+    const aLocked = playerCount < a.minPlayers ? 1 : 0
+    const bLocked = playerCount < b.minPlayers ? 1 : 0
+    return aLocked - bLocked
+  })
 
   return createPortal(
     <motion.div
@@ -61,15 +67,17 @@ export default function SpecialRolesOverlay({ roles, playerCount, onToggle, onCl
 
         {/* Roles list */}
         <div className="flex flex-col gap-3 px-6 py-4 overflow-y-auto">
-          {roles.map(role => {
+          {sortedRoles.map(role => {
             const locked = playerCount < role.minPlayers
             const active = role.enabled && !locked
+            const noSlots = !active && slotsRemaining < (role.slotCost ?? 1)
+            const disabled = locked || noSlots
             return (
               <button
                 key={role.id}
-                onClick={() => !locked && onToggle(role.id)}
-                disabled={locked}
-                className={`flex items-center gap-4 rounded-2xl px-4 py-3.5 text-left transition-all border ${locked
+                onClick={() => !disabled && onToggle(role.id)}
+                disabled={disabled}
+                className={`flex items-center gap-4 rounded-2xl px-4 py-3.5 text-left transition-all border ${disabled
                     ? 'opacity-35 cursor-not-allowed border-white/5 bg-white/[0.03]'
                     : active
                       ? `${role.bgActive} ${role.borderActive}`
@@ -79,7 +87,9 @@ export default function SpecialRolesOverlay({ roles, playerCount, onToggle, onCl
                 <span className="text-4xl shrink-0">{role.emoji}</span>
                 <div className="min-w-0 flex-1">
                   <p className="text-white text-sm font-bold">{role.label}</p>
-                  <span className="text-slate-500 text-[10px] -mt-0.5 block">Min. {role.minPlayers} giocatori</span>
+                  <span className="text-slate-500 text-[10px] -mt-0.5 block">
+                    {noSlots ? 'Slot insufficienti' : `Min. ${role.minPlayers} giocatori`}
+                  </span>
                   <p className="text-slate-400 text-xs mt-0.5">{role.description}</p>
                 </div>
                 <div className={`w-12 h-7 rounded-full transition-colors shrink-0 flex items-center ${active ? role.toggleColor : 'bg-white/10'
