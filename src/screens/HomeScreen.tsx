@@ -53,6 +53,10 @@ export default function HomeScreen() {
       <div className="particle particle-9" />
       <div className="particle particle-10" />
       <div className="particle particle-11" />
+      <div className="particle particle-12" />
+      <div className="particle particle-13" />
+      <div className="particle particle-14" />
+      <div className="particle particle-15" />
 
       {/* Camaleonte icon */}
       <motion.div
@@ -65,15 +69,17 @@ export default function HomeScreen() {
 
       {/* Title */}
       <motion.h1
-        className="text-4xl font-black text-white z-10 mt-3 title-glow"
+        className="text-5xl text-white z-10 mt-3 title-glow"
+        style={{ fontFamily: "'Bangers', cursive" }}
         variants={fadeUp}
       >
-        Camaleonte
+        CAMALEONTE
       </motion.h1>
 
       {/* Tagline */}
       <motion.p
-        className="text-teal-300 italic uppercase tracking-[3px] text-sm z-10 mt-2"
+        className="text-teal-300 tracking-[2px] text-sm z-10 mt-2"
+        style={{ fontFamily: "'Permanent Marker', cursive" }}
         variants={fadeUp}
       >
         Chi si mimetizza fra voi?
