@@ -15,8 +15,10 @@ import {
   DUELLANTE_TRANSFER_POINTS,
 } from '../constants/gameConfig'
 
-function getTalpaPartialPoints(players: Player[]): number {
-  const eliminatedCivili = players.filter(p => p.role === 'civile' && p.eliminated).length
+function getTalpaPartialPoints(players: Player[], talpaTurno: number): number {
+  const eliminatedCivili = players.filter(
+    p => p.role === 'civile' && p.eliminated && p.eliminatedInTurno !== null && p.eliminatedInTurno < talpaTurno
+  ).length
   return Math.min(MAX_TALPA_PARTIAL_POINTS, eliminatedCivili)
 }
 
@@ -38,7 +40,7 @@ function calcFinalScores(
       if (p.role === 'civile' && !camaleontePoisoned) pts = CIVILE_WIN_POINTS
       if (p.role === 'camaleonte' && camaleonteCorrectIds.has(p.id)) pts = getCamaleonteGuessPoints(totalPlayers)
       // Talpa eliminata → punti parziali
-      if (p.role === 'talpa' && p.eliminated) pts = getTalpaPartialPoints(players)
+      if (p.role === 'talpa' && p.eliminated) pts = getTalpaPartialPoints(players, p.eliminatedInTurno ?? 0)
     }
 
     if (winner === 'last_two') {
@@ -47,7 +49,7 @@ function calcFinalScores(
       // Camaleonte eliminato ma ha indovinato
       if (p.role === 'camaleonte' && p.eliminated && camaleonteCorrectIds.has(p.id)) pts = getCamaleonteGuessPoints(totalPlayers)
       // Talpa eliminata → punti parziali
-      if (p.role === 'talpa' && p.eliminated) pts = getTalpaPartialPoints(players)
+      if (p.role === 'talpa' && p.eliminated) pts = getTalpaPartialPoints(players, p.eliminatedInTurno ?? 0)
     }
 
     // Buffone bonus if eliminated in turno 1
