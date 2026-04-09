@@ -425,7 +425,7 @@ export default function SetupScreen() {
               <div className="text-left">
                 <p className="text-white text-sm font-semibold">Ruoli Speciali</p>
                 {(() => {
-                  const active = [buffoneEnabled && validNames.length >= 5, spettroEnabled, duellantiEnabled, romeoGiuliettaEnabled && validNames.length >= 5, riccioEnabled && validNames.length >= 5, oracoloEnabled && validNames.length >= 4].filter(Boolean).length
+                  const active = [oracoloEnabled && validNames.length >= 4, riccioEnabled && validNames.length >= 5, duellantiEnabled, buffoneEnabled && validNames.length >= 5, spettroEnabled, romeoGiuliettaEnabled && validNames.length >= 5].filter(Boolean).length
                   return active > 0
                     ? <p className="text-teal-400 text-xs">{active} attiv{active === 1 ? 'o' : 'i'}</p>
                     : <p className="text-slate-500 text-xs">Nessuno attivo</p>
@@ -434,8 +434,23 @@ export default function SetupScreen() {
             </div>
             <span className="text-slate-500 text-sm">›</span>
           </motion.button>
-          {(buffoneEnabled && validNames.length >= 5 || spettroEnabled || duellantiEnabled || romeoGiuliettaEnabled && validNames.length >= 5 || riccioEnabled && validNames.length >= 5 || oracoloEnabled && validNames.length >= 4) && (
+          {(oracoloEnabled && validNames.length >= 4 || riccioEnabled && validNames.length >= 5 || duellantiEnabled || buffoneEnabled && validNames.length >= 5 || spettroEnabled || romeoGiuliettaEnabled && validNames.length >= 5) && (
             <div className="flex flex-wrap gap-1.5 px-4 pb-3">
+              {oracoloEnabled && validNames.length >= 4 && (
+                <span className="inline-block rounded-full bg-purple-900/20 border border-purple-700/30 text-purple-400 text-xs font-bold px-2.5 py-0.5">
+                  🔮 Oracolo
+                </span>
+              )}
+              {riccioEnabled && validNames.length >= 5 && (
+                <span className="inline-block rounded-full bg-yellow-500/20 border border-yellow-400/30 text-yellow-400 text-xs font-bold px-2.5 py-0.5">
+                  🦔 Riccio
+                </span>
+              )}
+              {duellantiEnabled && (
+                <span className="inline-block rounded-full bg-blue-900/20 border border-blue-700/30 text-blue-400 text-xs font-bold px-2.5 py-0.5">
+                  ⚔️ Duellanti
+                </span>
+              )}
               {buffoneEnabled && validNames.length >= 5 && (
                 <span className="inline-block rounded-full bg-red-500/20 border border-red-400/30 text-red-400 text-xs font-bold px-2.5 py-0.5">
                   🃏 Buffone
@@ -446,24 +461,9 @@ export default function SetupScreen() {
                   🎐 Spettro
                 </span>
               )}
-              {duellantiEnabled && (
-                <span className="inline-block rounded-full bg-blue-900/20 border border-blue-700/30 text-blue-400 text-xs font-bold px-2.5 py-0.5">
-                  ⚔️ Duellanti
-                </span>
-              )}
               {romeoGiuliettaEnabled && validNames.length >= 5 && (
                 <span className="inline-block rounded-full bg-rose-400/20 border border-rose-300/30 text-rose-300 text-xs font-bold px-2.5 py-0.5">
                   💕 R&G
-                </span>
-              )}
-              {riccioEnabled && validNames.length >= 5 && (
-                <span className="inline-block rounded-full bg-yellow-500/20 border border-yellow-400/30 text-yellow-400 text-xs font-bold px-2.5 py-0.5">
-                  🦔 Riccio
-                </span>
-              )}
-              {oracoloEnabled && validNames.length >= 4 && (
-                <span className="inline-block rounded-full bg-purple-900/20 border border-purple-700/30 text-purple-400 text-xs font-bold px-2.5 py-0.5">
-                  🔮 Oracolo
                 </span>
               )}
             </div>
@@ -490,6 +490,48 @@ export default function SetupScreen() {
         {showSpecialRoles && (
           <SpecialRolesOverlay
             roles={[
+              {
+                id: 'oracolo',
+                label: 'L\'Oracolo',
+                emoji: '🔮',
+                description: 'Se eliminato, svela il ruolo di un giocatore a sua scelta.',
+                bgBase: 'bg-purple-900/10',
+                bgActive: 'bg-purple-900/25',
+                borderBase: 'border-purple-700/20',
+                borderActive: 'border-purple-700/50',
+                toggleColor: 'bg-purple-800',
+                enabled: oracoloEnabled,
+                minPlayers: 4,
+                slotCost: 1,
+              },
+              {
+                id: 'riccio',
+                label: 'Il Riccio',
+                emoji: '🦔',
+                description: 'Se eliminato, trascina un altro giocatore con sé.',
+                bgBase: 'bg-yellow-500/10',
+                bgActive: 'bg-yellow-500/25',
+                borderBase: 'border-yellow-400/20',
+                borderActive: 'border-yellow-400/50',
+                toggleColor: 'bg-yellow-500',
+                enabled: riccioEnabled,
+                minPlayers: 5,
+                slotCost: 1,
+              },
+              {
+                id: 'duellanti',
+                label: 'I Duellanti',
+                emoji: '⚔️',
+                description: 'Due nemici: chi viene eliminato per primo cede 2 punti all\'altro.',
+                bgBase: 'bg-blue-900/10',
+                bgActive: 'bg-blue-900/25',
+                borderBase: 'border-blue-700/20',
+                borderActive: 'border-blue-700/50',
+                toggleColor: 'bg-blue-800',
+                enabled: duellantiEnabled,
+                minPlayers: 4,
+                slotCost: 2,
+              },
               {
                 id: 'buffone',
                 label: 'Il Buffone',
@@ -519,20 +561,6 @@ export default function SetupScreen() {
                 slotCost: 1,
               },
               {
-                id: 'duellanti',
-                label: 'I Duellanti',
-                emoji: '⚔️',
-                description: 'Due nemici: chi viene eliminato per primo cede 2 punti all\'altro.',
-                bgBase: 'bg-blue-900/10',
-                bgActive: 'bg-blue-900/25',
-                borderBase: 'border-blue-700/20',
-                borderActive: 'border-blue-700/50',
-                toggleColor: 'bg-blue-800',
-                enabled: duellantiEnabled,
-                minPlayers: 4,
-                slotCost: 2,
-              },
-              {
                 id: 'romeoGiulietta',
                 label: 'Romeo & Giulietta',
                 emoji: '💕',
@@ -545,34 +573,6 @@ export default function SetupScreen() {
                 enabled: romeoGiuliettaEnabled,
                 minPlayers: 5,
                 slotCost: 2,
-              },
-              {
-                id: 'riccio',
-                label: 'Il Riccio',
-                emoji: '🦔',
-                description: 'Se eliminato, trascina un altro giocatore con sé.',
-                bgBase: 'bg-yellow-500/10',
-                bgActive: 'bg-yellow-500/25',
-                borderBase: 'border-yellow-400/20',
-                borderActive: 'border-yellow-400/50',
-                toggleColor: 'bg-yellow-500',
-                enabled: riccioEnabled,
-                minPlayers: 5,
-                slotCost: 1,
-              },
-              {
-                id: 'oracolo',
-                label: 'L\'Oracolo',
-                emoji: '🔮',
-                description: 'Se eliminato, svela il ruolo di un giocatore a sua scelta.',
-                bgBase: 'bg-purple-900/10',
-                bgActive: 'bg-purple-900/25',
-                borderBase: 'border-purple-700/20',
-                borderActive: 'border-purple-700/50',
-                toggleColor: 'bg-purple-800',
-                enabled: oracoloEnabled,
-                minPlayers: 4,
-                slotCost: 1,
               },
             ]}
             playerCount={validNames.length}
