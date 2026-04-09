@@ -149,7 +149,7 @@ export default function GuessScreen() {
             disabled={guess.trim().length === 0}
             className={`w-full py-5 rounded-2xl font-bold text-lg transition-all ${
               guess.trim().length > 0
-                ? 'bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-black shadow-[0_8px_32px_rgba(245,158,11,0.3)]'
+                ? 'bg-teal-500 hover:bg-teal-400 active:bg-teal-600 text-black shadow-[0_8px_32px_rgba(20,184,166,0.3)]'
                 : 'bg-white/5 text-slate-500 cursor-not-allowed border border-white/5'
             }`}
             whileHover={guess.trim().length > 0 ? springTap.whileHover : {}}

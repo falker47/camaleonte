@@ -117,7 +117,7 @@ export default function VoteScreen() {
           </div>
           <motion.button
             onClick={handleDraw}
-            className="w-full py-5 rounded-2xl font-bold text-lg bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-black transition-colors shadow-[0_8px_32px_rgba(245,158,11,0.3)]"
+            className="w-full py-5 rounded-2xl font-bold text-lg bg-teal-500 hover:bg-teal-400 active:bg-teal-600 text-black transition-colors shadow-[0_8px_32px_rgba(20,184,166,0.3)]"
             {...springTap}
           >
             Sorteggia

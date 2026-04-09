@@ -24,7 +24,7 @@ export default function ConfirmDialog({
   const confirmClass = variant === 'camaleonte'
     ? 'bg-teal-500 hover:bg-teal-400 text-black'
     : variant === 'warning'
-    ? 'bg-amber-500 hover:bg-amber-400 text-black'
+    ? 'bg-teal-500 hover:bg-teal-400 text-black'
     : 'bg-rose-600 hover:bg-rose-500 text-white'
 
   return (
