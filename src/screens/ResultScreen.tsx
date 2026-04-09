@@ -513,7 +513,7 @@ export default function ResultScreen() {
                   <div className="text-indigo-400 font-semibold">Civile — 2{'\u00A0'}pt</div>
                   <div className="text-slate-500 mt-0.5">
                     {hasCamaleonte
-                      ? 'Se tutti gli impostori vengono eliminati (e il Camaleonte non indovina)'
+                      ? 'Se tutti gli impostori vengono eliminati (ma 1\u00A0pt solo se il Camaleonte indovina)'
                       : 'Se tutti gli impostori vengono eliminati'}
                   </div>
                 </div>
