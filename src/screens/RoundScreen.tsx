@@ -1,25 +1,13 @@
 import { useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useGameStore } from '../store/gameStore'
-import type { Role } from '../store/types'
 import { AVATAR_COLORS } from '../constants/avatarColors'
 import { springTap } from '../constants/animations'
+import { ROLE_BORDER_COLORS, ROLE_AVATAR_BG } from '../constants/roleColors'
 import { getSurvivalThreshold } from '../utils/winCondition'
 import LastChanceOverlay from '../components/LastChanceOverlay'
 import talpaPng from '../assets/talpa.png'
 import camaleontePng from '../assets/camaleonte.png'
-
-const ROLE_BORDER_COLORS: Record<Role, string> = {
-  civile: 'border-indigo-400/40',
-  talpa: 'border-orange-500/40',
-  camaleonte: 'border-teal-400/40',
-}
-
-const ROLE_AVATAR_BG: Record<Role, string> = {
-  civile: 'from-indigo-600 to-indigo-800',
-  talpa: 'from-orange-700 to-orange-900',
-  camaleonte: 'from-teal-600 to-teal-800',
-}
 
 export default function RoundScreen() {
   const players = useGameStore(s => s.players)
@@ -58,8 +46,8 @@ export default function RoundScreen() {
 
       {active.some(p => p.specialRole === 'riccio') && isLastChance && (
         <div className="glass rounded-xl px-4 py-3 border border-yellow-400/20">
-          <p className="text-yellow-400 text-sm font-semibold">🦔 Il Riccio non potrà colpire in questo turno</p>
-          <p className="text-slate-400 text-xs mt-1">La prossima eliminazione concluderà la partita.</p>
+          <p className="text-yellow-400 text-sm font-semibold">🦔 Il Riccio potrebbe ribaltare tutto!</p>
+          <p className="text-slate-400 text-xs mt-1">Se eliminato, potrà trascinare un altro giocatore con sé.</p>
         </div>
       )}
 

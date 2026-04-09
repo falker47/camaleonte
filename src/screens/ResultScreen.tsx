@@ -66,8 +66,9 @@ export default function ResultScreen() {
     if (!me || !opponent) return null
     if (!me.eliminated && !opponent.eliminated) return null
     if (me.eliminated && opponent.eliminated) {
+      if (me.eliminatedInTurno == null || opponent.eliminatedInTurno == null) return 'draw'
       if (me.eliminatedInTurno === opponent.eliminatedInTurno) return 'draw'
-      return me.eliminatedInTurno! < opponent.eliminatedInTurno! ? 'lost' : 'won'
+      return me.eliminatedInTurno < opponent.eliminatedInTurno ? 'lost' : 'won'
     }
     return me.eliminated ? 'lost' : 'won'
   }

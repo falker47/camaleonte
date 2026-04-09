@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { useGameStore } from '../store/gameStore'
 import { springTap } from '../constants/animations'
+import { getCamaleonteGuessPoints } from '../constants/gameConfig'
 
 type Phase = 'privacy' | 'input' | 'result'
 
@@ -14,7 +15,7 @@ export default function GuessScreen() {
   const winner = useGameStore(s => s.winner)
   const nextTurno = useGameStore(s => s.nextTurno)
 
-  const camaleonteGuessPoints = players.length <= 4 ? 4 : 3
+  const camaleonteGuessPoints = getCamaleonteGuessPoints(players.length)
 
   const [guess, setGuess] = useState('')
   const [phase, setPhase] = useState<Phase>('privacy')

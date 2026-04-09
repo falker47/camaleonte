@@ -4,14 +4,9 @@ import { useGameStore } from '../store/gameStore'
 import RoleTag from '../components/RoleTag'
 import { vibrate } from '../utils/vibrate'
 import { springTap } from '../constants/animations'
+import { ROLE_FLASH_COLORS } from '../constants/roleColors'
 import talpaPng from '../assets/talpa.png'
 import camaleontePng from '../assets/camaleonte.png'
-
-const ROLE_FLASH_COLORS: Record<string, string> = {
-  camaleonte: 'rgba(20,184,166,0.15)',
-  talpa: 'rgba(234,88,12,0.15)',
-  civile: 'rgba(99,102,241,0.15)',
-}
 
 export default function EliminationScreen() {
   const eliminatedThisTurno = useGameStore(s => s.eliminatedThisTurno)
@@ -33,8 +28,8 @@ export default function EliminationScreen() {
   const isOracolo = eliminatedThisTurno.specialRole === 'oracolo'
   const isRomeoGiulietta = eliminatedThisTurno.specialRole === 'romeo' || eliminatedThisTurno.specialRole === 'giulietta'
   const linkedPartner = isRomeoGiulietta
-    ? (players.find(p => (p.specialRole === 'romeo' || p.specialRole === 'giulietta') && p.id !== eliminatedThisTurno.id && !p.eliminated)
-      ?? storeLinkedPartner)
+    ? (storeLinkedPartner
+      ?? players.find(p => (p.specialRole === 'romeo' || p.specialRole === 'giulietta') && p.id !== eliminatedThisTurno.id && !p.eliminated))
     : null
 
   // Count remaining impostors (excluding the one being eliminated right now)

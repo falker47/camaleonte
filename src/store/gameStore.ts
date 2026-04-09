@@ -5,24 +5,19 @@ import { shuffle } from '../utils/shuffle'
 import { assignRoles } from '../utils/assignRoles'
 import { checkWinCondition } from '../utils/winCondition'
 import { isWordMatch } from '../utils/matchWord'
-
-function getCamaleonteGuessPoints(totalPlayers: number): number {
-  return totalPlayers <= 4 ? 4 : 3
-}
-
-function getCamaleonteSurvivalPoints(totalPlayers: number): number {
-  if (totalPlayers <= 3) return 3
-  if (totalPlayers <= 4) return 4
-  return 5
-}
-
-function getTalpaWinPoints(totalPlayers: number): number {
-  return totalPlayers <= 4 ? 3 : 5
-}
+import {
+  getCamaleonteGuessPoints,
+  getCamaleonteSurvivalPoints,
+  getTalpaWinPoints,
+  MAX_TALPA_PARTIAL_POINTS,
+  CIVILE_WIN_POINTS,
+  BUFFONE_BONUS_POINTS,
+  DUELLANTE_TRANSFER_POINTS,
+} from '../constants/gameConfig'
 
 function getTalpaPartialPoints(players: Player[]): number {
   const eliminatedCivili = players.filter(p => p.role === 'civile' && p.eliminated).length
-  return Math.min(3, eliminatedCivili)
+  return Math.min(MAX_TALPA_PARTIAL_POINTS, eliminatedCivili)
 }
 
 function calcFinalScores(
@@ -40,7 +35,7 @@ function calcFinalScores(
     let pts = 0
 
     if (winner === 'civilians') {
-      if (p.role === 'civile' && !camaleontePoisoned) pts = 2
+      if (p.role === 'civile' && !camaleontePoisoned) pts = CIVILE_WIN_POINTS
       if (p.role === 'camaleonte' && camaleonteCorrectIds.has(p.id)) pts = getCamaleonteGuessPoints(totalPlayers)
       // Talpa eliminata → punti parziali
       if (p.role === 'talpa' && p.eliminated) pts = getTalpaPartialPoints(players)
@@ -55,8 +50,8 @@ function calcFinalScores(
       if (p.role === 'talpa' && p.eliminated) pts = getTalpaPartialPoints(players)
     }
 
-    // Buffone bonus: +2 if eliminated in turno 1
-    if (p.specialRole === 'buffone' && p.eliminatedInTurno === 1) pts += 2
+    // Buffone bonus if eliminated in turno 1
+    if (p.specialRole === 'buffone' && p.eliminatedInTurno === 1) pts += BUFFONE_BONUS_POINTS
 
     roundScores[p.name] = pts
     scores[p.name] = (scores[p.name] ?? 0) + pts
@@ -73,17 +68,19 @@ function calcFinalScores(
       loser = a; winnerId = b.id
     } else if (b.eliminated && !a.eliminated) {
       loser = b; winnerId = a.id
-    } else if (a.eliminated && b.eliminated && a.eliminatedInTurno !== b.eliminatedInTurno) {
-      loser = (a.eliminatedInTurno! < b.eliminatedInTurno!) ? a : b
+    } else if (a.eliminated && b.eliminated && a.eliminatedInTurno != null && b.eliminatedInTurno != null && a.eliminatedInTurno !== b.eliminatedInTurno) {
+      loser = a.eliminatedInTurno < b.eliminatedInTurno ? a : b
       winnerId = loser === a ? b.id : a.id
     }
 
     if (loser && winnerId) {
-      roundScores[loser.name] = (roundScores[loser.name] ?? 0) - 2
-      scores[loser.name] = (scores[loser.name] ?? 0) - 2
-      const winnerName = players.find(p => p.id === winnerId)!.name
-      roundScores[winnerName] = (roundScores[winnerName] ?? 0) + 2
-      scores[winnerName] = (scores[winnerName] ?? 0) + 2
+      roundScores[loser.name] = (roundScores[loser.name] ?? 0) - DUELLANTE_TRANSFER_POINTS
+      scores[loser.name] = (scores[loser.name] ?? 0) - DUELLANTE_TRANSFER_POINTS
+      const winnerPlayer = players.find(p => p.id === winnerId)
+      if (!winnerPlayer) return { scores, roundScores }
+      const winnerName = winnerPlayer.name
+      roundScores[winnerName] = (roundScores[winnerName] ?? 0) + DUELLANTE_TRANSFER_POINTS
+      scores[winnerName] = (scores[winnerName] ?? 0) + DUELLANTE_TRANSFER_POINTS
     }
   }
 
@@ -329,7 +326,8 @@ export const useGameStore = create<GameState>((set, get) => ({
     )
 
     // R&G linked elimination for target
-    const target = updatedPlayers.find(p => p.id === targetId)!
+    const target = updatedPlayers.find(p => p.id === targetId)
+    if (!target) return
     let linkedPartner: Player | null = null
     if (target.specialRole === 'romeo' || target.specialRole === 'giulietta') {
       const partnerRole = target.specialRole === 'romeo' ? 'giulietta' : 'romeo'

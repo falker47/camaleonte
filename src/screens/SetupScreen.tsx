@@ -15,7 +15,6 @@ const SUGGESTED_ROLES: Record<number, [number, number]> = {
 }
 
 interface Slot { id: number; name: string }
-let nextSlotId = 3
 
 export default function SetupScreen() {
   const config = useGameStore(s => s.config)
@@ -24,6 +23,7 @@ export default function SetupScreen() {
   const startGame = useGameStore(s => s.startGame)
   const goTo = useGameStore(s => s.goTo)
 
+  const nextSlotId = useRef(3)
   const [slots, setSlots] = useState<Slot[]>([{ id: 0, name: '' }, { id: 1, name: '' }, { id: 2, name: '' }])
   const [camaleonteCount, setCamaleonteCount] = useState(config.camaleonteCount)
   const [talpaCount, setTalpaCount] = useState(config.talpaCount)
@@ -185,7 +185,7 @@ export default function SetupScreen() {
     !hasEmptySlots
 
   const addPlayer = () => {
-    if (slots.length < MAX_PLAYERS) setSlots([...slots, { id: nextSlotId++, name: '' }])
+    if (slots.length < MAX_PLAYERS) setSlots([...slots, { id: nextSlotId.current++, name: '' }])
   }
 
   const removePlayer = (i: number) => {
@@ -232,7 +232,7 @@ export default function SetupScreen() {
       next[emptyIndex] = { ...next[emptyIndex], name: trimmed }
       setSlots(next)
     } else {
-      setSlots([...slots, { id: nextSlotId++, name: trimmed }])
+      setSlots([...slots, { id: nextSlotId.current++, name: trimmed }])
     }
     setCtaValue('')
     // Re-focus CTA input – mobile browsers auto-advance to next input on Enter
