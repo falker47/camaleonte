@@ -41,7 +41,7 @@ export default function ScoreReference({ onClose }: { onClose: () => void }) {
           <section>
             <h3 className="text-teal-400 font-semibold text-sm mb-2">🎯 Soglia di sopravvivenza</h3>
             <p className="text-slate-400 text-xs mb-2">
-              Camaleonte e Talpa vincono se il numero di giocatori attivi scende alla soglia con almeno un impostore vivo.
+              Ogni impostore (camaleonte e talpa) gioca per sé: <br />esso vince se è ancora in gioco quando i giocatori attivi scendono alla soglia.
             </p>
             <div className="rounded-xl overflow-hidden border border-white/10">
               <table className="w-full text-xs">

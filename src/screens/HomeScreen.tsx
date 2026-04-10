@@ -38,6 +38,17 @@ export default function HomeScreen() {
     >
       <Bunting />
 
+      {/* Score reference button */}
+      <motion.button
+        onClick={() => setShowScoreRef(true)}
+        className="absolute top-5 right-5 z-10 w-9 h-9 rounded-full glass text-slate-400 hover:text-white flex items-center justify-center text-sm font-bold transition-colors"
+        aria-label="Punteggi"
+        variants={fadeUp}
+        {...springTap}
+      >
+        ?
+      </motion.button>
+
       {/* Ambient blobs */}
       <div className="blob blob-1" />
       <div className="blob blob-2" />
@@ -143,14 +154,6 @@ export default function HomeScreen() {
           {...springTap}
         >
           Come si gioca
-        </motion.button>
-
-        <motion.button
-          onClick={() => setShowScoreRef(true)}
-          className="glass-button-secondary py-2.5 px-5 rounded-xl text-sm transition-colors"
-          {...springTap}
-        >
-          Punteggi
         </motion.button>
 
         {canInstall && (
