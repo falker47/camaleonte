@@ -10,10 +10,25 @@ const STEPS: { emoji?: string; image?: string; title: string; text: string }[] =
   { emoji: '🎯', title: 'Obiettivi', text: 'I Civili devono eliminare tutti gli impostori. La Talpa e il Camaleonte vincono se sopravvivono abbastanza a lungo \u2014 più siete, più turni dovranno resistere!' },
   { image: camaleontePng, title: 'L\'ultima chance', text: 'Se il Camaleonte viene eliminato, può tentare di indovinare la parola dei Civili. Se ci riesce, vince comunque!' },
   { emoji: '⭐', title: 'Ruoli Speciali', text: 'Nel setup puoi attivare ruoli speciali pensati per giocatori già rodati che vogliono aggiungere un tocco di pepe in più alle loro partite!' },
-  { emoji: '🏆', title: 'Punteggi', text: 'Civili: 2\u00A0pt se eliminano tutti gli impostori. Il Camaleonte guadagna di più sopravvivendo in partite lunghe, di più indovinando in quelle brevi. La Talpa prende punti parziali per ogni civile eliminato. Dettagli nella schermata risultati!' },
+  { emoji: '🏆', title: 'Punteggi', text: 'Civili: 2\u00A0pt se eliminano tutti gli impostori. Il Camaleonte guadagna di più sopravvivendo in partite lunghe e indovinando in quelle brevi. La Talpa ottiene punti parziali per ogni civile eliminato. Dettagli nella schermata risultati!' },
 ]
 
 const swipeThreshold = 50
+
+const slideVariants = {
+  enter: (dir: number) => ({
+    x: dir > 0 ? 300 : -300,
+    opacity: 0,
+  }),
+  center: {
+    x: 0,
+    opacity: 1,
+  },
+  exit: (dir: number) => ({
+    x: dir > 0 ? -300 : 300,
+    opacity: 0,
+  }),
+}
 
 export default function Tutorial({ onClose }: { onClose: () => void }) {
   const [step, setStep] = useState(0)
@@ -62,14 +77,18 @@ export default function Tutorial({ onClose }: { onClose: () => void }) {
             window.addEventListener('pointerup', onUp)
           }}
         >
-          <AnimatePresence mode="wait" custom={direction}>
+          <AnimatePresence initial={false} mode="popLayout" custom={direction}>
             <motion.div
               key={step}
               custom={direction}
-              initial={{ x: direction * 60, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: direction * -60, opacity: 0 }}
-              transition={{ duration: 0.25, ease: 'easeOut' }}
+              variants={slideVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{
+                x: { type: 'spring', stiffness: 200, damping: 28 },
+                opacity: { duration: 0.25 },
+              }}
               className="flex flex-col items-center text-center gap-3 w-full"
             >
               {STEPS[step].image
