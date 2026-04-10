@@ -1,10 +1,91 @@
+import { type ReactNode } from 'react'
 import { motion } from 'framer-motion'
+
+const pt = (n: number) => `${n}\u00A0pt`
 
 const SURVIVAL_THRESHOLDS = [
   { range: '3–5', threshold: 2 },
   { range: '6–8', threshold: 3 },
   { range: '9+', threshold: 4 },
 ]
+
+const CIVILE_ROWS = [
+  { scenario: 'Tutti gli impostori eliminati', points: pt(2), color: 'text-white' },
+  { scenario: 'Impostori eliminati, ma Camaleonte indovina', points: pt(1), color: 'text-amber-400' },
+  { scenario: 'Impostori sopravvivono', points: pt(0), color: 'text-slate-500' },
+]
+
+const CAMALEONTE_ROWS: ScoreRow[] = [
+  { scenario: 'Eliminato, indovina la parola', small: pt(4), large: pt(3) },
+  { scenario: 'Sopravvive fino alla soglia', small: pt(3), large: pt(4) },
+  { scenario: 'Eliminato, non indovina', merged: pt(0), color: 'text-slate-500' },
+]
+
+const TALPA_ROWS: ScoreRow[] = [
+  { scenario: 'Sopravvive fino alla soglia', small: pt(3), large: pt(4) },
+  { scenario: 'Eliminata, civili vincono', merged: `1\u00A0pt / civile eliminato (max 2)` },
+  { scenario: 'Eliminata, impostori sopravvivono', merged: pt(0), color: 'text-slate-500' },
+]
+
+const SPECIAL_ROLES = [
+  { name: '🃏 Buffone', color: 'text-red-400', effect: `+${pt(2)} se eliminato al 1° turno` },
+  { name: '⚔️ Duellanti', color: 'text-blue-400', effect: `Il primo eliminato perde 1\u00A0pt, l'altro guadagna 1\u00A0pt. Pareggio se eliminati nello stesso turno.` },
+  { name: '💕 Romeo & Giulietta', color: 'text-rose-300', effect: 'Nessun effetto sui punti. Se uno cade, cade anche l\'altro.' },
+  { name: '🦔 Riccio', color: 'text-yellow-400', effect: 'Nessun bonus punti. Se eliminato, trascina un avversario con sé.' },
+  { name: '🎐 Spettro', color: 'text-cyan-400', effect: 'Nessun bonus punti. Continua a votare dopo eliminazione.' },
+  { name: '🔮 Oracolo', color: 'text-purple-400', effect: 'Nessun bonus punti. Se eliminato, svela il ruolo di un giocatore.' },
+]
+
+type ScoreRow = {
+  scenario: string
+  small?: string
+  large?: string
+  merged?: string
+  color?: string
+}
+
+function Section({ icon, title, color, description, children }: { icon: string; title: string; color: string; description?: ReactNode; children: ReactNode }) {
+  return (
+    <section>
+      <h3 className={`${color} font-semibold text-sm mb-2`}>{icon} {title}</h3>
+      {description}
+      <div className="rounded-xl overflow-hidden border border-white/10">
+        {children}
+      </div>
+    </section>
+  )
+}
+
+function ScoreTable({ columns, children }: { columns: { label: string; align?: 'left' | 'right' }[]; children: ReactNode }) {
+  return (
+    <table className="w-full text-xs">
+      <thead>
+        <tr className="bg-white/[0.07]">
+          {columns.map(({ label, align = 'left' }) => (
+            <th key={label} className={`text-${align} px-3 py-2 text-slate-300 font-semibold`}>{label}</th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>{children}</tbody>
+    </table>
+  )
+}
+
+function TwoColScoreRows({ rows }: { rows: ScoreRow[] }) {
+  return rows.map(({ scenario, small, large, merged, color = 'text-white' }) => (
+    <tr key={scenario} className="border-t border-white/5">
+      <td className="px-3 py-2 text-slate-400">{scenario}</td>
+      {merged !== undefined ? (
+        <td className={`px-3 py-2 ${color} font-semibold text-right`} colSpan={2}>{merged}</td>
+      ) : (
+        <>
+          <td className={`px-3 py-2 ${color} font-semibold text-right`}>{small}</td>
+          <td className={`px-3 py-2 ${color} font-semibold text-right`}>{large}</td>
+        </>
+      )}
+    </tr>
+  ))
+}
 
 export default function ScoreReference({ onClose }: { onClose: () => void }) {
   return (
@@ -23,7 +104,6 @@ export default function ScoreReference({ onClose }: { onClose: () => void }) {
         transition={{ type: 'spring', stiffness: 400, damping: 30 }}
         onClick={e => e.stopPropagation()}
       >
-        {/* Header */}
         <div className="flex items-center justify-between px-5 pt-5 pb-3">
           <h2 className="text-white font-bold text-lg">Tabella Punteggi</h2>
           <button
@@ -35,166 +115,60 @@ export default function ScoreReference({ onClose }: { onClose: () => void }) {
           </button>
         </div>
 
-        {/* Scrollable content */}
         <div className="overflow-y-auto px-5 pb-5 flex flex-col gap-4">
-          {/* Soglia sopravvivenza */}
-          <section>
-            <h3 className="text-teal-400 font-semibold text-sm mb-2">🎯 Soglia di sopravvivenza</h3>
-            <p className="text-slate-400 text-xs mb-2">
-              Ogni impostore (camaleonte e talpa) gioca per sé: <br />esso vince se è ancora in gioco quando i giocatori attivi scendono alla soglia.
-            </p>
-            <div className="rounded-xl overflow-hidden border border-white/10">
-              <table className="w-full text-xs">
-                <thead>
-                  <tr className="bg-white/[0.07]">
-                    <th className="text-left px-3 py-2 text-slate-300 font-semibold">Giocatori</th>
-                    <th className="text-left px-3 py-2 text-slate-300 font-semibold">Ultimi N</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {SURVIVAL_THRESHOLDS.map(({ range, threshold }) => (
-                    <tr key={range} className="border-t border-white/5">
-                      <td className="px-3 py-2 text-slate-400">{range}</td>
-                      <td className="px-3 py-2 text-white font-semibold">{threshold}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </section>
+          <Section
+            icon="🎯"
+            title="Soglia di sopravvivenza"
+            color="text-teal-400"
+            description={
+              <p className="text-slate-400 text-xs mb-2">
+                Ogni impostore (camaleonte e talpa) gioca per sé: <br />esso vince se è ancora in gioco quando i giocatori attivi scendono alla soglia.
+              </p>
+            }
+          >
+            <ScoreTable columns={[{ label: 'Giocatori' }, { label: 'Ultimi N' }]}>
+              {SURVIVAL_THRESHOLDS.map(({ range, threshold }) => (
+                <tr key={range} className="border-t border-white/5">
+                  <td className="px-3 py-2 text-slate-400">{range}</td>
+                  <td className="px-3 py-2 text-white font-semibold">{threshold}</td>
+                </tr>
+              ))}
+            </ScoreTable>
+          </Section>
 
-          {/* Civile */}
-          <section>
-            <h3 className="text-indigo-400 font-semibold text-sm mb-2">🛡️ Civile</h3>
-            <div className="rounded-xl overflow-hidden border border-white/10">
-              <table className="w-full text-xs">
-                <thead>
-                  <tr className="bg-white/[0.07]">
-                    <th className="text-left px-3 py-2 text-slate-300 font-semibold">Scenario</th>
-                    <th className="text-right px-3 py-2 text-slate-300 font-semibold">Punti</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr className="border-t border-white/5">
-                    <td className="px-3 py-2 text-slate-400">Tutti gli impostori eliminati</td>
-                    <td className="px-3 py-2 text-white font-semibold text-right">2{'\u00A0'}pt</td>
-                  </tr>
-                  <tr className="border-t border-white/5">
-                    <td className="px-3 py-2 text-slate-400">Impostori eliminati, ma Camaleonte indovina</td>
-                    <td className="px-3 py-2 text-amber-400 font-semibold text-right">1{'\u00A0'}pt</td>
-                  </tr>
-                  <tr className="border-t border-white/5">
-                    <td className="px-3 py-2 text-slate-400">Impostori sopravvivono</td>
-                    <td className="px-3 py-2 text-slate-500 font-semibold text-right">0{'\u00A0'}pt</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </section>
+          <Section icon="🛡️" title="Civile" color="text-indigo-400">
+            <ScoreTable columns={[{ label: 'Scenario' }, { label: 'Punti', align: 'right' }]}>
+              {CIVILE_ROWS.map(({ scenario, points, color }) => (
+                <tr key={scenario} className="border-t border-white/5">
+                  <td className="px-3 py-2 text-slate-400">{scenario}</td>
+                  <td className={`px-3 py-2 ${color} font-semibold text-right`}>{points}</td>
+                </tr>
+              ))}
+            </ScoreTable>
+          </Section>
 
-          {/* Camaleonte */}
-          <section>
-            <h3 className="text-teal-400 font-semibold text-sm mb-2">🦎 Camaleonte</h3>
-            <div className="rounded-xl overflow-hidden border border-white/10">
-              <table className="w-full text-xs">
-                <thead>
-                  <tr className="bg-white/[0.07]">
-                    <th className="text-left px-3 py-2 text-slate-300 font-semibold">Scenario</th>
-                    <th className="text-right px-3 py-2 text-slate-300 font-semibold">≤4</th>
-                    <th className="text-right px-3 py-2 text-slate-300 font-semibold">5+</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr className="border-t border-white/5">
-                    <td className="px-3 py-2 text-slate-400">Eliminato, indovina la parola</td>
-                    <td className="px-3 py-2 text-white font-semibold text-right">4{'\u00A0'}pt</td>
-                    <td className="px-3 py-2 text-white font-semibold text-right">3{'\u00A0'}pt</td>
-                  </tr>
-                  <tr className="border-t border-white/5">
-                    <td className="px-3 py-2 text-slate-400">Sopravvive fino alla soglia</td>
-                    <td className="px-3 py-2 text-white font-semibold text-right">3{'\u00A0'}pt</td>
-                    <td className="px-3 py-2 text-white font-semibold text-right">4{'\u00A0'}pt</td>
-                  </tr>
-                  <tr className="border-t border-white/5">
-                    <td className="px-3 py-2 text-slate-400">Eliminato, non indovina</td>
-                    <td className="px-3 py-2 text-slate-500 font-semibold text-right" colSpan={2}>0{'\u00A0'}pt</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </section>
+          <Section icon="🦎" title="Camaleonte" color="text-teal-400">
+            <ScoreTable columns={[{ label: 'Scenario' }, { label: '≤4', align: 'right' }, { label: '5+', align: 'right' }]}>
+              <TwoColScoreRows rows={CAMALEONTE_ROWS} />
+            </ScoreTable>
+          </Section>
 
-          {/* Talpa */}
-          <section>
-            <h3 className="text-orange-500 font-semibold text-sm mb-2">🕵️ Talpa</h3>
-            <div className="rounded-xl overflow-hidden border border-white/10">
-              <table className="w-full text-xs">
-                <thead>
-                  <tr className="bg-white/[0.07]">
-                    <th className="text-left px-3 py-2 text-slate-300 font-semibold">Scenario</th>
-                    <th className="text-right px-3 py-2 text-slate-300 font-semibold">≤4</th>
-                    <th className="text-right px-3 py-2 text-slate-300 font-semibold">5+</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr className="border-t border-white/5">
-                    <td className="px-3 py-2 text-slate-400">Sopravvive fino alla soglia</td>
-                    <td className="px-3 py-2 text-white font-semibold text-right">3{'\u00A0'}pt</td>
-                    <td className="px-3 py-2 text-white font-semibold text-right">4{'\u00A0'}pt</td>
-                  </tr>
-                  <tr className="border-t border-white/5">
-                    <td className="px-3 py-2 text-slate-400">Eliminata, civili vincono</td>
-                    <td className="px-3 py-2 text-white font-semibold text-right" colSpan={2}>1{'\u00A0'}pt / civile eliminato (max 2)</td>
-                  </tr>
-                  <tr className="border-t border-white/5">
-                    <td className="px-3 py-2 text-slate-400">Eliminata, impostori sopravvivono</td>
-                    <td className="px-3 py-2 text-slate-500 font-semibold text-right" colSpan={2}>0{'\u00A0'}pt</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </section>
+          <Section icon="🕵️" title="Talpa" color="text-orange-500">
+            <ScoreTable columns={[{ label: 'Scenario' }, { label: '≤4', align: 'right' }, { label: '5+', align: 'right' }]}>
+              <TwoColScoreRows rows={TALPA_ROWS} />
+            </ScoreTable>
+          </Section>
 
-          {/* Ruoli Speciali */}
-          <section>
-            <h3 className="text-purple-400 font-semibold text-sm mb-2">⭐ Ruoli Speciali</h3>
-            <div className="rounded-xl overflow-hidden border border-white/10">
-              <table className="w-full text-xs">
-                <thead>
-                  <tr className="bg-white/[0.07]">
-                    <th className="text-left px-3 py-2 text-slate-300 font-semibold">Ruolo</th>
-                    <th className="text-left px-3 py-2 text-slate-300 font-semibold">Effetto</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr className="border-t border-white/5">
-                    <td className="px-3 py-2 text-red-400 font-semibold">🃏 Buffone</td>
-                    <td className="px-3 py-2 text-slate-400">+2{'\u00A0'}pt se eliminato al 1° turno</td>
-                  </tr>
-                  <tr className="border-t border-white/5">
-                    <td className="px-3 py-2 text-blue-400 font-semibold">⚔️ Duellanti</td>
-                    <td className="px-3 py-2 text-slate-400">Il primo eliminato perde 1{'\u00A0'}pt, l'altro guadagna 1{'\u00A0'}pt. Pareggio se eliminati nello stesso turno.</td>
-                  </tr>
-                  <tr className="border-t border-white/5">
-                    <td className="px-3 py-2 text-rose-300 font-semibold">💕 Romeo & Giulietta</td>
-                    <td className="px-3 py-2 text-slate-400">Nessun effetto sui punti. Se uno cade, cade anche l'altro.</td>
-                  </tr>
-                  <tr className="border-t border-white/5">
-                    <td className="px-3 py-2 text-yellow-400 font-semibold">🦔 Riccio</td>
-                    <td className="px-3 py-2 text-slate-400">Nessun bonus punti. Se eliminato, trascina un avversario con sé.</td>
-                  </tr>
-                  <tr className="border-t border-white/5">
-                    <td className="px-3 py-2 text-cyan-400 font-semibold">🎐 Spettro</td>
-                    <td className="px-3 py-2 text-slate-400">Nessun bonus punti. Continua a votare dopo eliminazione.</td>
-                  </tr>
-                  <tr className="border-t border-white/5">
-                    <td className="px-3 py-2 text-purple-400 font-semibold">🔮 Oracolo</td>
-                    <td className="px-3 py-2 text-slate-400">Nessun bonus punti. Se eliminato, svela il ruolo di un giocatore.</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </section>
+          <Section icon="⭐" title="Ruoli Speciali" color="text-purple-400">
+            <ScoreTable columns={[{ label: 'Ruolo' }, { label: 'Effetto' }]}>
+              {SPECIAL_ROLES.map(({ name, color, effect }) => (
+                <tr key={name} className="border-t border-white/5">
+                  <td className={`px-3 py-2 ${color} font-semibold`}>{name}</td>
+                  <td className="px-3 py-2 text-slate-400">{effect}</td>
+                </tr>
+              ))}
+            </ScoreTable>
+          </Section>
         </div>
       </motion.div>
     </motion.div>
