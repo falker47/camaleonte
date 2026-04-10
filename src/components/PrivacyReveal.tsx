@@ -215,7 +215,7 @@ export default function PrivacyReveal({ playerName, word, role, specialRole, spe
                       ⚔️ Il Duellante
                     </span>
                     <p className={`text-sm text-center ${textColor} opacity-60`}>
-                      Sfidi <span className="font-bold">{specialRoleExtra}</span>! Eliminalo per rubargli 2 pt.
+                      Sfidi <span className="font-bold">{specialRoleExtra}</span>! Eliminalo per rubargli 1 pt.
                     </p>
                   </div>
                 )}
