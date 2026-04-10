@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useGameStore } from '../store/gameStore'
 import { usePwaInstall } from '../hooks/usePwaInstall'
 import Tutorial from '../components/Tutorial'
+import ScoreReference from '../components/ScoreReference'
 import camaleontePng from '../assets/camaleonte.png'
 import { Bunting, TropicalFoliage } from '../components/HomeDecorations'
 
@@ -26,6 +27,7 @@ export default function HomeScreen() {
   const goTo = useGameStore(s => s.goTo)
   const { canInstall, install } = usePwaInstall()
   const [showTutorial, setShowTutorial] = useState(false)
+  const [showScoreRef, setShowScoreRef] = useState(false)
 
   return (
     <motion.div
@@ -143,6 +145,14 @@ export default function HomeScreen() {
           Come si gioca
         </motion.button>
 
+        <motion.button
+          onClick={() => setShowScoreRef(true)}
+          className="glass-button-secondary py-2.5 px-5 rounded-xl text-sm transition-colors"
+          {...springTap}
+        >
+          Punteggi
+        </motion.button>
+
         {canInstall && (
           <motion.button
             onClick={install}
@@ -171,6 +181,10 @@ export default function HomeScreen() {
 
       <AnimatePresence>
         {showTutorial && <Tutorial onClose={() => setShowTutorial(false)} />}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showScoreRef && <ScoreReference onClose={() => setShowScoreRef(false)} />}
       </AnimatePresence>
     </motion.div>
   )
