@@ -5,6 +5,7 @@ import { shuffle } from '../utils/shuffle'
 import { assignRoles } from '../utils/assignRoles'
 import { checkWinCondition } from '../utils/winCondition'
 import { isWordMatch } from '../utils/matchWord'
+import { getAliases } from '../data/wordAliases'
 import {
   getCamaleonteGuessPoints,
   getCamaleonteSurvivalPoints,
@@ -383,7 +384,7 @@ export const useGameStore = create<GameState>((set, get) => ({
     const { wordPair, players, scores, camaleonteCorrectIds, eliminatedThisTurno, riccioStrikeActive } = get()
     if (!wordPair || !eliminatedThisTurno) return
 
-    const isCorrect = isWordMatch(guess, wordPair.wordA)
+    const isCorrect = isWordMatch(guess, wordPair.wordA, getAliases(wordPair.wordA))
 
     if (isCorrect) {
       const camaleonteId = eliminatedThisTurno.id
