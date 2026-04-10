@@ -10,7 +10,7 @@ export const CIVILE_WIN_POINTS = 2
 export const CIVILE_POISONED_POINTS = 1
 export const BUFFONE_BONUS_POINTS = 2
 export const DUELLANTE_TRANSFER_POINTS = 1
-export const MAX_TALPA_PARTIAL_POINTS = 3
+export const MAX_TALPA_PARTIAL_POINTS = 2
 
 export function getCamaleonteGuessPoints(totalPlayers: number): number {
   return totalPlayers <= 4 ? 4 : 3

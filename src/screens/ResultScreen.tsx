@@ -526,7 +526,7 @@ export default function ResultScreen() {
                 {hasTalpa && (
                   <div>
                     <div className="text-orange-500 font-semibold">La Talpa — {players.length <= 4 ? '3' : '4'}{'\u00A0'}pt sopravvive</div>
-                    <div className="text-slate-500 mt-0.5">Se eliminata: +1{'\u00A0'}pt per ogni civile eliminato (max 3{'\u00A0'}pt)</div>
+                    <div className="text-slate-500 mt-0.5">Se eliminata: +1{'\u00A0'}pt per ogni civile eliminato (max 2{'\u00A0'}pt)</div>
                   </div>
                 )}
                 {players.some(p => p.specialRole === 'buffone') && (
