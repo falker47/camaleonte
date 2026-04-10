@@ -41,7 +41,7 @@ Attivabili dal setup per rendere il gioco più imprevedibile.
 
 ## Gioca
 
-**[Gioca ora](https://falker47.github.io/undercover/)**
+**[Gioca ora](https://falker47.github.io/camaleonte/)**
 
 Installa come PWA sul telefono per la migliore esperienza.
 

@@ -2,7 +2,7 @@
 
 ## Contesto del gioco
 
-Undercover e' un party game di deduzione. I giocatori ricevono una parola segreta e danno indizi a turno. I ruoli base sono:
+Camaleonte e' un party game di deduzione. I giocatori ricevono una parola segreta e danno indizi a turno. I ruoli base sono:
 - **Civile**: conosce la parola corretta, vuole eliminare gli impostori
 - **Infiltrato**: riceve una parola diversa (non sa di essere infiltrato), vuole sopravvivere
 - **Mr. White**: non ha parola, deve bluffare, puo' tentare di indovinare la parola se eliminato
