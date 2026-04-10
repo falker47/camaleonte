@@ -181,7 +181,7 @@ export default function ScoreReference({ onClose }: { onClose: () => void }) {
                   </tr>
                   <tr className="border-t border-white/5">
                     <td className="px-3 py-2 text-yellow-400 font-semibold">🦔 Riccio</td>
-                    <td className="px-3 py-2 text-slate-400">Nessun bonus punti. Se eliminato, trascina un avversario con se'.</td>
+                    <td className="px-3 py-2 text-slate-400">Nessun bonus punti. Se eliminato, trascina un avversario con sé.</td>
                   </tr>
                   <tr className="border-t border-white/5">
                     <td className="px-3 py-2 text-cyan-400 font-semibold">🎐 Spettro</td>
