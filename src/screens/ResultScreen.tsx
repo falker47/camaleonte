@@ -312,7 +312,7 @@ export default function ResultScreen() {
           <div className="flex gap-4">
             <div>
               <p className="text-xs text-indigo-400">Civili</p>
-              <p className="text-white font-bold">{wordPair.civilian}</p>
+              <p className="text-white font-bold">{wordPair.wordA}</p>
             </div>
             {hasTalpa && (
               <>

@@ -160,21 +160,27 @@ export const useGameStore = create<GameState>((set, get) => ({
   startGame: () => {
     const { playerNames, config, usedPairIndices } = get()
 
+    const needsTriple = config.talpaCount > 1
+
     let available = wordPairs
       .map((pair, i) => ({ pair, i }))
       .filter(({ i }) => !usedPairIndices.includes(i))
+      .filter(({ pair }) => !needsTriple || pair.wordC != null)
 
     if (available.length === 0) {
       const lastUsed = usedPairIndices[usedPairIndices.length - 1]
       available = wordPairs
         .map((pair, i) => ({ pair, i }))
         .filter(({ i }) => i !== lastUsed)
+        .filter(({ pair }) => !needsTriple || pair.wordC != null)
     }
 
     const chosen = shuffle(available)[0]
     const raw = chosen.pair
-    const words = shuffle([raw.civilian, raw.undercover, raw.undercover2])
-    const pair: WordPair = { civilian: words[0], undercover: words[1], undercover2: words[2], category: raw.category }
+    const words = raw.wordC != null
+      ? shuffle([raw.wordA, raw.wordB, raw.wordC])
+      : shuffle([raw.wordA, raw.wordB])
+    const pair: WordPair = { wordA: words[0], wordB: words[1], wordC: words[2], category: raw.category }
     const players = assignRoles(playerNames, config, pair)
     set({
       players,
@@ -377,7 +383,7 @@ export const useGameStore = create<GameState>((set, get) => ({
     const { wordPair, players, scores, camaleonteCorrectIds, eliminatedThisTurno, riccioStrikeActive } = get()
     if (!wordPair || !eliminatedThisTurno) return
 
-    const isCorrect = isWordMatch(guess, wordPair.civilian)
+    const isCorrect = isWordMatch(guess, wordPair.wordA)
 
     if (isCorrect) {
       const camaleonteId = eliminatedThisTurno.id
