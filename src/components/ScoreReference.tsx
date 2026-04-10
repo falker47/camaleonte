@@ -1,5 +1,7 @@
 import { type ReactNode } from 'react'
 import { motion } from 'framer-motion'
+import talpaPng from '../assets/talpa.png'
+import camaleontePng from '../assets/camaleonte.png'
 
 const pt = (n: number) => `${n}\u00A0pt`
 
@@ -44,10 +46,10 @@ type ScoreRow = {
   color?: string
 }
 
-function Section({ icon, title, color, description, children }: { icon: string; title: string; color: string; description?: ReactNode; children: ReactNode }) {
+function Section({ icon, title, color, description, children }: { icon: ReactNode; title: string; color: string; description?: ReactNode; children: ReactNode }) {
   return (
     <section>
-      <h3 className={`${color} font-semibold text-sm mb-2`}>{icon} {title}</h3>
+      <h3 className={`${color} font-semibold text-sm mb-2 flex items-center gap-1.5`}>{icon} {title}</h3>
       {description}
       <div className="rounded-xl overflow-hidden border border-white/10">
         {children}
@@ -147,13 +149,13 @@ export default function ScoreReference({ onClose }: { onClose: () => void }) {
             </ScoreTable>
           </Section>
 
-          <Section icon="🦎" title="Camaleonte" color="text-teal-400">
+          <Section icon={<img src={camaleontePng} alt="" className="inline h-4 w-4" />} title="Camaleonte" color="text-teal-400">
             <ScoreTable columns={[{ label: 'Scenario' }, { label: '≤4', align: 'right' }, { label: '5+', align: 'right' }]}>
               <TwoColScoreRows rows={CAMALEONTE_ROWS} />
             </ScoreTable>
           </Section>
 
-          <Section icon="🕵️" title="Talpa" color="text-orange-500">
+          <Section icon={<img src={talpaPng} alt="" className="inline h-4 w-4" />} title="Talpa" color="text-orange-500">
             <ScoreTable columns={[{ label: 'Scenario' }, { label: '≤4', align: 'right' }, { label: '5+', align: 'right' }]}>
               <TwoColScoreRows rows={TALPA_ROWS} />
             </ScoreTable>
