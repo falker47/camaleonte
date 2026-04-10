@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import camaleontePng from '../assets/camaleonte.png'
+import ScoreReference from './ScoreReference'
 
 const STEPS: { emoji?: string; image?: string; title: string; text: string }[] = [
   { emoji: '🎭', title: 'I tre ruoli', text: 'Ogni partita ha Civili, Talpa e Camaleonte. I Civili ricevono una parola, la Talpa una simile ma diversa, e il Camaleonte non riceve nulla!' },
@@ -10,7 +11,7 @@ const STEPS: { emoji?: string; image?: string; title: string; text: string }[] =
   { emoji: '🎯', title: 'Obiettivi', text: 'I Civili devono eliminare tutti gli impostori. La Talpa e il Camaleonte vincono se sopravvivono abbastanza a lungo \u2014 più siete, più turni dovranno resistere!' },
   { image: camaleontePng, title: 'L\'ultima chance', text: 'Se il Camaleonte viene eliminato, può tentare di indovinare la parola dei Civili. Se ci riesce, vince comunque!' },
   { emoji: '⭐', title: 'Ruoli Speciali', text: 'Nel setup puoi attivare ruoli speciali pensati per giocatori già rodati che vogliono aggiungere un tocco di pepe in più alle loro partite!' },
-  { emoji: '🏆', title: 'Punteggi', text: 'Civili: 2\u00A0pt se eliminano tutti gli impostori. Il Camaleonte guadagna di più sopravvivendo in partite lunghe e indovinando in quelle brevi. La Talpa ottiene punti parziali per ogni civile eliminato. Dettagli nella schermata risultati!' },
+  { emoji: '🏆', title: 'Punteggi', text: 'Ogni round assegna punti in base al ruolo e all\'esito della partita. I Civili guadagnano eliminando gli impostori, il Camaleonte e la Talpa puntano a sopravvivere o a sfruttare le loro abilità speciali. I punti variano in base al numero di giocatori.' },
 ]
 
 const swipeThreshold = 50
@@ -33,6 +34,7 @@ const slideVariants = {
 export default function Tutorial({ onClose }: { onClose: () => void }) {
   const [step, setStep] = useState(0)
   const [direction, setDirection] = useState(0)
+  const [showScoreRef, setShowScoreRef] = useState(false)
 
   const go = (next: number) => {
     if (next < 0 || next >= STEPS.length) return
@@ -97,6 +99,14 @@ export default function Tutorial({ onClose }: { onClose: () => void }) {
               }
               <h3 className="text-white font-bold text-lg">{STEPS[step].title}</h3>
               <p className="text-slate-400 text-sm leading-relaxed">{STEPS[step].text}</p>
+              {step === STEPS.length - 1 && (
+                <button
+                  onClick={() => setShowScoreRef(true)}
+                  className="mt-1 text-teal-400 text-sm font-semibold underline underline-offset-2 hover:text-teal-300 transition-colors"
+                >
+                  Vedi tabella punteggi
+                </button>
+              )}
             </motion.div>
           </AnimatePresence>
         </div>
@@ -143,6 +153,9 @@ export default function Tutorial({ onClose }: { onClose: () => void }) {
           )}
         </div>
       </motion.div>
+      <AnimatePresence>
+        {showScoreRef && <ScoreReference onClose={() => setShowScoreRef(false)} />}
+      </AnimatePresence>
     </motion.div>
   )
 }
