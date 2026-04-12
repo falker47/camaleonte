@@ -137,6 +137,7 @@ export const wordPairs: WordPair[] = [
   { wordA: 'Paperino', wordB: 'Topolino', wordC: 'Pippo', category: 'Cinema' },
   { wordA: 'Biancaneve', wordB: 'Cenerentola', wordC: 'Rapunzel', category: 'Cinema' },
   { wordA: 'Il Re Leone', wordB: 'Il Libro Della Giungla', wordC: 'Tarzan', category: 'Cinema' },
+  { wordA: 'La Sirenetta', wordB: 'La Bella Addormentata', wordC: 'La Bella e la Bestia', category: 'Cinema' },
 
   // ──── Concetti ────
   { wordA: 'Lavoro', wordB: 'Hobby', wordC: 'Volontariato', category: 'Concetti' },

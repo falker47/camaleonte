@@ -46,6 +46,20 @@ const WORD_ALIASES: Record<string, string[]> = {
   'Bicicletta': ['Bici'],
   'Moto': ['Motocicletta'],
   'Automobile': ['Macchina', 'Auto'],
+
+  // Nomi Propri
+  'Capitan America': ['Captain America', 'Cap'],
+  'Spider Man': ['Uomo Ragno'],
+  'Topolino': ['Mickey Mouse'],
+  'Paperino': ['Donald Duck'],
+  'Cenerentola': ['Cinderella'],
+  'Biancaneve': ['Snow White'],
+  'La Bella Addormentata': ['Sleeping Beauty'],
+  'La Sirenetta': ['The Little Mermaid'],
+  'Il Re Leone': ['The Lion King'],
+  'Il Libro Della Giungla': ['The Jungle Book'],
+  'La Bella e la Bestia': ['Beauty and the Beast'],
+  'Aladdin': ['Aladino'],
 }
 
 export function getAliases(word: string): string[] | undefined {
