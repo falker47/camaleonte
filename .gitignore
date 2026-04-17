@@ -38,3 +38,6 @@ android/app/signing.properties
 
 # Capacitor assets source
 assets/
+
+# Play Store assets (not needed in repo)
+play-store-assets/
