@@ -92,8 +92,17 @@ export default function HomeScreen() {
 
       {/* Title */}
       <motion.h1
-        className="text-5xl z-10 mt-3 title-glow bg-gradient-to-r from-green-400 via-teal-300 to-violet-400 bg-clip-text text-transparent"
-        style={{ fontFamily: "'Bangers', cursive" }}
+        className="text-6xl z-10 mt-3 bg-clip-text text-transparent"
+        style={{
+          fontFamily: "'Luckiest Guy', cursive",
+          letterSpacing: '0.04em',
+          backgroundImage:
+            'linear-gradient(95deg, #0e7490 0%, #0f766e 18%, #15803d 34%, #a16207 52%, #b45309 66%, #9f1239 80%, #6b21a8 95%)',
+          WebkitTextStroke: '1.5px #0a0118',
+          paintOrder: 'stroke fill',
+          filter:
+            'brightness(1.5) saturate(0.7) drop-shadow(0 3px 6px rgba(0,0,0,0.25)) drop-shadow(0 0 20px rgba(45,212,191,0.25)) drop-shadow(0 0 30px rgba(168,85,247,0.18))',
+        }}
         variants={fadeUp}
       >
         CAMALEONTE

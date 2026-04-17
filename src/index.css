@@ -16,6 +16,14 @@
   src: url('./assets/fonts/PermanentMarker.woff2') format('woff2');
 }
 
+@font-face {
+  font-family: 'Luckiest Guy';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('./assets/fonts/LuckiestGuy.woff2') format('woff2');
+}
+
 @layer base {
   html {
     height: 100%;

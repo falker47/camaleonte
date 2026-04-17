@@ -36,8 +36,8 @@ Thumbs.db
 *.jks
 android/app/signing.properties
 
-# Capacitor assets source
-assets/
+# Capacitor assets source (repo root only — do not ignore src/assets)
+/assets/
 
 # Play Store assets (not needed in repo)
 play-store-assets/
