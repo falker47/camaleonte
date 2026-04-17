@@ -30,3 +30,11 @@ Thumbs.db
 .superpowers/
 .agent/
 .docs/
+
+# Android signing
+*.keystore
+*.jks
+android/app/signing.properties
+
+# Capacitor assets source
+assets/

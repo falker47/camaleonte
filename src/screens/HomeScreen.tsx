@@ -4,6 +4,7 @@ import { useGameStore } from '../store/gameStore'
 import { usePwaInstall } from '../hooks/usePwaInstall'
 import Tutorial from '../components/Tutorial'
 import ScoreReference from '../components/ScoreReference'
+import SupportOverlay from '../components/SupportOverlay'
 import camaleontePng from '../assets/camaleonte.png'
 import { Bunting, TropicalFoliage } from '../components/HomeDecorations'
 
@@ -28,6 +29,7 @@ export default function HomeScreen() {
   const { canInstall, install } = usePwaInstall()
   const [showTutorial, setShowTutorial] = useState(false)
   const [showScoreRef, setShowScoreRef] = useState(false)
+  const [showSupport, setShowSupport] = useState(false)
 
   return (
     <motion.div
@@ -171,16 +173,37 @@ export default function HomeScreen() {
 
       <TropicalFoliage />
 
-      {/* Footer */}
-      <motion.a
-        href="https://falker47.github.io/Nexus-portfolio/"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="absolute bottom-5 z-10 text-xs text-slate-500 hover:text-slate-300 transition-colors tracking-wide"
+      {/* Footer area */}
+      <motion.div
+        className="absolute bottom-4 z-10 flex flex-col items-center gap-1.5 bg-black/50 backdrop-blur-sm rounded-xl px-4 py-2.5"
         variants={fadeUp}
       >
-        &copy; {new Date().getFullYear()} Maurizio Falconi - falker47
-      </motion.a>
+        <button
+          onClick={() => setShowSupport(true)}
+          className="text-[11px] text-slate-400 hover:text-slate-200 transition-colors"
+        >
+          100% gratis, senza pubblicità e acquisti in-app. <span className="text-teal-400">Scopri perché</span>
+        </button>
+        <div className="flex items-center gap-2 text-[10px] text-slate-500">
+          <a
+            href="https://falker47.github.io/Nexus-portfolio/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-slate-300 transition-colors tracking-wide"
+          >
+            &copy; falker47 - Maurizio Falconi
+          </a>
+          <span>·</span>
+          <a
+            href="/privacy.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-slate-300 transition-colors tracking-wide"
+          >
+            Privacy Policy
+          </a>
+        </div>
+      </motion.div>
 
       <AnimatePresence>
         {showTutorial && <Tutorial onClose={() => setShowTutorial(false)} />}
@@ -188,6 +211,10 @@ export default function HomeScreen() {
 
       <AnimatePresence>
         {showScoreRef && <ScoreReference onClose={() => setShowScoreRef(false)} />}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showSupport && <SupportOverlay onClose={() => setShowSupport(false)} />}
       </AnimatePresence>
     </motion.div>
   )
