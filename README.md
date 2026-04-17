@@ -21,7 +21,7 @@ Attivabili dal setup per rendere il gioco più imprevedibile.
 | Ruolo | Min. | Descrizione |
 |-------|------|-------------|
 | 🃏 Il Buffone | 5 | Un civile che guadagna 2 punti bonus se si fa eliminare al primo turno. |
-| 🎐 Lo Spettro | 3 | Anche dopo essere eliminato, continua a votare. |
+| 🎐 Lo Spettro | 3 | Anche dopo essere stato eliminato, continua a votare. |
 | ⚔️ I Duellanti | 4 | Due nemici: chi viene eliminato per primo cede 2 punti all'altro. |
 | 💕 Romeo & Giulietta | 5 | Due giocatori legati: se uno cade, cade anche l'altro. |
 | 🦔 Il Riccio | 5 | Se eliminato, trascina un altro giocatore con sé. |

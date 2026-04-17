@@ -550,7 +550,7 @@ export default function SetupScreen() {
                 id: 'spettro',
                 label: 'Lo Spettro',
                 emoji: '🎐',
-                description: 'Anche dopo essere eliminato, continua a votare.',
+                description: 'Anche dopo essere stato eliminato, continua a votare.',
                 bgBase: 'bg-cyan-500/10',
                 bgActive: 'bg-cyan-500/25',
                 borderBase: 'border-cyan-400/20',
