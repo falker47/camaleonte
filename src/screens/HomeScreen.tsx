@@ -5,6 +5,7 @@ import { usePwaInstall } from '../hooks/usePwaInstall'
 import Tutorial from '../components/Tutorial'
 import ScoreReference from '../components/ScoreReference'
 import SupportOverlay from '../components/SupportOverlay'
+import PrivacyOverlay from '../components/PrivacyOverlay'
 import camaleontePng from '../assets/camaleonte.png'
 import { Bunting, TropicalFoliage } from '../components/HomeDecorations'
 
@@ -30,6 +31,7 @@ export default function HomeScreen() {
   const [showTutorial, setShowTutorial] = useState(false)
   const [showScoreRef, setShowScoreRef] = useState(false)
   const [showSupport, setShowSupport] = useState(false)
+  const [showPrivacy, setShowPrivacy] = useState(false)
 
   return (
     <motion.div
@@ -203,14 +205,12 @@ export default function HomeScreen() {
             &copy; falker47 - Maurizio Falconi
           </a>
           <span>·</span>
-          <a
-            href="/privacy.html"
-            target="_blank"
-            rel="noopener noreferrer"
+          <button
+            onClick={() => setShowPrivacy(true)}
             className="hover:text-slate-300 transition-colors tracking-wide"
           >
             Privacy Policy
-          </a>
+          </button>
         </div>
       </motion.div>
 
@@ -224,6 +224,10 @@ export default function HomeScreen() {
 
       <AnimatePresence>
         {showSupport && <SupportOverlay onClose={() => setShowSupport(false)} />}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showPrivacy && <PrivacyOverlay onClose={() => setShowPrivacy(false)} />}
       </AnimatePresence>
     </motion.div>
   )
