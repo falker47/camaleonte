@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "test:core": "tsc -p tsconfig.test.json && node --test tests/winCondition.test.mjs",
     "preview": "vite preview --host",
     "build:android": "npm run build && npx cap sync android",
     "open:android": "npx cap open android"

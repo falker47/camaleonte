@@ -1,71 +1,109 @@
 # Camaleonte
 
-Un gioco di deduzione sociale per 3-12 giocatori su un singolo dispositivo. Non serve internet.
+Gioco di deduzione sociale **offline e single-device** per 3–12 giocatori. Il telefono passa di mano in mano: ognuno scopre in privato il proprio ruolo e la propria parola, poi il gruppo discute, vota ed elimina i sospetti.
 
-## Come funziona
+**[Gioca ora](https://falker47.github.io/camaleonte/)** · installabile come PWA · build Android tramite Capacitor
 
-Ogni giocatore riceve una parola segreta. **Il Camaleonte** non ha nessuna parola e deve bluffare. **Le Talpe** ricevono una parola diversa ma non sanno di essere impostori. A turno, ogni giocatore dà un indizio di una sola parola per descrivere la propria, poi si vota per eliminare il sospettato. Trovate gli impostori prima che vi superino in numero!
+![Anteprima di Camaleonte](public/preview.png)
 
-### Ruoli
+## Il problema di gioco
 
-| Ruolo | Descrizione |
-|-------|-------------|
-| Civile | Conosce la parola principale. Deve individuare gli impostori. |
-| La Talpa | Ha una parola simile ma diversa. Non sa di essere un impostore. |
-| Il Camaleonte | Non ha nessuna parola. Deve bluffare e, se eliminato, può tentare di indovinare la parola dei civili per vincere. |
+Tutti devono riuscire a partecipare senza account, backend o dispositivi multipli, ma con informazioni private differenti.
 
-### Ruoli Speciali
+Camaleonte gestisce localmente l'intero flusso: setup, distribuzione segreta di ruoli/parole, turni, voto, eliminazioni, abilità speciali, condizioni di vittoria, punteggi e rivincita. Dopo il primo caricamento la PWA è progettata per funzionare anche offline.
 
-Attivabili dal setup per rendere il gioco più imprevedibile.
+## Ruoli base
 
-| Ruolo | Min. | Descrizione |
-|-------|------|-------------|
-| 🃏 Il Buffone | 5 | Un civile che guadagna 2 punti bonus se si fa eliminare al primo turno. |
-| 🎐 Lo Spettro | 3 | Anche dopo essere stato eliminato, continua a votare. |
-| ⚔️ I Duellanti | 4 | Due nemici: chi viene eliminato per primo cede 2 punti all'altro. |
-| 💕 Romeo & Giulietta | 5 | Due giocatori legati: se uno cade, cade anche l'altro. |
-| 🦔 Il Riccio | 5 | Se eliminato, trascina un altro giocatore con sé. |
-| 🔮 L'Oracolo | 4 | Se eliminato, svela il ruolo di un giocatore a sua scelta. |
+| Ruolo | Informazione | Obiettivo |
+|---|---|---|
+| **Civile** | Conosce la parola principale | Eliminare tutti gli impostori |
+| **Talpa** | Riceve una parola simile ma diversa, senza sapere di essere un impostore | Sopravvivere abbastanza a lungo |
+| **Camaleonte** | Non riceve alcuna parola | Bluffare; se eliminato può tentare di indovinare la parola dei civili |
 
-### Meccaniche
+Gli impostori non vincono semplicemente quando superano numericamente i civili. La partita usa una **soglia dinamica di sopravvivenza** basata sul numero iniziale di giocatori:
 
-- **Indizi e voto**: a turno ogni giocatore dà un indizio di una parola, poi si vota per eliminare il sospettato.
-- **Guess del Camaleonte**: se eliminato, il Camaleonte ha 60 secondi per indovinare la parola dei civili e vincere.
-- **Punteggio persistente**: punti diversi in base al ruolo e all'esito della partita, con classifica che si mantiene tra le rivincite.
-- **Rivincita**: rimescola ruoli e ordine dei giocatori mantenendo i punteggi.
-- **Invalida turno**: possibilità di ripetere un turno se qualcosa è andato storto.
+- 3–5 giocatori → vittoria degli impostori quando restano al massimo 2 giocatori attivi;
+- 6–8 giocatori → soglia 3;
+- 9–12 giocatori → soglia 4.
 
-### Parole
+I civili vincono appena non rimane alcun Camaleonte o Talpa attivo.
 
-248 coppie di parole in 16 categorie: Cibo, Bevande, Sport, Tecnologia, Luoghi, Animali, Oggetti, Professioni, Cinema, Abbigliamento, Cultura, Concetti, Fantasy, Giochi, Trasporti, Scienza.
+## Ruoli speciali
 
-## Gioca
+Sono opzionali e aggiungono interazioni senza cambiare il modello single-device.
 
-**[Gioca ora](https://falker47.github.io/camaleonte/)**
+| Ruolo | Min. giocatori | Effetto |
+|---|---:|---|
+| **Buffone** | 5 | Ottiene un bonus se viene eliminato al primo turno |
+| **Spettro** | 3 | Continua a votare dopo l'eliminazione |
+| **Duellanti** | 4 | Due rivali: chi cade per primo trasferisce punti all'altro |
+| **Romeo & Giulietta** | 5 | Se uno viene eliminato, cade anche l'altro |
+| **Riccio** | 5 | Quando viene eliminato trascina con sé un altro giocatore |
+| **Oracolo** | 4 | Quando viene eliminato può rivelare il ruolo di un giocatore |
 
-Installa come PWA sul telefono per la migliore esperienza.
+## Contenuto e flusso
 
-## Tech Stack
+Il dataset corrente contiene **507 set di parole in 16 categorie**. Molti set includono una terza parola, usata quando la configurazione richiede più Talpe.
 
-- React 19 + TypeScript
-- Tailwind CSS v4
-- Framer Motion
-- Zustand (state management)
-- Vite 5 + vite-plugin-pwa
+Il flusso principale comprende:
 
-## Development
+1. configurazione di giocatori, impostori e ruoli speciali;
+2. rivelazione privata di ruolo e parola;
+3. indizi a turno;
+4. voto ed eliminazione;
+5. eventuali abilità/guess del Camaleonte;
+6. verifica della condizione di vittoria e punteggio;
+7. rivincita con ruoli e ordine rimescolati, mantenendo la classifica.
+
+## Architettura
+
+- **React 19 + TypeScript** per UI e logica applicativa;
+- **Zustand** per la macchina di stato del gioco;
+- **Tailwind CSS v4** e **Framer Motion** per interfaccia mobile-first e animazioni;
+- **Vite 5 + vite-plugin-pwa** per build e funzionamento offline;
+- **Capacitor 8** per il wrapper Android;
+- **GitHub Pages** per la versione web pubblica.
+
+La logica di dominio è separata in utility dedicate (`src/utils`), mentre `src/store/gameStore.ts` orchestra stato, eliminazioni, abilità speciali e scoring.
+
+## Verifica
+
+La pipeline GitHub Actions esegue su ogni push e pull request:
 
 ```bash
-npm install
-npm run dev
-```
-
-## Build
-
-```bash
+npm ci
+npm run test:core
 npm run build
 ```
 
-## License
+I test core coprono le soglie dinamiche e le principali condizioni di vittoria. Il deploy su GitHub Pages avviene solo dopo il superamento della verifica su `master`.
 
-All Rights Reserved. Vedi [LICENSE](LICENSE) per i dettagli.
+## Sviluppo locale
+
+Richiede Node.js 20+.
+
+```bash
+npm ci
+npm run dev
+```
+
+Per la build di produzione:
+
+```bash
+npm run test:core
+npm run build
+```
+
+Per sincronizzare la build web nel progetto Android:
+
+```bash
+npm run build:android
+```
+
+## Privacy
+
+Il gioco non richiede account o backend e lo stato della partita resta sul dispositivo. La pagina informativa è disponibile in [public/privacy.html](public/privacy.html).
+
+## Licenza
+
+**All Rights Reserved.** Vedi [LICENSE](LICENSE).
