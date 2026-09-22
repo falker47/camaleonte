@@ -2,7 +2,7 @@
 
 Gioco di deduzione sociale **offline e single-device** per 3–12 giocatori. Il telefono passa di mano in mano: ognuno scopre in privato il proprio ruolo e la propria parola, poi il gruppo discute, vota ed elimina i sospetti.
 
-**[Gioca ora](https://falker47.github.io/camaleonte/)** · installabile come PWA · build Android tramite Capacitor
+**[Gioca ora](https://camaleonte.netlify.app/)** · installabile come PWA · build Android tramite Capacitor
 
 ![Anteprima di Camaleonte](public/preview.png)
 
@@ -62,7 +62,7 @@ Il flusso principale comprende:
 - **Tailwind CSS v4** e **Framer Motion** per interfaccia mobile-first e animazioni;
 - **Vite 5 + vite-plugin-pwa** per build e funzionamento offline;
 - **Capacitor 8** per il wrapper Android;
-- **GitHub Pages** per la versione web pubblica.
+- **Netlify** per la versione web pubblica canonica.
 
 La logica di dominio è separata in utility dedicate (`src/utils`), mentre `src/store/gameStore.ts` orchestra stato, eliminazioni, abilità speciali e scoring.
 
@@ -76,7 +76,7 @@ npm run test:core
 npm run build
 ```
 
-I test core coprono le soglie dinamiche e le principali condizioni di vittoria. Il deploy su GitHub Pages avviene solo dopo il superamento della verifica su `master`.
+I test core coprono le soglie dinamiche e le principali condizioni di vittoria. La pipeline GitHub Actions esegue test e build su `master` e mantiene anche un deploy GitHub Pages come mirror tecnico; il link pubblico canonico resta Netlify.
 
 ## Sviluppo locale
 
