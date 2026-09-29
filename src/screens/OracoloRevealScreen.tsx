@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { useGameStore } from '../store/gameStore'
 import ConfirmDialog from '../components/ConfirmDialog'
@@ -18,30 +18,58 @@ const SPECIAL_ROLE_BADGES: Record<string, { emoji: string; label: string; classe
   oracolo: { emoji: '🔮', label: 'Oracolo', classes: 'bg-purple-900/20 border-purple-700/30 text-purple-400' },
 }
 
-type Phase = 'select' | 'reveal'
-
 export default function OracoloRevealScreen() {
   const players = useGameStore(s => s.players)
   const eliminatedThisTurno = useGameStore(s => s.eliminatedThisTurno)
   const oracoloReveal = useGameStore(s => s.oracoloReveal)
+  const stageOracoloReveal = useGameStore(s => s.stageOracoloReveal)
+  const oracoloPendingRevealId = useGameStore(s => s.oracoloPendingRevealId)
+  const privacyEpoch = useGameStore(s => s.privacyEpoch)
 
   const [selectedId, setSelectedId] = useState<string | null>(null)
-  const [phase, setPhase] = useState<Phase>('select')
-  const [revealedId, setRevealedId] = useState<string | null>(null)
+  const [revealUnlocked, setRevealUnlocked] = useState(false)
 
   const targets = players.filter(p => !p.eliminated)
   const selectedPlayer = selectedId ? players.find(p => p.id === selectedId) : null
-  const revealedPlayer = revealedId ? players.find(p => p.id === revealedId) : null
+  const revealedPlayer = oracoloPendingRevealId
+    ? players.find(p => p.id === oracoloPendingRevealId) ?? null
+    : null
+
+  useEffect(() => {
+    setRevealUnlocked(false)
+  }, [privacyEpoch])
 
   const handleConfirm = () => {
     if (selectedId) {
-      setRevealedId(selectedId)
+      stageOracoloReveal(selectedId)
       setSelectedId(null)
-      setPhase('reveal')
+      setRevealUnlocked(true)
     }
   }
 
-  if (phase === 'reveal' && revealedPlayer) {
+  if (revealedPlayer && !revealUnlocked) {
+    return (
+      <div className="flex flex-col items-center justify-center flex-1 px-5 py-8 gap-6">
+        <div className="flex flex-col items-center gap-3">
+          <div className="text-6xl">🔒</div>
+          <p className="text-slate-400 text-sm">Rivelazione pronta per</p>
+          <h2 className="text-3xl font-black text-white text-center">{revealedPlayer.name}</h2>
+          <p className="text-slate-500 text-center text-sm max-w-xs">
+            Tocca solo quando tutti sono pronti a vedere il ruolo.
+          </p>
+        </div>
+        <motion.button
+          onClick={() => setRevealUnlocked(true)}
+          className="w-full max-w-xs bg-purple-500 hover:bg-purple-400 active:bg-purple-600 text-white font-bold py-5 rounded-2xl text-lg transition-colors"
+          {...springTap}
+        >
+          Rivela ruolo
+        </motion.button>
+      </div>
+    )
+  }
+
+  if (revealedPlayer && revealUnlocked) {
     const badge = revealedPlayer.specialRole ? SPECIAL_ROLE_BADGES[revealedPlayer.specialRole] : null
     const isCamaleonte = revealedPlayer.role === 'camaleonte'
     const isTalpa = revealedPlayer.role === 'talpa'
