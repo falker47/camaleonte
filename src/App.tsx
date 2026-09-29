@@ -119,7 +119,7 @@ function InGameUtilityControls({
   const canInvalidate = INVALIDATE_SCREENS.has(screen)
 
   return (
-    <div className="absolute top-4 right-4 z-50 flex items-center overflow-hidden rounded-2xl bg-slate-950/92 border border-white/15 shadow-[0_8px_30px_rgba(0,0,0,0.35)] backdrop-blur-xl">
+    <div className="absolute top-4 right-4 z-50 flex items-center overflow-hidden rounded-2xl bg-slate-950/95 border border-white/15 shadow-[0_8px_30px_rgba(0,0,0,0.35)] backdrop-blur-xl">
       {canInvalidate && (
         <button
           onClick={onRequestInvalidate}
