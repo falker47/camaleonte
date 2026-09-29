@@ -6,7 +6,7 @@ import RoleTag from '../components/RoleTag'
 import Particles from '../components/Particles'
 import { useAnimatedValue } from '../hooks/useAnimatedValue'
 import { springTap } from '../constants/animations'
-import { formatMancheProgress, isGameComplete } from '../utils/gameDuration'
+import { formatMancheProgress } from '../utils/gameDuration'
 import talpaPng from '../assets/talpa.png'
 import camaleontePng from '../assets/camaleonte.png'
 
@@ -37,7 +37,6 @@ export default function ResultScreen() {
   const config = useGameStore(s => s.config)
   const hasCamaleonte = config.camaleonteCount > 0
   const hasTalpa = config.talpaCount > 0
-  const gameCompleted = isGameComplete(manche, players.length, config.duration)
   const mancheProgress = formatMancheProgress(manche, players.length, config.duration)
 
   const [showLegend, setShowLegend] = useState(false)
@@ -214,15 +213,7 @@ export default function ResultScreen() {
         </>
       )}
 
-      {/* Session progress */}
-      {gameCompleted ? (
-        <div className="glass rounded-2xl px-4 py-3 flex items-center justify-between border border-teal-400/25">
-          <span className="text-teal-300 text-sm font-bold">Partita completata</span>
-          <span className="text-slate-400 text-xs">{mancheProgress}</span>
-        </div>
-      ) : (
-        <p className="text-center text-slate-500 text-xs font-semibold">{mancheProgress}</p>
-      )}
+      <p className="text-center text-slate-500 text-xs font-semibold">{mancheProgress}</p>
 
       {/* Winner banner */}
       {isCiviliansWin && (
@@ -440,7 +431,7 @@ export default function ResultScreen() {
             <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
               Classifica generale
             </p>
-            {!gameCompleted && (confirmReset ? (
+            {confirmReset ? (
               <div className="flex items-center gap-2">
                 <span className="text-rose-400 text-xs">Sicuro?</span>
                 <button
@@ -463,7 +454,7 @@ export default function ResultScreen() {
               >
                 Azzera punteggi
               </button>
-            ))}
+            )}
           </div>
           <div className="glass-strong rounded-2xl overflow-hidden">
             {leaderboard.map(([name, total], i) => {
@@ -587,32 +578,20 @@ export default function ResultScreen() {
       </div>
 
       <div className="flex flex-col gap-3">
-        {gameCompleted ? (
-          <motion.button
-            onClick={resetGame}
-            className="w-full glass-button font-bold py-5 rounded-2xl text-lg"
-            {...springTap}
-          >
-            Fine partita
-          </motion.button>
-        ) : (
-          <>
-            <motion.button
-              onClick={rematch}
-              className="w-full glass-button font-bold py-5 rounded-2xl text-lg"
-              {...springTap}
-            >
-              Continua
-            </motion.button>
-            <motion.button
-              onClick={resetGame}
-              className="w-full glass-button-secondary font-semibold py-4 rounded-2xl"
-              {...springTap}
-            >
-              Fine partita
-            </motion.button>
-          </>
-        )}
+        <motion.button
+          onClick={rematch}
+          className="w-full glass-button font-bold py-5 rounded-2xl text-lg"
+          {...springTap}
+        >
+          Continua
+        </motion.button>
+        <motion.button
+          onClick={resetGame}
+          className="w-full glass-button-secondary font-semibold py-4 rounded-2xl"
+          {...springTap}
+        >
+          Fine partita
+        </motion.button>
       </div>
     </div>
   )
