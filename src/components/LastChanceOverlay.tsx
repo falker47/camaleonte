@@ -49,7 +49,7 @@ export default function LastChanceOverlay({ onDismiss }: Props) {
       >
         <p className="text-sm tracking-[6px] uppercase font-semibold mb-4"
           style={{ color: 'rgba(239,68,68,0.7)' }}>
-          ⚠ Turno Finale
+          Turno Finale
         </p>
         <h1 className="text-4xl font-black text-white leading-tight -tracking-wide"
           style={{ textShadow: '0 0 40px rgba(220,38,38,0.5), 0 0 80px rgba(220,38,38,0.2)' }}>
