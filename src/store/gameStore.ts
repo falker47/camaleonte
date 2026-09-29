@@ -6,6 +6,7 @@ import { assignRoles } from '../utils/assignRoles'
 import { checkWinCondition } from '../utils/winCondition'
 import { isWordMatch } from '../utils/matchWord'
 import { getAliases } from '../data/wordAliases'
+import { canStartNextManche, getMancheNumberForStart, type MancheStartReason } from '../utils/gameDuration'
 import { clearStoredGameSnapshot } from './gameStorage'
 import {
   createInitialGuessSession,
@@ -105,6 +106,7 @@ interface GameState {
   players: Player[]
   wordPair: WordPair | null
   dealIndex: number
+  manche: number
   turno: number
   currentVotes: Record<string, number>
   eliminatedThisTurno: Player | null
@@ -131,7 +133,7 @@ interface GameState {
   setGuessSession: (update: Partial<GuessSession> | ((session: GuessSession) => GuessSession)) => void
   stageOracoloReveal: (targetId: string) => void
   maskSensitiveUi: () => void
-  startGame: () => void
+  startGame: (reason?: MancheStartReason) => void
   advanceDeal: () => void
   castVote: (votes: Record<string, number>) => void
   confirmElimination: () => void
@@ -148,10 +150,11 @@ interface GameState {
 export const useGameStore = create<GameState>((set, get) => ({
   screen: 'home',
   playerNames: [],
-  config: { camaleonteCount: 1, talpaCount: 0, specialRoles: {} },
+  config: { camaleonteCount: 1, talpaCount: 0, duration: 2, specialRoles: {} },
   players: [],
   wordPair: null,
   dealIndex: 0,
+  manche: 0,
   turno: 1,
   currentVotes: {},
   eliminatedThisTurno: null,
@@ -203,9 +206,12 @@ export const useGameStore = create<GameState>((set, get) => ({
       : state.guessSession,
   })),
 
-  startGame: () => {
-    const { playerNames, config, usedPairIndices } = get()
+  startGame: (reason = 'initial') => {
+    const { playerNames, config, usedPairIndices, manche } = get()
 
+    if (reason === 'continue' && !canStartNextManche(manche, playerNames.length, config.duration)) return
+
+    const nextManche = getMancheNumberForStart(manche, reason)
     const needsTriple = config.talpaCount > 1
 
     let available = wordPairs
@@ -233,6 +239,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       wordPair: pair,
       usedPairIndices: [...usedPairIndices, chosen.i],
       dealIndex: 0,
+      manche: nextManche,
       turno: 1,
       currentVotes: {},
       eliminatedThisTurno: null,
@@ -488,7 +495,7 @@ export const useGameStore = create<GameState>((set, get) => ({
   invalidateRound: () => {
     const { usedPairIndices } = get()
     set({ usedPairIndices: usedPairIndices.slice(0, -1) })
-    get().startGame()
+    get().startGame('invalidate')
   },
 
   resetGame: () => {
@@ -501,6 +508,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       players: [],
       wordPair: null,
       dealIndex: 0,
+      manche: 0,
       turno: 1,
       currentVotes: {},
       eliminatedThisTurno: null,
@@ -523,10 +531,12 @@ export const useGameStore = create<GameState>((set, get) => ({
   },
 
   rematch: () => {
-    const { playerNames } = get()
+    const { playerNames, manche, config } = get()
+    if (!canStartNextManche(manche, playerNames.length, config.duration)) return
+
     const rotated = [...playerNames.slice(1), playerNames[0]]
     set({ playerNames: rotated })
-    get().startGame()
+    get().startGame('continue')
   },
 
   resetScores: () => {
