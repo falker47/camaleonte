@@ -77,6 +77,22 @@ test('versioned snapshot round-trips the active game state', () => {
   })
 })
 
+test('saved-game summary derives the active turn from elimination history', () => {
+  const players = persistedState().players.map(player => ({ ...player }))
+  players[0].eliminated = true
+  players[0].eliminatedInTurno = 1
+  players[1].eliminated = true
+  players[1].eliminatedInTurno = 2
+
+  const snapshot = createGameSnapshot(persistedState({
+    screen: 'round',
+    players,
+    turno: 1,
+  }), 15)
+
+  assert.equal(getSavedGameSummary(snapshot).turno, 3)
+})
+
 test('Camaleonte private input is locked again when restored', () => {
   const state = persistedState({
     screen: 'camaleonte_guess',
