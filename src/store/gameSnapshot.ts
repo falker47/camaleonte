@@ -106,7 +106,7 @@ export function getSavedGameSummary(snapshot: GameSnapshotV1): SavedGameSummary 
   return {
     savedAt: snapshot.savedAt,
     playerCount: snapshot.state.players.length,
-    turno: Math.max(snapshot.state.turno, ...snapshot.state.players.map(player => player.eliminatedInTurno ?? 0)),
+    turno: Math.max(snapshot.state.turno, ...snapshot.state.players.map(player => (player.eliminatedInTurno ?? 0) + (snapshot.state.screen === 'round' || snapshot.state.screen === 'vote' ? 1 : 0))),
     screen: snapshot.state.screen,
   }
 }
