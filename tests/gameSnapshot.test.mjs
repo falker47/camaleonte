@@ -72,25 +72,26 @@ test('versioned snapshot round-trips the active game state', () => {
   assert.deepEqual(getSavedGameSummary(parsed), {
     savedAt: 123456,
     playerCount: 3,
+    manche: 2,
     turno: 2,
     screen: 'vote',
   })
 })
 
-test('saved-game summary derives the active turn from elimination history', () => {
-  const players = persistedState().players.map(player => ({ ...player }))
-  players[0].eliminated = true
-  players[0].eliminatedInTurno = 1
-  players[1].eliminated = true
-  players[1].eliminatedInTurno = 2
-
+test('saved-game summary exposes both session manche and in-game turn', () => {
   const snapshot = createGameSnapshot(persistedState({
-    screen: 'round',
-    players,
+    screen: 'deal',
     turno: 1,
+    usedPairIndices: [153, 438, 266, 75],
   }), 15)
 
-  assert.equal(getSavedGameSummary(snapshot).turno, 3)
+  assert.deepEqual(getSavedGameSummary(snapshot), {
+    savedAt: 15,
+    playerCount: 3,
+    manche: 4,
+    turno: 1,
+    screen: 'deal',
+  })
 })
 
 test('Camaleonte private input is locked again when restored', () => {
