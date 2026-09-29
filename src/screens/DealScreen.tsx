@@ -7,6 +7,7 @@ export default function DealScreen() {
   const players = useGameStore(s => s.players)
   const dealIndex = useGameStore(s => s.dealIndex)
   const advanceDeal = useGameStore(s => s.advanceDeal)
+  const privacyEpoch = useGameStore(s => s.privacyEpoch)
 
   const current = players[dealIndex]
   const total = players.length
@@ -57,6 +58,7 @@ export default function DealScreen() {
       </div>
 
       <PrivacyReveal
+        key={`${current.id}-${privacyEpoch}`}
         playerName={current.name}
         word={current.word}
         role={current.role}

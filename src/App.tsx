@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useGameStore } from './store/gameStore'
 import type { Screen } from './store/types'
 import { useBackGuard } from './hooks/useBackGuard'
+import { useAppLifecyclePrivacy } from './hooks/useAppLifecyclePrivacy'
 import ConfirmDialog from './components/ConfirmDialog'
 import HomeScreen from './screens/HomeScreen'
 import SetupScreen from './screens/SetupScreen'
@@ -184,6 +185,7 @@ export default function App() {
   const requestInvalidate = useCallback(() => setShowInvalidate(true), [])
 
   useBackGuard(requestQuit)
+  useAppLifecyclePrivacy()
 
   return (
     <div className="h-full bg-slate-950 text-white flex flex-col max-w-md mx-auto overflow-hidden relative">
@@ -194,9 +196,9 @@ export default function App() {
         <AnimatedScreen />
         <ConfirmDialog
           open={showQuit}
-          title="Uscire dalla partita?"
-          description="I progressi della partita andranno persi."
-          confirmLabel="Esci"
+          title="Abbandonare la partita?"
+          description="La partita salvata su questo dispositivo verrà cancellata."
+          confirmLabel="Abbandona"
           onConfirm={() => { setShowQuit(false); useGameStore.getState().resetGame() }}
           onCancel={() => setShowQuit(false)}
         />

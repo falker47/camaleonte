@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useGameStore } from '../store/gameStore'
 import { usePwaInstall } from '../hooks/usePwaInstall'
@@ -6,6 +6,9 @@ import Tutorial from '../components/Tutorial'
 import ScoreReference from '../components/ScoreReference'
 import SupportOverlay from '../components/SupportOverlay'
 import PrivacyOverlay from '../components/PrivacyOverlay'
+import ConfirmDialog from '../components/ConfirmDialog'
+import { discardSavedGame, getSavedGame, restoreSavedGame } from '../store/gamePersistence'
+import type { SavedGameSummary } from '../store/gameSnapshot'
 import camaleontePng from '../assets/camaleonte.png'
 import { Bunting, TropicalFoliage } from '../components/HomeDecorations'
 
@@ -32,6 +35,50 @@ export default function HomeScreen() {
   const [showScoreRef, setShowScoreRef] = useState(false)
   const [showSupport, setShowSupport] = useState(false)
   const [showPrivacy, setShowPrivacy] = useState(false)
+  const [savedGame, setSavedGame] = useState<SavedGameSummary | null>(null)
+  const [resumingSavedGame, setResumingSavedGame] = useState(false)
+  const [showDiscardSaved, setShowDiscardSaved] = useState(false)
+
+  useEffect(() => {
+    let cancelled = false
+
+    void getSavedGame()
+      .then(summary => {
+        if (!cancelled) setSavedGame(summary)
+      })
+      .catch(error => {
+        console.error('Unable to inspect saved game', error)
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  const handleContinueSavedGame = async () => {
+    if (resumingSavedGame) return
+
+    setResumingSavedGame(true)
+    try {
+      const restored = await restoreSavedGame()
+      if (!restored) setSavedGame(null)
+    } catch (error) {
+      console.error('Unable to restore saved game', error)
+      setSavedGame(null)
+    } finally {
+      setResumingSavedGame(false)
+    }
+  }
+
+  const handleDiscardSavedGame = async () => {
+    try {
+      await discardSavedGame()
+      setSavedGame(null)
+      setShowDiscardSaved(false)
+    } catch (error) {
+      console.error('Unable to discard saved game', error)
+    }
+  }
 
   return (
     <motion.div
@@ -145,10 +192,45 @@ export default function HomeScreen() {
       </motion.div>
 
       {/* CTA */}
+      {savedGame && (
+        <>
+          <motion.button
+            onClick={() => { void handleContinueSavedGame() }}
+            disabled={resumingSavedGame}
+            className="z-10 mt-7 font-bold py-4 px-12 rounded-2xl text-lg transition-colors text-white disabled:opacity-60"
+            style={{
+              background: 'linear-gradient(135deg, rgba(20,184,166,0.85), rgba(16,185,129,0.9))',
+              border: '1px solid rgba(45,212,191,0.5)',
+              boxShadow: '0 8px 32px rgba(20,184,166,0.35), 0 0 60px rgba(139,92,246,0.15), inset 0 1px 0 rgba(255,255,255,0.15)',
+            }}
+            variants={fadeUp}
+            {...springTap}
+          >
+            {resumingSavedGame ? 'Ripristino…' : 'Continua partita'}
+          </motion.button>
+
+          <motion.div
+            className="z-10 mt-2 flex items-center gap-3 text-xs text-slate-400"
+            variants={fadeUp}
+          >
+            <span>{savedGame.playerCount} giocatori · turno {savedGame.turno}</span>
+            <button
+              onClick={() => setShowDiscardSaved(true)}
+              className="text-rose-400 hover:text-rose-300 transition-colors"
+            >
+              Abbandona
+            </button>
+          </motion.div>
+        </>
+      )}
+
       <motion.button
         onClick={() => goTo('setup')}
-        className="z-10 mt-7 font-bold py-4 px-14 rounded-2xl text-lg transition-colors text-white"
-        style={{
+        className={`z-10 ${savedGame ? 'mt-3' : 'mt-7'} font-bold py-4 px-14 rounded-2xl text-lg transition-colors text-white`}
+        style={savedGame ? {
+          background: 'rgba(255,255,255,0.06)',
+          border: '1px solid rgba(255,255,255,0.12)',
+        } : {
           background: 'linear-gradient(135deg, rgba(20,184,166,0.85), rgba(16,185,129,0.9))',
           border: '1px solid rgba(45,212,191,0.5)',
           boxShadow: '0 8px 32px rgba(20,184,166,0.35), 0 0 60px rgba(139,92,246,0.15), inset 0 1px 0 rgba(255,255,255,0.15)',
@@ -156,7 +238,7 @@ export default function HomeScreen() {
         variants={fadeUp}
         {...springTap}
       >
-        Gioca Ora
+        {savedGame ? 'Nuova partita' : 'Gioca Ora'}
       </motion.button>
 
       {/* Secondary buttons */}
@@ -229,6 +311,15 @@ export default function HomeScreen() {
       <AnimatePresence>
         {showPrivacy && <PrivacyOverlay onClose={() => setShowPrivacy(false)} />}
       </AnimatePresence>
+
+      <ConfirmDialog
+        open={showDiscardSaved}
+        title="Abbandonare la partita salvata?"
+        description="Il salvataggio locale verrà cancellato definitivamente."
+        confirmLabel="Abbandona"
+        onConfirm={() => { void handleDiscardSavedGame() }}
+        onCancel={() => setShowDiscardSaved(false)}
+      />
     </motion.div>
   )
 }

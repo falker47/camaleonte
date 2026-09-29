@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { Capacitor } from '@capacitor/core'
 import './index.css'
 import App from './App'
+import { startGamePersistence } from './store/gamePersistence'
 
 if (Capacitor.isNativePlatform()) {
   import('@capacitor/status-bar').then(({ StatusBar, Style }) => {
@@ -22,6 +23,8 @@ if (!Capacitor.isNativePlatform()) {
     })
   })
 }
+
+startGamePersistence()
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

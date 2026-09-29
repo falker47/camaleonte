@@ -11,6 +11,7 @@
   },
   "include": [
     "src/utils/winCondition.ts",
-    "src/store/types.ts"
+    "src/store/types.ts",
+    "src/store/gameSnapshot.ts"
   ]
 }

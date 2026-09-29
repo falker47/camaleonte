@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useGameStore } from '../store/gameStore'
 import type { Player } from '../store/types'
@@ -13,16 +12,29 @@ export default function VoteScreen() {
   const goTo = useGameStore(s => s.goTo)
 
   const oracoloRevealedIds = useGameStore(s => s.oracoloRevealedIds)
+  const voteSession = useGameStore(s => s.voteSession)
+  const setVoteSession = useGameStore(s => s.setVoteSession)
 
   const active = players.filter(p => !p.eliminated)
   const eliminatedSpettro = players.find(p => p.eliminated && p.specialRole === 'spettro')
   const voterCount = active.length + (eliminatedSpettro ? 1 : 0)
 
-  const [votes, setVotes] = useState<Record<string, number>>({})
-  const [voteHistory, setVoteHistory] = useState<string[]>([]) // track order for undo
-  const [tieBreak, setTieBreak] = useState<string[] | null>(null)
-  const [pendingDraw, setPendingDraw] = useState<Player[] | null>(null)
-  const [randomPick, setRandomPick] = useState<Player | null>(null)
+  const {
+    votes,
+    voteHistory,
+    tieBreakIds: tieBreak,
+    pendingDrawIds,
+    randomPickId,
+  } = voteSession
+
+  const pendingDraw = pendingDrawIds
+    ? pendingDrawIds
+        .map(id => active.find(player => player.id === id))
+        .filter((player): player is Player => player !== undefined)
+    : null
+  const randomPick = randomPickId
+    ? active.find(player => player.id === randomPickId) ?? null
+    : null
 
   const totalVotesCast = Object.values(votes).reduce((a, b) => a + b, 0)
   const votersLeft = voterCount - totalVotesCast
@@ -32,19 +44,26 @@ export default function VoteScreen() {
   const handleVote = (targetId: string) => {
     if (votersLeft <= 0) return
     vibrate()
-    setVotes(v => ({ ...v, [targetId]: (v[targetId] ?? 0) + 1 }))
-    setVoteHistory(h => [...h, targetId])
+    setVoteSession(session => ({
+      ...session,
+      votes: { ...session.votes, [targetId]: (session.votes[targetId] ?? 0) + 1 },
+      voteHistory: [...session.voteHistory, targetId],
+    }))
   }
 
   const handleUndo = () => {
     if (voteHistory.length === 0) return
     const lastId = voteHistory[voteHistory.length - 1]
-    setVoteHistory(h => h.slice(0, -1))
-    setVotes(v => {
-      const next = { ...v }
-      next[lastId] = (next[lastId] ?? 1) - 1
-      if (next[lastId] <= 0) delete next[lastId]
-      return next
+    setVoteSession(session => {
+      const nextVotes = { ...session.votes }
+      nextVotes[lastId] = (nextVotes[lastId] ?? 1) - 1
+      if (nextVotes[lastId] <= 0) delete nextVotes[lastId]
+
+      return {
+        ...session,
+        votes: nextVotes,
+        voteHistory: session.voteHistory.slice(0, -1),
+      }
     })
   }
 
@@ -61,17 +80,25 @@ export default function VoteScreen() {
 
     // First tie → re-vote among tied players
     if (!tieBreak) {
-      setTieBreak(tied)
+      setVoteSession({
+        tieBreakIds: tied,
+        votes: {},
+        voteHistory: [],
+      })
+      return
     } else {
       // Second tie → go to random draw
       const tiedPlayers = tied
         .map(id => active.find(p => p.id === id))
         .filter((p): p is Player => p !== undefined)
       if (tiedPlayers.length === 0) return
-      setPendingDraw(tiedPlayers)
+      setVoteSession({
+        pendingDrawIds: tiedPlayers.map(player => player.id),
+        randomPickId: null,
+        votes: {},
+        voteHistory: [],
+      })
     }
-    setVotes({})
-    setVoteHistory([])
   }
 
   const handleDraw = () => {
@@ -79,7 +106,7 @@ export default function VoteScreen() {
     const arr = new Uint32Array(1)
     crypto.getRandomValues(arr)
     const idx = arr[0] % pendingDraw.length
-    setRandomPick(pendingDraw[idx])
+    setVoteSession({ randomPickId: pendingDraw[idx].id })
   }
 
   const handleDrawConfirm = () => {
@@ -163,7 +190,7 @@ export default function VoteScreen() {
             <div className="flex gap-2">
               {voteHistory.length > 0 && (
                 <button
-                  onClick={() => { setVotes({}); setVoteHistory([]) }}
+                  onClick={() => setVoteSession({ votes: {}, voteHistory: [] })}
                   className="glass rounded-full px-3 py-1.5 text-rose-400 hover:text-rose-300 text-xs font-medium transition-colors"
                 >
                   Azzera
