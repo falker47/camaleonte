@@ -1,8 +1,9 @@
-import { useState, useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useGameStore } from '../store/gameStore'
 import { springTap } from '../constants/animations'
 import { getCamaleonteGuessPoints } from '../constants/gameConfig'
+import { createInitialGuessSession } from '../store/gameSnapshot'
 
 type Phase = 'privacy' | 'input' | 'result'
 
@@ -14,45 +15,40 @@ export default function GuessScreen() {
   const camaleonteGuessResult = useGameStore(s => s.camaleonteGuessResult)
   const winner = useGameStore(s => s.winner)
   const nextTurno = useGameStore(s => s.nextTurno)
+  const guessSession = useGameStore(s => s.guessSession)
+  const setGuessSession = useGameStore(s => s.setGuessSession)
 
   const camaleonteGuessPoints = getCamaleonteGuessPoints(players.length)
-
-  const [guess, setGuess] = useState('')
-  const [phase, setPhase] = useState<Phase>('privacy')
-  const [timeLeft, setTimeLeft] = useState(60)
-  const timedOut = useRef(false)
+  const { phase, draft: guess, timeLeft, privacyLocked } = guessSession
 
   const gameOver = winner !== null
 
-  // Countdown timer — runs only during input phase
+  // Countdown is part of the resumable game state. It pauses while privacy-locked.
   useEffect(() => {
-    if (phase !== 'input') return
+    if (phase !== 'input' || privacyLocked || timeLeft <= 0) return
+
     const id = setInterval(() => {
-      setTimeLeft(t => {
-        if (t <= 1) {
-          clearInterval(id)
-          timedOut.current = true
-          return 0
-        }
-        return t - 1
+      setGuessSession(session => {
+        if (session.phase !== 'input' || session.privacyLocked) return session
+        return { ...session, timeLeft: Math.max(0, session.timeLeft - 1) }
       })
     }, 1000)
-    return () => clearInterval(id)
-  }, [phase])
 
-  // Auto-submit when time runs out
+    return () => clearInterval(id)
+  }, [phase, privacyLocked, timeLeft, setGuessSession])
+
+  // Auto-submit exactly once when the persisted timer reaches zero.
   useEffect(() => {
-    if (timedOut.current && timeLeft === 0) {
-      timedOut.current = false
+    if (phase === 'input' && !privacyLocked && timeLeft === 0) {
       submitCamaleonteGuess('')
-      setPhase('result')
+      setGuessSession({ phase: 'result', privacyLocked: false })
     }
-  }, [timeLeft, submitCamaleonteGuess])
+  }, [phase, privacyLocked, timeLeft, submitCamaleonteGuess, setGuessSession])
 
   const handleSubmit = () => {
     if (guess.trim().length === 0) return
     submitCamaleonteGuess(guess.trim())
-    setPhase('result')
+    setGuessSession({ phase: 'result', privacyLocked: false })
   }
 
   const handleContinue = () => {
@@ -60,11 +56,12 @@ export default function GuessScreen() {
     // If linked partner is a camaleonte that hasn't guessed yet, give them a turn
     if (linkedEliminatedThisTurno?.role === 'camaleonte' && linkedEliminatedThisTurno.id !== eliminatedThisTurno?.id) {
       store.goTo('camaleonte_guess')
-      useGameStore.setState({ eliminatedThisTurno: linkedEliminatedThisTurno, linkedEliminatedThisTurno: null, camaleonteGuessResult: null })
-      setGuess('')
-      setPhase('privacy')
-      setTimeLeft(60)
-      timedOut.current = false
+      useGameStore.setState({
+        eliminatedThisTurno: linkedEliminatedThisTurno,
+        linkedEliminatedThisTurno: null,
+        camaleonteGuessResult: null,
+        guessSession: createInitialGuessSession(),
+      })
       return
     }
     // If Riccio strike is pending, go to strike screen (even if last_two triggered — Riccio can invalidate it)
@@ -84,8 +81,8 @@ export default function GuessScreen() {
     }
   }
 
-  // Privacy screen — others must not see the input
-  if (phase === 'privacy') {
+  // Privacy screen — also shown again after background/restore while input was private.
+  if (phase === 'privacy' || (phase === 'input' && privacyLocked)) {
     return (
       <div className="flex flex-col items-center justify-center flex-1 px-5 py-8 gap-6">
         <div className="flex flex-col items-center gap-3">
@@ -98,15 +95,17 @@ export default function GuessScreen() {
             Gli altri giocatori non devono guardare lo schermo!
           </p>
           <p className="text-teal-400 text-sm font-semibold mt-1">
-            Avrai 60 secondi per indovinare la parola!
+            {phase === 'privacy'
+              ? 'Avrai 60 secondi per indovinare la parola!'
+              : `Tentativo in pausa — restano ${timeLeft} secondi.`}
           </p>
         </div>
         <motion.button
-          onClick={() => setPhase('input')}
+          onClick={() => setGuessSession({ phase: 'input', privacyLocked: false })}
           className="w-full max-w-xs bg-teal-500 hover:bg-teal-400 active:bg-teal-600 text-black font-bold py-5 rounded-2xl text-lg transition-colors shadow-[0_8px_32px_rgba(20,184,166,0.3)]"
           {...springTap}
         >
-          Sono pronto
+          {phase === 'privacy' ? 'Sono pronto' : 'Riprendi tentativo'}
         </motion.button>
       </div>
     )
@@ -137,7 +136,7 @@ export default function GuessScreen() {
           <input
             type="text"
             value={guess}
-            onChange={e => setGuess(e.target.value)}
+            onChange={e => setGuessSession({ draft: e.target.value })}
             onKeyDown={e => e.key === 'Enter' && handleSubmit()}
             placeholder="Scrivi la parola..."
             className="w-full glass-input rounded-2xl px-4 py-4 text-lg text-center"
