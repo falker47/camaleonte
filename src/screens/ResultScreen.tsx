@@ -417,7 +417,7 @@ export default function ResultScreen() {
         >
           <div>
             <p className="text-slate-200 text-sm font-semibold">Dettagli manche</p>
-            <p className="text-slate-500 text-[11px]">Parole, ruoli e punti completi</p>
+            <p className="text-slate-500 text-[11px]">{hasTalpa ? 'Parole, ruoli e punti completi' : 'Parola, ruoli e punti completi'}</p>
           </div>
           <motion.span
             className="text-slate-500 shrink-0"
@@ -440,7 +440,7 @@ export default function ResultScreen() {
       {/* Word reveal */}
       {wordPair && (
         <div className="glass rounded-2xl px-4 py-3">
-          <p className="text-slate-400 text-xs uppercase tracking-wide mb-2">Le parole segrete</p>
+          <p className="text-slate-400 text-xs uppercase tracking-wide mb-2">{hasTalpa ? 'Le parole segrete' : 'La parola segreta'}</p>
           <div className="flex gap-4">
             <div>
               <p className="text-xs text-indigo-400">Civili</p>
@@ -486,7 +486,7 @@ export default function ResultScreen() {
                   transition={{ delay: gi * 0.08 }}
                 >
                   <div className="flex items-center gap-2 mb-2">
-                    <RoleTag role={role} size="sm" />
+                    <RoleTag role={role} size="sm" plural={role === 'civile' || group.length > 1} />
                     <div className="flex-1 h-px bg-white/8" />
                   </div>
                   <div className="flex flex-wrap gap-2">
