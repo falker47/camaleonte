@@ -16,11 +16,11 @@ const SUGGESTED_ROLES: Record<number, [number, number]> = {
   11: [2, 2], 12: [2, 2],
 }
 
-const DURATION_OPTIONS: { value: GameDuration; label: string }[] = [
-  { value: 1, label: '1 giro' },
-  { value: 2, label: '2 giri' },
-  { value: 3, label: '3 giri' },
-  { value: 'unlimited', label: '∞ Senza limite' },
+const DURATION_OPTIONS: { value: GameDuration; valueLabel: string; unitLabel: string }[] = [
+  { value: 1, valueLabel: '1', unitLabel: 'giro' },
+  { value: 2, valueLabel: '2', unitLabel: 'giri' },
+  { value: 3, valueLabel: '3', unitLabel: 'giri' },
+  { value: 'unlimited', valueLabel: '∞', unitLabel: 'senza limite' },
 ]
 
 interface Slot { id: number; name: string }
@@ -371,6 +371,57 @@ export default function SetupScreen() {
         )}
       </div>
 
+      {/* Game duration */}
+      <div>
+        <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wide mb-3">
+          Durata partita
+        </h3>
+        <div className="glass rounded-2xl p-1 flex gap-1">
+          {DURATION_OPTIONS.map(option => {
+            const selected = duration === option.value
+            return (
+              <motion.button
+                key={String(option.value)}
+                type="button"
+                aria-label={option.value === 'unlimited' ? 'Senza limite' : `${option.value} ${option.value === 1 ? 'giro' : 'giri'}`}
+                aria-pressed={selected}
+                onClick={() => handleDurationChange(option.value)}
+                className={`relative min-w-0 flex-1 rounded-xl py-2.5 px-1 flex flex-col items-center justify-center transition-colors ${
+                  selected
+                    ? 'bg-teal-500/18 text-white border border-teal-400/35 shadow-[0_4px_18px_rgba(20,184,166,0.12)]'
+                    : 'text-slate-500 border border-transparent hover:bg-white/[0.04] hover:text-slate-300'
+                }`}
+                {...springTap}
+              >
+                <span className={`font-black leading-none ${option.value === 'unlimited' ? 'text-2xl' : 'text-lg'}`}>
+                  {option.valueLabel}
+                </span>
+                <span className="text-[9px] leading-none mt-1 whitespace-nowrap">
+                  {option.unitLabel}
+                </span>
+              </motion.button>
+            )
+          })}
+        </div>
+        <div className="mt-2 flex items-center justify-between gap-3">
+          <p className="text-teal-300 text-xs font-semibold">
+            {duration === 'unlimited'
+              ? 'Partita senza limite'
+              : validNames.length >= 3
+                ? `${duration} ${duration === 1 ? 'giro' : 'giri'} · ${totalManche} manche`
+                : `${duration} ${duration === 1 ? 'giro' : 'giri'}`}
+          </p>
+          {suggestedDuration === duration && (
+            <span className="shrink-0 rounded-full bg-teal-500/10 border border-teal-400/20 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wide text-teal-300">
+              Consigliato
+            </span>
+          )}
+        </div>
+        <p className="text-slate-600 text-[11px] mt-1">
+          1 giro = una manche per ogni giocatore
+        </p>
+      </div>
+
       {/* Role counts */}
       <div>
         <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wide mb-3">
@@ -497,51 +548,6 @@ export default function SetupScreen() {
             </div>
           )}
         </div>
-      </div>
-
-      {/* Game duration */}
-      <div>
-        <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wide mb-3">
-          Durata partita
-        </h3>
-        <div className="grid grid-cols-2 gap-2">
-          {DURATION_OPTIONS.map(option => {
-            const selected = duration === option.value
-            const recommended = suggestedDuration === option.value
-            return (
-              <button
-                key={String(option.value)}
-                type="button"
-                aria-pressed={selected}
-                onClick={() => handleDurationChange(option.value)}
-                className={`rounded-xl border px-3 py-3 text-left transition-colors ${
-                  selected
-                    ? 'bg-teal-500/15 border-teal-400/50 text-white'
-                    : 'bg-white/[0.03] border-white/10 text-slate-400 hover:bg-white/[0.06]'
-                }`}
-              >
-                <div className="flex items-center justify-between gap-2">
-                  <span className="text-sm font-semibold">{option.label}</span>
-                  {recommended && (
-                    <span className="text-[9px] uppercase tracking-wide text-teal-300">
-                      Consigliato
-                    </span>
-                  )}
-                </div>
-              </button>
-            )
-          })}
-        </div>
-        <p className="text-teal-300 text-xs font-semibold mt-2">
-          {duration === 'unlimited'
-            ? '∞ Senza limite'
-            : validNames.length >= 3
-              ? `${duration} ${duration === 1 ? 'giro' : 'giri'} · ${totalManche} manche`
-              : `${duration} ${duration === 1 ? 'giro' : 'giri'}`}
-        </p>
-        <p className="text-slate-600 text-xs mt-1">
-          1 giro = una manche per ogni giocatore
-        </p>
       </div>
 
       <motion.button

@@ -68,6 +68,7 @@ const PERSISTED_SCREENS: ReadonlySet<string> = new Set([
   'riccio_strike',
   'oracolo_reveal',
   'result',
+  'final_result',
 ])
 
 const ROLES = new Set(['civile', 'talpa', 'camaleonte'])
@@ -136,15 +137,26 @@ export function migrateGameSnapshot(input: unknown): GameSnapshotV1 | null {
     ? Math.max(1, input.state.usedPairIndices.length)
     : undefined
 
+  const normalizedDuration = input.state.config.duration === undefined
+    ? 'unlimited'
+    : input.state.config.duration
+  const normalizedManche = input.state.manche === undefined ? legacyManche : input.state.manche
+  const playerCount = Array.isArray(input.state.players) ? input.state.players.length : 0
+  const normalizedScreen = input.state.screen === 'result'
+    && typeof normalizedManche === 'number'
+    && (normalizedDuration === 1 || normalizedDuration === 2 || normalizedDuration === 3)
+    && normalizedManche >= playerCount * normalizedDuration
+      ? 'final_result'
+      : input.state.screen
+
   const normalizedState: Record<string, unknown> = {
     ...input.state,
+    screen: normalizedScreen,
     config: {
       ...input.state.config,
-      duration: input.state.config.duration === undefined
-        ? 'unlimited'
-        : input.state.config.duration,
+      duration: normalizedDuration,
     },
-    manche: input.state.manche === undefined ? legacyManche : input.state.manche,
+    manche: normalizedManche,
   }
 
   if (!isPersistedGameState(normalizedState)) return null
