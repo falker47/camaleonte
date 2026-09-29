@@ -400,9 +400,11 @@ export default function SetupScreen() {
                 <span className="text-[9px] leading-none mt-1 whitespace-nowrap">
                   {option.unitLabel}
                 </span>
-                <span className={`mt-1 text-[8px] leading-none font-black uppercase tracking-[0.08em] ${recommended ? 'text-teal-300' : 'invisible'}`}>
-                  Consigliato
-                </span>
+                {recommended && (
+                  <span className="pointer-events-none absolute -top-2 left-1/2 -translate-x-1/2 rounded-full border border-teal-300/25 bg-slate-900/95 px-1.5 py-0.5 text-[7px] font-black uppercase tracking-[0.08em] leading-none text-teal-300 shadow-[0_3px_10px_rgba(0,0,0,0.35)] backdrop-blur-sm">
+                    Consigliato
+                  </span>
+                )}
               </motion.button>
             )
           })}
