@@ -8,6 +8,7 @@ import {
   getSuggestedGameDuration,
   getTotalManche,
   isGameComplete,
+  getSessionResultScreen,
   resolveGameDuration,
 } from '../.test-build/utils/gameDuration.js'
 
@@ -59,4 +60,10 @@ test('invalidating a manche replaces it without consuming the session limit', ()
   assert.equal(getMancheNumberForStart(5, 'invalidate'), 5)
   assert.equal(getMancheNumberForStart(5, 'continue'), 6)
   assert.equal(getMancheNumberForStart(0, 'initial'), 1)
+})
+
+test('completed finite sessions use the dedicated final result screen', () => {
+  assert.equal(getSessionResultScreen(7, 4, 2), 'result')
+  assert.equal(getSessionResultScreen(8, 4, 2), 'final_result')
+  assert.equal(getSessionResultScreen(200, 4, 'unlimited'), 'result')
 })
