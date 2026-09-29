@@ -113,7 +113,7 @@ function QuitButton({ onRequestQuit }: { onRequestQuit: () => void }) {
   return (
     <button
       onClick={onRequestQuit}
-      className="absolute top-4 right-4 z-50 w-9 h-9 rounded-full glass text-slate-400 hover:text-white flex items-center justify-center text-sm font-bold transition-colors"
+      className="absolute top-4 right-4 z-50 w-11 h-11 rounded-full glass-strong text-rose-200 hover:text-white flex items-center justify-center text-lg font-black ring-1 ring-rose-300/20 shadow-[0_6px_24px_rgba(244,63,94,0.14)] transition-all"
       aria-label="Esci"
     >
       ✕
@@ -129,7 +129,7 @@ function InvalidateButton({ onRequestInvalidate }: { onRequestInvalidate: () => 
   return (
     <button
       onClick={onRequestInvalidate}
-      className="absolute top-4 right-14 z-50 w-9 h-9 rounded-full glass text-slate-400 hover:text-white flex items-center justify-center text-sm transition-colors"
+      className="absolute top-4 right-[4.5rem] z-50 w-11 h-11 rounded-full glass-strong text-amber-200 hover:text-white flex items-center justify-center text-lg font-bold ring-1 ring-amber-300/20 shadow-[0_6px_24px_rgba(251,191,36,0.12)] transition-all"
       aria-label="Invalida manche"
     >
       ⟳
