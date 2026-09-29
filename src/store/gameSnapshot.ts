@@ -1,5 +1,4 @@
 import type { GameConfig, Player, Screen, WordPair } from './types'
-import { getTotalManche } from '../utils/gameDuration'
 
 export type PersistedScreen = Exclude<Screen, 'home' | 'setup'>
 export type GuessPhase = 'privacy' | 'input' | 'result'
@@ -112,7 +111,9 @@ export function getSavedGameSummary(snapshot: GameSnapshotV1): SavedGameSummary 
     savedAt: snapshot.savedAt,
     playerCount,
     manche: snapshot.state.manche,
-    totalManche: getTotalManche(playerCount, snapshot.state.config.duration),
+    totalManche: snapshot.state.config.duration === 'unlimited'
+      ? null
+      : playerCount * snapshot.state.config.duration,
     turno: snapshot.state.turno,
     screen: snapshot.state.screen,
   }
