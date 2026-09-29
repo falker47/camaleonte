@@ -63,14 +63,12 @@ function toPersistedGameState(state: ReturnType<typeof useGameStore.getState>): 
   }
 }
 
-function persistState(state: ReturnType<typeof useGameStore.getState>): void {
+function persistState(state: ReturnType<typeof useGameStore.getState>): Promise<void> {
   const persistedState = toPersistedGameState(state)
-  if (!persistedState) return
+  if (!persistedState) return Promise.resolve()
 
   const snapshot = createGameSnapshot(persistedState)
-  void writeStoredGameSnapshot(serializeGameSnapshot(snapshot)).catch(error => {
-    console.error('Unable to save game snapshot', error)
-  })
+  return writeStoredGameSnapshot(serializeGameSnapshot(snapshot))
 }
 
 async function readValidSnapshot() {
@@ -90,8 +88,15 @@ export function startGamePersistence(): void {
 
   useGameStore.subscribe(state => {
     if (restoringSnapshot) return
-    persistState(state)
+    void persistState(state).catch(error => {
+      console.error('Unable to save game snapshot', error)
+    })
   })
+}
+
+export async function flushGamePersistence(): Promise<void> {
+  if (restoringSnapshot) return
+  await persistState(useGameStore.getState())
 }
 
 export async function getSavedGame(): Promise<SavedGameSummary | null> {
@@ -157,7 +162,7 @@ export async function restoreSavedGame(): Promise<boolean> {
     restoringSnapshot = false
   }
 
-  persistState(useGameStore.getState())
+  await persistState(useGameStore.getState())
   return true
 }
 
