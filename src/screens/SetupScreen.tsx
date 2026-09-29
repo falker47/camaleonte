@@ -379,6 +379,7 @@ export default function SetupScreen() {
         <div className="glass rounded-2xl p-1 flex gap-1">
           {DURATION_OPTIONS.map(option => {
             const selected = duration === option.value
+            const recommended = suggestedDuration === option.value
             return (
               <motion.button
                 key={String(option.value)}
@@ -399,24 +400,20 @@ export default function SetupScreen() {
                 <span className="text-[9px] leading-none mt-1 whitespace-nowrap">
                   {option.unitLabel}
                 </span>
+                <span className={`mt-1 text-[8px] leading-none font-black uppercase tracking-[0.08em] ${recommended ? 'text-teal-300' : 'invisible'}`}>
+                  Consigliato
+                </span>
               </motion.button>
             )
           })}
         </div>
-        <div className="mt-2 flex items-center justify-between gap-3">
-          <p className="text-teal-300 text-xs font-semibold">
-            {duration === 'unlimited'
-              ? 'Partita senza limite'
-              : validNames.length >= 3
-                ? `${duration} ${duration === 1 ? 'giro' : 'giri'} · ${totalManche} manche`
-                : `${duration} ${duration === 1 ? 'giro' : 'giri'}`}
-          </p>
-          {suggestedDuration === duration && (
-            <span className="shrink-0 rounded-full bg-teal-500/10 border border-teal-400/20 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wide text-teal-300">
-              Consigliato
-            </span>
-          )}
-        </div>
+        <p className="mt-2 text-teal-300 text-xs font-semibold">
+          {duration === 'unlimited'
+            ? 'Partita senza limite'
+            : validNames.length >= 3
+              ? `${duration} ${duration === 1 ? 'giro' : 'giri'} · ${totalManche} manche`
+              : `${duration} ${duration === 1 ? 'giro' : 'giri'}`}
+        </p>
         <p className="text-slate-600 text-[11px] mt-1">
           1 giro = una manche per ogni giocatore
         </p>
