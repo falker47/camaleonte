@@ -6,6 +6,13 @@ import { assignRoles } from '../utils/assignRoles'
 import { checkWinCondition } from '../utils/winCondition'
 import { isWordMatch } from '../utils/matchWord'
 import { getAliases } from '../data/wordAliases'
+import { clearStoredGameSnapshot } from './gameStorage'
+import {
+  createInitialGuessSession,
+  createInitialVoteSession,
+  type GuessSession,
+  type VoteSession,
+} from './gameSnapshot'
 import {
   getCamaleonteGuessPoints,
   getCamaleonteSurvivalPoints,
@@ -112,10 +119,18 @@ interface GameState {
   oracoloRevealActive: boolean
   oracoloRevealedIds: string[]
   usedPairIndices: number[]
+  voteSession: VoteSession
+  guessSession: GuessSession
+  oracoloPendingRevealId: string | null
+  privacyEpoch: number
 
   goTo: (screen: Screen) => void
   setPlayerNames: (names: string[]) => void
   setConfig: (config: GameConfig) => void
+  setVoteSession: (update: Partial<VoteSession> | ((session: VoteSession) => VoteSession)) => void
+  setGuessSession: (update: Partial<GuessSession> | ((session: GuessSession) => GuessSession)) => void
+  stageOracoloReveal: (targetId: string) => void
+  maskSensitiveUi: () => void
   startGame: () => void
   advanceDeal: () => void
   castVote: (votes: Record<string, number>) => void
@@ -151,12 +166,42 @@ export const useGameStore = create<GameState>((set, get) => ({
   oracoloRevealActive: false,
   oracoloRevealedIds: [],
   usedPairIndices: [],
+  voteSession: createInitialVoteSession(),
+  guessSession: createInitialGuessSession(),
+  oracoloPendingRevealId: null,
+  privacyEpoch: 0,
 
-  goTo: (screen) => set({ screen }),
+  goTo: (screen) => set(state => ({
+    screen,
+    ...(screen === 'vote' && state.screen !== 'vote'
+      ? { voteSession: createInitialVoteSession() }
+      : {}),
+  })),
 
   setPlayerNames: (names) => set({ playerNames: names }),
 
   setConfig: (config) => set({ config }),
+
+  setVoteSession: (update) => set(state => ({
+    voteSession: typeof update === 'function'
+      ? update(state.voteSession)
+      : { ...state.voteSession, ...update },
+  })),
+
+  setGuessSession: (update) => set(state => ({
+    guessSession: typeof update === 'function'
+      ? update(state.guessSession)
+      : { ...state.guessSession, ...update },
+  })),
+
+  stageOracoloReveal: (targetId) => set({ oracoloPendingRevealId: targetId }),
+
+  maskSensitiveUi: () => set(state => ({
+    privacyEpoch: state.privacyEpoch + 1,
+    guessSession: state.screen === 'camaleonte_guess' && state.guessSession.phase === 'input'
+      ? { ...state.guessSession, privacyLocked: true }
+      : state.guessSession,
+  })),
 
   startGame: () => {
     const { playerNames, config, usedPairIndices } = get()
@@ -200,6 +245,9 @@ export const useGameStore = create<GameState>((set, get) => ({
       postRiccioStrike: false,
       oracoloRevealActive: false,
       oracoloRevealedIds: [],
+      voteSession: createInitialVoteSession(),
+      guessSession: createInitialGuessSession(),
+      oracoloPendingRevealId: null,
       screen: 'deal',
     })
   },
@@ -224,7 +272,12 @@ export const useGameStore = create<GameState>((set, get) => ({
         eliminated = players.find(p => p.id === id) ?? null
       }
     }
-    set({ currentVotes: votes, eliminatedThisTurno: eliminated, screen: 'elimination' })
+    set({
+      currentVotes: votes,
+      eliminatedThisTurno: eliminated,
+      voteSession: createInitialVoteSession(),
+      screen: 'elimination',
+    })
   },
 
   confirmElimination: () => {
@@ -243,11 +296,11 @@ export const useGameStore = create<GameState>((set, get) => ({
       }
 
       if (eliminatedThisTurno.role === 'camaleonte' && wordPair) {
-        set({ screen: 'camaleonte_guess', camaleonteGuessResult: null })
+        set({ screen: 'camaleonte_guess', camaleonteGuessResult: null, guessSession: createInitialGuessSession() })
         return
       }
       if (linkedEliminatedThisTurno?.role === 'camaleonte' && wordPair) {
-        set({ eliminatedThisTurno: linkedEliminatedThisTurno, screen: 'camaleonte_guess', camaleonteGuessResult: null })
+        set({ eliminatedThisTurno: linkedEliminatedThisTurno, screen: 'camaleonte_guess', camaleonteGuessResult: null, guessSession: createInitialGuessSession() })
         return
       }
 
@@ -300,13 +353,13 @@ export const useGameStore = create<GameState>((set, get) => ({
 
     // Voted camaleonte gets a guess first (riccio strike will happen after via GuessScreen)
     if (eliminatedThisTurno.role === 'camaleonte' && wordPair) {
-      set({ screen: 'camaleonte_guess', camaleonteGuessResult: null })
+      set({ screen: 'camaleonte_guess', camaleonteGuessResult: null, guessSession: createInitialGuessSession() })
       return
     }
 
     // Linked partner camaleonte also gets a guess
     if (linkedPartner?.role === 'camaleonte' && wordPair) {
-      set({ eliminatedThisTurno: linkedPartner, screen: 'camaleonte_guess', camaleonteGuessResult: null })
+      set({ eliminatedThisTurno: linkedPartner, screen: 'camaleonte_guess', camaleonteGuessResult: null, guessSession: createInitialGuessSession() })
       return
     }
 
@@ -368,7 +421,11 @@ export const useGameStore = create<GameState>((set, get) => ({
   oracoloReveal: (targetId) => {
     const { players, turno, scores, camaleonteCorrectIds, oracoloRevealedIds } = get()
 
-    set({ oracoloRevealActive: false, oracoloRevealedIds: [...oracoloRevealedIds, targetId] })
+    set({
+      oracoloRevealActive: false,
+      oracoloRevealedIds: [...oracoloRevealedIds, targetId],
+      oracoloPendingRevealId: null,
+    })
 
     const win = checkWinCondition(players, players.length)
     if (win) {
@@ -417,7 +474,15 @@ export const useGameStore = create<GameState>((set, get) => ({
   },
 
   nextTurno: () => {
-    set({ screen: 'round', turno: get().turno + 1, currentVotes: {}, linkedEliminatedThisTurno: null })
+    set({
+      screen: 'round',
+      turno: get().turno + 1,
+      currentVotes: {},
+      linkedEliminatedThisTurno: null,
+      voteSession: createInitialVoteSession(),
+      guessSession: createInitialGuessSession(),
+      oracoloPendingRevealId: null,
+    })
   },
 
   invalidateRound: () => {
@@ -427,6 +492,10 @@ export const useGameStore = create<GameState>((set, get) => ({
   },
 
   resetGame: () => {
+    void clearStoredGameSnapshot().catch(error => {
+      console.error('Unable to clear saved game', error)
+    })
+
     set({
       screen: 'home',
       players: [],
@@ -446,6 +515,10 @@ export const useGameStore = create<GameState>((set, get) => ({
       oracoloRevealedIds: [],
       scores: {},
       usedPairIndices: [],
+      voteSession: createInitialVoteSession(),
+      guessSession: createInitialGuessSession(),
+      oracoloPendingRevealId: null,
+      privacyEpoch: get().privacyEpoch + 1,
     })
   },
 
