@@ -54,3 +54,13 @@ export function formatMancheProgress(
     ? `Manche ${currentManche}`
     : `Manche ${currentManche} / ${total}`
 }
+
+export function getSessionResultScreen(
+  currentManche: number,
+  playerCount: number,
+  duration: GameDuration
+): 'result' | 'final_result' {
+  return isGameComplete(currentManche, playerCount, duration)
+    ? 'final_result'
+    : 'result'
+}
