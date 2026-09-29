@@ -30,13 +30,13 @@ export default function PrivacyOverlay({ onClose }: { onClose: () => void }) {
 
         <div className="overflow-y-auto px-5 pb-6 flex flex-col gap-4">
           <p className="text-slate-500 text-xs italic">
-            Ultimo aggiornamento: 16 aprile 2026
+            Ultimo aggiornamento: 29 settembre 2026
           </p>
 
           <section className="flex flex-col gap-1.5">
             <h3 className="text-teal-400 font-semibold text-sm">Raccolta dati</h3>
             <p className="text-slate-300 text-sm leading-relaxed">
-              Camaleonte <span className="text-white font-semibold">non raccoglie, memorizza o trasmette alcun dato personale</span>. L'app funziona interamente offline e tutti i dati di gioco restano sul dispositivo.
+              Camaleonte <span className="text-white font-semibold">non trasmette dati personali e non usa account o backend</span>. Per consentire di riprendere una partita, i nomi inseriti e lo stato della partita possono essere memorizzati esclusivamente sul dispositivo. Il salvataggio viene cancellato quando la partita viene abbandonata o terminata esplicitamente.
             </p>
           </section>
 
