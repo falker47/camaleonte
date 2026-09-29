@@ -4,6 +4,7 @@ import { useGameStore } from '../store/gameStore'
 import { springTap } from '../constants/animations'
 import { getCamaleonteGuessPoints } from '../constants/gameConfig'
 import { createInitialGuessSession } from '../store/gameSnapshot'
+import { getSessionResultScreen } from '../utils/gameDuration'
 
 export default function GuessScreen() {
   const eliminatedThisTurno = useGameStore(s => s.eliminatedThisTurno)
@@ -73,7 +74,7 @@ export default function GuessScreen() {
       return
     }
     if (gameOver) {
-      store.goTo('result')
+      store.goTo(getSessionResultScreen(store.manche, store.players.length, store.config.duration))
     } else {
       nextTurno()
     }
