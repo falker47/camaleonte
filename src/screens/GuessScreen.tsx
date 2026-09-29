@@ -5,8 +5,6 @@ import { springTap } from '../constants/animations'
 import { getCamaleonteGuessPoints } from '../constants/gameConfig'
 import { createInitialGuessSession } from '../store/gameSnapshot'
 
-type Phase = 'privacy' | 'input' | 'result'
-
 export default function GuessScreen() {
   const eliminatedThisTurno = useGameStore(s => s.eliminatedThisTurno)
   const linkedEliminatedThisTurno = useGameStore(s => s.linkedEliminatedThisTurno)
