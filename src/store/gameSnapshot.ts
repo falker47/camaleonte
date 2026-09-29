@@ -1,4 +1,5 @@
 import type { GameConfig, Player, Screen, WordPair } from './types'
+import { getTotalManche } from '../utils/gameDuration'
 
 export type PersistedScreen = Exclude<Screen, 'home' | 'setup'>
 export type GuessPhase = 'privacy' | 'input' | 'result'
@@ -25,6 +26,7 @@ export interface PersistedGameState {
   players: Player[]
   wordPair: WordPair
   dealIndex: number
+  manche: number
   turno: number
   eliminatedThisTurnoId: string | null
   linkedEliminatedThisTurnoId: string | null
@@ -53,6 +55,7 @@ export interface SavedGameSummary {
   savedAt: number
   playerCount: number
   manche: number
+  totalManche: number | null
   turno: number
   screen: PersistedScreen
 }
@@ -104,10 +107,12 @@ export function serializeGameSnapshot(snapshot: GameSnapshotV1): string {
 }
 
 export function getSavedGameSummary(snapshot: GameSnapshotV1): SavedGameSummary {
+  const playerCount = snapshot.state.players.length
   return {
     savedAt: snapshot.savedAt,
-    playerCount: snapshot.state.players.length,
-    manche: Math.max(1, snapshot.state.usedPairIndices.length),
+    playerCount,
+    manche: snapshot.state.manche,
+    totalManche: getTotalManche(playerCount, snapshot.state.config.duration),
     turno: snapshot.state.turno,
     screen: snapshot.state.screen,
   }
@@ -124,9 +129,30 @@ export function parseGameSnapshot(raw: string): GameSnapshotV1 | null {
 export function migrateGameSnapshot(input: unknown): GameSnapshotV1 | null {
   if (!isRecord(input) || input.version !== 1) return null
   if (!isFiniteNumber(input.savedAt) || input.savedAt < 0) return null
-  if (!isPersistedGameState(input.state)) return null
+  if (!isRecord(input.state) || !isRecord(input.state.config)) return null
 
-  const snapshot = input as unknown as GameSnapshotV1
+  const legacyManche = Array.isArray(input.state.usedPairIndices)
+    ? Math.max(1, input.state.usedPairIndices.length)
+    : undefined
+
+  const normalizedState: Record<string, unknown> = {
+    ...input.state,
+    config: {
+      ...input.state.config,
+      duration: input.state.config.duration === undefined
+        ? 'unlimited'
+        : input.state.config.duration,
+    },
+    manche: input.state.manche === undefined ? legacyManche : input.state.manche,
+  }
+
+  if (!isPersistedGameState(normalizedState)) return null
+
+  const snapshot: GameSnapshotV1 = {
+    version: 1,
+    savedAt: input.savedAt,
+    state: normalizedState,
+  }
 
   // A private Camaleonte input must never reappear automatically exposed.
   if (snapshot.state.screen === 'camaleonte_guess' && snapshot.state.guessSession.phase === 'input') {
@@ -147,6 +173,7 @@ function isPersistedGameState(value: unknown): value is PersistedGameState {
   if (!Array.isArray(value.players) || value.players.length < 3 || !value.players.every(isPlayer)) return false
   if (!isWordPair(value.wordPair)) return false
   if (!isIntegerInRange(value.dealIndex, 0, value.players.length - 1)) return false
+  if (!isIntegerInRange(value.manche, 1, Number.MAX_SAFE_INTEGER)) return false
   if (!isIntegerInRange(value.turno, 1, Number.MAX_SAFE_INTEGER)) return false
 
   const playerIds = new Set(value.players.map(player => player.id))
@@ -196,6 +223,7 @@ function isGameConfig(value: unknown): value is GameConfig {
   if (!isRecord(value)) return false
   if (!isIntegerInRange(value.camaleonteCount, 0, 12)) return false
   if (!isIntegerInRange(value.talpaCount, 0, 12)) return false
+  if (value.duration !== 'unlimited' && value.duration !== 1 && value.duration !== 2 && value.duration !== 3) return false
 
   if (value.specialRoles !== undefined) {
     if (!isRecord(value.specialRoles)) return false
