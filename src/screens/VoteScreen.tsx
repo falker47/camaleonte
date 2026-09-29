@@ -184,7 +184,7 @@ export default function VoteScreen() {
             <div className="flex items-baseline gap-1">
               <span className="text-white font-black text-lg">{totalVotesCast}/{voterCount}</span>
               <span className="text-slate-500 text-xs">
-                {allVoted ? 'tutti votato!' : 'voti'}
+                {allVoted ? 'hanno votato tutti!' : 'voti'}
               </span>
             </div>
             <div className="flex gap-2">
