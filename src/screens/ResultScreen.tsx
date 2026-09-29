@@ -40,6 +40,7 @@ export default function ResultScreen() {
   const mancheProgress = formatMancheProgress(manche, players.length, config.duration)
 
   const [showLegend, setShowLegend] = useState(false)
+  const [showDetails, setShowDetails] = useState(false)
   const [confirmReset, setConfirmReset] = useState(false)
 
   const camaleontePoisoned = camaleonteCorrectIds.length > 0
@@ -60,6 +61,10 @@ export default function ResultScreen() {
   const leaderboard = Object.entries(scores)
     .sort(([, a], [, b]) => b - a)
   const hasScoreHistory = leaderboard.length > 0
+  const scoredPlayers = players
+    .map(player => ({ player, points: roundScores[player.name] ?? 0 }))
+    .filter(({ points }) => points !== 0)
+    .sort((a, b) => b.points - a.points)
 
   // Duellanti: compute duel result for display
   const duelists = players.filter(p => p.specialRole === 'duellante')
@@ -78,7 +83,7 @@ export default function ResultScreen() {
   }
 
   return (
-    <div className="relative flex flex-col flex-1 min-h-0 px-5 py-6 gap-4 overflow-y-auto">
+    <div className="relative flex flex-col flex-1 min-h-0 overflow-hidden">
       {/* Confetti / Particles */}
       {isCiviliansWin && (
         <>
@@ -213,31 +218,32 @@ export default function ResultScreen() {
         </>
       )}
 
-      <p className="text-center text-slate-500 text-xs font-semibold">{mancheProgress}</p>
+      <div className="flex-1 min-h-0 overflow-y-auto px-4 pt-4 pb-3 flex flex-col gap-3">
+        <p className="text-center text-slate-500 text-xs font-semibold">{mancheProgress}</p>
 
       {/* Winner banner */}
       {isCiviliansWin && (
         <motion.div
-          className="rounded-3xl px-6 py-6 text-center bg-gradient-to-br from-indigo-700 to-indigo-900 border border-white/10"
+          className="rounded-2xl px-4 py-4 text-center bg-gradient-to-br from-indigo-700 to-indigo-900 border border-white/10"
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ type: 'spring', stiffness: 200, damping: 20 }}
         >
-          <div className="text-5xl mb-2">🎉</div>
-          <h2 className="text-2xl font-black text-white">I Civili vincono!</h2>
+          <div className="text-4xl mb-1.5">🎉</div>
+          <h2 className="text-xl font-black text-white">I Civili vincono!</h2>
           <p className="text-indigo-200 text-sm mt-1">Tutti gli impostori sono stati eliminati.</p>
         </motion.div>
       )}
 
       {hasCamaleonte && isPoisoned && (
         <motion.div
-          className="rounded-3xl px-6 py-6 text-center bg-gradient-to-br from-teal-600 to-teal-800 border border-white/10"
+          className="rounded-2xl px-4 py-4 text-center bg-gradient-to-br from-teal-600 to-teal-800 border border-white/10"
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ type: 'spring', stiffness: 200, damping: 20 }}
         >
-          <img src={camaleontePng} alt="Il Camaleonte" className="w-12 h-12 mx-auto mb-2" />
-          <h2 className="text-2xl font-black text-white">Il Camaleonte vince!</h2>
+          <img src={camaleontePng} alt="Il Camaleonte" className="w-10 h-10 mx-auto mb-1.5" />
+          <h2 className="text-xl font-black text-white">Il Camaleonte vince!</h2>
           <p className="text-teal-200 text-sm mt-1">
             Ha indovinato la parola dei civili.
           </p>
@@ -246,13 +252,13 @@ export default function ResultScreen() {
 
       {hasCamaleonte && isCamaleonteSurvived && (
         <motion.div
-          className="rounded-3xl px-6 py-6 text-center bg-gradient-to-br from-teal-600 to-teal-800 border border-white/10"
+          className="rounded-2xl px-4 py-4 text-center bg-gradient-to-br from-teal-600 to-teal-800 border border-white/10"
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ type: 'spring', stiffness: 200, damping: 20 }}
         >
-          <img src={camaleontePng} alt="Il Camaleonte" className="w-12 h-12 mx-auto mb-2" />
-          <h2 className="text-2xl font-black text-white">Il Camaleonte vince!</h2>
+          <img src={camaleontePng} alt="Il Camaleonte" className="w-10 h-10 mx-auto mb-1.5" />
+          <h2 className="text-xl font-black text-white">Il Camaleonte vince!</h2>
           <p className="text-teal-200 text-sm mt-1">
             È sopravvissuto fino alla fine.
           </p>
@@ -261,13 +267,13 @@ export default function ResultScreen() {
 
       {hasTalpa && isTalpaSurvived && (
         <motion.div
-          className="rounded-3xl px-6 py-6 text-center bg-gradient-to-br from-orange-800 to-orange-950 border border-white/10"
+          className="rounded-2xl px-4 py-4 text-center bg-gradient-to-br from-orange-800 to-orange-950 border border-white/10"
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ type: 'spring', stiffness: 200, damping: 20 }}
         >
-          <img src={talpaPng} alt="La Talpa" className="w-12 h-12 mx-auto mb-2" />
-          <h2 className="text-2xl font-black text-white">La Talpa vince!</h2>
+          <img src={talpaPng} alt="La Talpa" className="w-10 h-10 mx-auto mb-1.5" />
+          <h2 className="text-xl font-black text-white">La Talpa vince!</h2>
           <p className="text-orange-300 text-sm mt-1">
             È sopravvissuta fino alla fine.
           </p>
@@ -276,16 +282,16 @@ export default function ResultScreen() {
 
       {hasCamaleonte && hasTalpa && isBothSurvived && (
         <motion.div
-          className="rounded-3xl px-6 py-6 text-center bg-gradient-to-br from-teal-700 to-orange-800 border border-white/10"
+          className="rounded-2xl px-4 py-4 text-center bg-gradient-to-br from-teal-700 to-orange-800 border border-white/10"
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ type: 'spring', stiffness: 200, damping: 20 }}
         >
-          <div className="flex justify-center gap-2 mb-2">
-            <img src={camaleontePng} alt="Il Camaleonte" className="w-12 h-12" />
-            <img src={talpaPng} alt="La Talpa" className="w-12 h-12" />
+          <div className="flex justify-center gap-2 mb-1.5">
+            <img src={camaleontePng} alt="Il Camaleonte" className="w-10 h-10" />
+            <img src={talpaPng} alt="La Talpa" className="w-10 h-10" />
           </div>
-          <h2 className="text-2xl font-black text-white">Gli impostori vincono!</h2>
+          <h2 className="text-xl font-black text-white">Gli impostori vincono!</h2>
           <p className="text-amber-100 text-sm mt-1">
             Sono sopravvissuti fino alla fine.
           </p>
@@ -294,25 +300,146 @@ export default function ResultScreen() {
 
       {hasCamaleonte && hasTalpa && isTalpaSurvivedAndPoisoned && (
         <motion.div
-          className="rounded-3xl px-6 py-6 text-center bg-gradient-to-br from-teal-700 to-orange-800 border border-white/10"
+          className="rounded-2xl px-4 py-4 text-center bg-gradient-to-br from-teal-700 to-orange-800 border border-white/10"
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ type: 'spring', stiffness: 200, damping: 20 }}
         >
-          <div className="flex justify-center gap-2 mb-2">
-            <img src={camaleontePng} alt="Il Camaleonte" className="w-12 h-12" />
-            <img src={talpaPng} alt="La Talpa" className="w-12 h-12" />
+          <div className="flex justify-center gap-2 mb-1.5">
+            <img src={camaleontePng} alt="Il Camaleonte" className="w-10 h-10" />
+            <img src={talpaPng} alt="La Talpa" className="w-10 h-10" />
           </div>
-          <h2 className="text-2xl font-black text-white">Gli impostori vincono!</h2>
+          <h2 className="text-xl font-black text-white">Gli impostori vincono!</h2>
           <p className="text-amber-100 text-sm mt-1">
             La Talpa è sopravvissuta e il Camaleonte ha indovinato la parola.
           </p>
         </motion.div>
       )}
 
+      {/* Essential round score changes */}
+      <div>
+        <div className="flex items-center justify-between gap-3 mb-2">
+          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
+            Punti manche
+          </p>
+          <span className="text-[11px] text-slate-600">
+            {scoredPlayers.length} {scoredPlayers.length === 1 ? 'variazione' : 'variazioni'}
+          </span>
+        </div>
+        <div className="flex flex-wrap gap-1.5">
+          {scoredPlayers.length > 0 ? scoredPlayers.map(({ player, points }) => (
+            <div
+              key={player.id}
+              className="glass rounded-lg px-2.5 py-1.5 flex items-center gap-1.5"
+            >
+              <span className="text-white text-xs font-medium">{player.name}</span>
+              <span className={`text-xs font-black ${points > 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                <AnimatedCounter value={points} />
+              </span>
+            </div>
+          )) : (
+            <span className="text-slate-500 text-xs">Nessun punto assegnato in questa manche</span>
+          )}
+        </div>
+      </div>
+
+      {/* Leaderboard (cumulative) */}
+      {hasScoreHistory && (
+        <div>
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
+              Classifica generale
+            </p>
+            {confirmReset ? (
+              <div className="flex items-center gap-2">
+                <span className="text-rose-400 text-xs">Sicuro?</span>
+                <button
+                  onClick={() => { resetScores(); setConfirmReset(false) }}
+                  className="px-4 text-sm bg-rose-500/20 text-rose-400 hover:bg-rose-500/30 font-semibold rounded-lg transition-colors"
+                >
+                  Si
+                </button>
+                <button
+                  onClick={() => setConfirmReset(false)}
+                  className="px-4 text-sm bg-white/5 text-slate-400 hover:bg-white/10 rounded-lg transition-colors"
+                >
+                  No
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => setConfirmReset(true)}
+                className="text-xs text-slate-600 hover:text-rose-400 transition-colors"
+              >
+                Azzera punteggi
+              </button>
+            )}
+          </div>
+          <div className="glass-strong rounded-2xl overflow-hidden">
+            {leaderboard.map(([name, total], i) => {
+              const rank = 1 + leaderboard.filter(([, score]) => score > total).length
+              const isFirst = rank === 1 && total > 0
+              return (
+                <motion.div
+                  key={name}
+                  layout
+                  className={`flex items-center justify-between px-3 py-2.5 ${
+                    i < leaderboard.length - 1 ? 'border-b border-white/8' : ''
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5">
+                    <span className={`w-6 text-center font-bold text-sm ${
+                      isFirst ? 'text-amber-400' : 'text-slate-500'
+                    }`}>
+                      {isFirst ? '👑' : `${rank}`}
+                    </span>
+                    <span className="text-white font-medium text-sm">{name}</span>
+                  </div>
+                  <span className={`font-bold text-sm ${
+                    isFirst ? 'text-amber-400' : total < 0 ? 'text-rose-400' : 'text-white'
+                  }`}>
+                    <AnimatedScore value={total} />
+                  </span>
+                </motion.div>
+              )
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Secondary round detail */}
+      <div className="shrink-0 rounded-xl overflow-hidden bg-white/[0.04] border border-white/8">
+        <button
+          type="button"
+          aria-expanded={showDetails}
+          onClick={() => setShowDetails(v => !v)}
+          className="w-full min-h-11 flex items-center justify-between gap-3 px-3 py-2.5 text-left"
+        >
+          <div>
+            <p className="text-slate-200 text-sm font-semibold">Dettagli manche</p>
+            <p className="text-slate-500 text-[11px]">Parole, ruoli e spiegazione dei punti</p>
+          </div>
+          <motion.span
+            className="text-slate-500 shrink-0"
+            animate={{ rotate: showDetails ? 180 : 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            ▾
+          </motion.span>
+        </button>
+        <AnimatePresence>
+          {showDetails && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="overflow-hidden"
+            >
+              <div className="px-3 pb-3 flex flex-col gap-3">
       {/* Word reveal */}
       {wordPair && (
-        <div className="glass rounded-2xl px-5 py-4">
+        <div className="glass rounded-2xl px-4 py-3">
           <p className="text-slate-400 text-xs uppercase tracking-wide mb-2">Le parole segrete</p>
           <div className="flex gap-4">
             <div>
@@ -341,7 +468,7 @@ export default function ResultScreen() {
         <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">
           Ruoli e punti manche
         </p>
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-2.5">
           {(() => {
             const roles = [...new Set(players.map(p => p.role))]
             const groupPoints = (role: typeof roles[number]) =>
@@ -424,75 +551,20 @@ export default function ResultScreen() {
 
       <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
 
-      {/* Leaderboard (cumulative) */}
-      {hasScoreHistory && (
-        <div>
-          <div className="flex items-center justify-between mb-2">
-            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
-              Classifica generale
-            </p>
-            {confirmReset ? (
-              <div className="flex items-center gap-2">
-                <span className="text-rose-400 text-xs">Sicuro?</span>
-                <button
-                  onClick={() => { resetScores(); setConfirmReset(false) }}
-                  className="px-4 text-sm bg-rose-500/20 text-rose-400 hover:bg-rose-500/30 font-semibold rounded-lg transition-colors"
-                >
-                  Si
-                </button>
-                <button
-                  onClick={() => setConfirmReset(false)}
-                  className="px-4 text-sm bg-white/5 text-slate-400 hover:bg-white/10 rounded-lg transition-colors"
-                >
-                  No
-                </button>
+
               </div>
-            ) : (
-              <button
-                onClick={() => setConfirmReset(true)}
-                className="text-xs text-slate-600 hover:text-rose-400 transition-colors"
-              >
-                Azzera punteggi
-              </button>
-            )}
-          </div>
-          <div className="glass-strong rounded-2xl overflow-hidden">
-            {leaderboard.map(([name, total], i) => {
-              const rank = 1 + leaderboard.filter(([, score]) => score > total).length
-              const isFirst = rank === 1 && total > 0
-              return (
-                <motion.div
-                  key={name}
-                  layout
-                  className={`flex items-center justify-between px-4 py-3 ${
-                    i < leaderboard.length - 1 ? 'border-b border-white/8' : ''
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <span className={`w-6 text-center font-bold text-sm ${
-                      isFirst ? 'text-amber-400' : 'text-slate-500'
-                    }`}>
-                      {isFirst ? '👑' : `${rank}`}
-                    </span>
-                    <span className="text-white font-medium text-sm">{name}</span>
-                  </div>
-                  <span className={`font-bold text-sm ${
-                    isFirst ? 'text-amber-400' : total < 0 ? 'text-rose-400' : 'text-white'
-                  }`}>
-                    <AnimatedScore value={total} />
-                  </span>
-                </motion.div>
-              )
-            })}
-          </div>
-        </div>
-      )}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
 
       {/* Points legend (collapsible) */}
       <div className="shrink-0 rounded-xl overflow-hidden bg-white/[0.07] border border-white/10 border-l-2 border-l-teal-500">
         <button
+          type="button"
+          aria-expanded={showLegend}
           onClick={() => setShowLegend(v => !v)}
-          className="w-full flex items-center justify-between px-4 py-3.5 text-slate-200 text-sm font-semibold"
+          className="w-full min-h-11 flex items-center justify-between px-3 py-2.5 text-slate-200 text-sm font-semibold"
         >
           <span>ℹ Come funzionano i punteggi?</span>
           <motion.span
@@ -577,17 +649,19 @@ export default function ResultScreen() {
         </AnimatePresence>
       </div>
 
-      <div className="flex flex-col gap-3">
+      </div>
+
+      <div className="shrink-0 px-4 pt-2 pb-3 border-t border-white/8 bg-slate-950/95 backdrop-blur-md">
         <motion.button
           onClick={rematch}
-          className="w-full glass-button font-bold py-5 rounded-2xl text-lg"
+          className="w-full glass-button font-bold py-4 rounded-2xl text-lg"
           {...springTap}
         >
           Continua
         </motion.button>
         <motion.button
           onClick={resetGame}
-          className="w-full glass-button-secondary font-semibold py-4 rounded-2xl"
+          className="w-full glass-button-secondary font-semibold py-2.5 rounded-xl text-sm mt-1"
           {...springTap}
         >
           Fine partita
