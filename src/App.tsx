@@ -15,6 +15,7 @@ import GuessScreen from './screens/GuessScreen'
 import RiccioStrikeScreen from './screens/RiccioStrikeScreen'
 import OracoloRevealScreen from './screens/OracoloRevealScreen'
 import ResultScreen from './screens/ResultScreen'
+import FinalResultScreen from './screens/FinalResultScreen'
 
 const SCREENS: Record<Screen, ComponentType> = {
   home: HomeScreen,
@@ -27,13 +28,14 @@ const SCREENS: Record<Screen, ComponentType> = {
   riccio_strike: RiccioStrikeScreen,
   oracolo_reveal: OracoloRevealScreen,
   result: ResultScreen,
+  final_result: FinalResultScreen,
 }
 
 const SCREEN_ORDER: Screen[] = [
-  'home', 'setup', 'deal', 'round', 'vote', 'elimination', 'camaleonte_guess', 'riccio_strike', 'oracolo_reveal', 'result',
+  'home', 'setup', 'deal', 'round', 'vote', 'elimination', 'camaleonte_guess', 'riccio_strike', 'oracolo_reveal', 'result', 'final_result',
 ]
 
-const FADE_SCALE_SCREENS: Set<Screen> = new Set(['elimination', 'riccio_strike', 'oracolo_reveal', 'result'])
+const FADE_SCALE_SCREENS: Set<Screen> = new Set(['elimination', 'riccio_strike', 'oracolo_reveal', 'result', 'final_result'])
 
 function getTransitionVariants(prev: Screen | null, current: Screen) {
   if (FADE_SCALE_SCREENS.has(current)) {
