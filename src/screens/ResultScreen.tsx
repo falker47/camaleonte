@@ -440,7 +440,7 @@ export default function ResultScreen() {
             <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
               Classifica generale
             </p>
-            {confirmReset ? (
+            {!gameCompleted && (confirmReset ? (
               <div className="flex items-center gap-2">
                 <span className="text-rose-400 text-xs">Sicuro?</span>
                 <button
@@ -463,7 +463,7 @@ export default function ResultScreen() {
               >
                 Azzera punteggi
               </button>
-            )}
+            ))}
           </div>
           <div className="glass-strong rounded-2xl overflow-hidden">
             {leaderboard.map(([name, total], i) => {
