@@ -6,7 +6,7 @@ import { assignRoles } from '../utils/assignRoles'
 import { checkWinCondition } from '../utils/winCondition'
 import { isWordMatch } from '../utils/matchWord'
 import { getAliases } from '../data/wordAliases'
-import { canStartNextManche, getMancheNumberForStart, type MancheStartReason } from '../utils/gameDuration'
+import { canStartNextManche, getMancheNumberForStart, getSessionResultScreen, type MancheStartReason } from '../utils/gameDuration'
 import { clearStoredGameSnapshot } from './gameStorage'
 import {
   createInitialGuessSession,
@@ -321,7 +321,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       if (win) {
         const correctSet = new Set(camaleonteCorrectIds)
         const { scores: newScores, roundScores } = calcFinalScores(players, win, correctSet, scores)
-        set({ winner: win, scores: newScores, roundScores, screen: 'result', eliminatedThisTurno: null, linkedEliminatedThisTurno: null })
+        set({ winner: win, scores: newScores, roundScores, screen: getSessionResultScreen(get().manche, players.length, get().config.duration), eliminatedThisTurno: null, linkedEliminatedThisTurno: null })
       } else {
         set({ screen: 'round', turno: turno + 1, currentVotes: {}, eliminatedThisTurno: null, linkedEliminatedThisTurno: null })
       }
@@ -386,7 +386,7 @@ export const useGameStore = create<GameState>((set, get) => ({
     if (win) {
       const correctSet = new Set(camaleonteCorrectIds)
       const { scores: newScores, roundScores } = calcFinalScores(updatedPlayers, win, correctSet, scores)
-      set({ winner: win, scores: newScores, roundScores, screen: 'result', eliminatedThisTurno: null, linkedEliminatedThisTurno: null })
+      set({ winner: win, scores: newScores, roundScores, screen: getSessionResultScreen(get().manche, players.length, get().config.duration), eliminatedThisTurno: null, linkedEliminatedThisTurno: null })
     } else {
       set({ screen: 'round', turno: get().turno + 1, currentVotes: {}, eliminatedThisTurno: null, linkedEliminatedThisTurno: null })
     }
@@ -438,7 +438,7 @@ export const useGameStore = create<GameState>((set, get) => ({
     if (win) {
       const correctSet = new Set(camaleonteCorrectIds)
       const { scores: newScores, roundScores } = calcFinalScores(players, win, correctSet, scores)
-      set({ winner: win, scores: newScores, roundScores, screen: 'result', eliminatedThisTurno: null, linkedEliminatedThisTurno: null })
+      set({ winner: win, scores: newScores, roundScores, screen: getSessionResultScreen(get().manche, players.length, get().config.duration), eliminatedThisTurno: null, linkedEliminatedThisTurno: null })
     } else {
       set({ screen: 'round', turno: turno + 1, currentVotes: {}, eliminatedThisTurno: null, linkedEliminatedThisTurno: null })
     }
