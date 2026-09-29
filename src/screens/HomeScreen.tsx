@@ -213,7 +213,7 @@ export default function HomeScreen() {
             className="z-10 mt-2 flex items-center gap-3 text-xs text-slate-400"
             variants={fadeUp}
           >
-            <span>{savedGame.playerCount} giocatori · manche {savedGame.manche} · turno {savedGame.turno}</span>
+            <span>{savedGame.playerCount} giocatori · manche {savedGame.manche}{savedGame.totalManche !== null ? `/${savedGame.totalManche}` : ''} · turno {savedGame.turno}</span>
             <button
               onClick={() => setShowDiscardSaved(true)}
               className="text-rose-400 hover:text-rose-300 transition-colors"
