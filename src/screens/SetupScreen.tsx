@@ -275,7 +275,7 @@ export default function SetupScreen() {
   }
 
   return (
-    <div className="flex flex-col flex-1 min-h-0 px-5 py-6 gap-5 overflow-y-auto">
+    <div className="flex flex-col flex-1 min-h-0 px-4 py-4 gap-4 overflow-y-auto">
       <div className="flex items-center gap-3">
         <BackButton onClick={() => goTo('home')} />
         <h2 className="text-xl font-bold text-white">Nuova Partita</h2>
@@ -294,7 +294,7 @@ export default function SetupScreen() {
             enterKeyHint="send"
             placeholder="Aggiungi giocatore..."
             disabled={slots.length >= MAX_PLAYERS}
-            className="w-full rounded-2xl pl-10 pr-12 py-4 text-base bg-teal-500/8 border-2 border-teal-400/45 text-white placeholder-slate-500 focus:outline-none focus:border-teal-400/70 focus:shadow-[0_0_30px_rgba(20,184,166,0.12)] disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+            className="w-full rounded-2xl pl-10 pr-12 py-3 text-base bg-teal-500/8 border-2 border-teal-400/45 text-white placeholder-slate-500 focus:outline-none focus:border-teal-400/70 focus:shadow-[0_0_30px_rgba(20,184,166,0.12)] disabled:opacity-40 disabled:cursor-not-allowed transition-all"
             style={{ userSelect: 'text', touchAction: 'auto' }}
             maxLength={20}
           />
@@ -303,14 +303,11 @@ export default function SetupScreen() {
         {ctaError && (
           <p className="text-rose-400 text-xs mt-1 ml-1">{ctaError}</p>
         )}
-        {!ctaError && (
-          <p className="text-slate-600 text-xs mt-1 ml-1">Scrivi un nome e premi Invio</p>
-        )}
       </div>
 
       {/* Player names */}
       <div>
-        <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wide mb-3">
+        <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wide mb-2">
           Giocatori ({validNames.length})
         </h3>
         <div className="grid grid-cols-3 gap-2">
@@ -356,24 +353,11 @@ export default function SetupScreen() {
             ))}
           </AnimatePresence>
         </div>
-        {slots.length < MAX_PLAYERS && (
-          <>
-            <p className="text-slate-600 text-xs mt-1">
-              Premi Invio per aggiungere
-            </p>
-            <button
-              onClick={addPlayer}
-              className="mt-2 text-teal-400 hover:text-teal-300 text-sm py-2 transition-colors"
-            >
-              + Aggiungi giocatore
-            </button>
-          </>
-        )}
       </div>
 
       {/* Game duration */}
       <div>
-        <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wide mb-3">
+        <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wide mb-2">
           Durata partita
         </h3>
         <div className="glass rounded-2xl p-1 flex gap-1">
@@ -416,20 +400,17 @@ export default function SetupScreen() {
               ? `${duration} ${duration === 1 ? 'giro' : 'giri'} · ${totalManche} manche`
               : `${duration} ${duration === 1 ? 'giro' : 'giri'}`}
         </p>
-        <p className="text-slate-600 text-[11px] mt-1">
-          1 giro = una manche per ogni giocatore
-        </p>
       </div>
 
       {/* Role counts */}
       <div>
-        <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wide mb-3">
+        <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wide mb-2">
           Ruoli
         </h3>
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-2">
           <RoleCounter
             label="Il Camaleonte"
-            description={"Non ha nessuna parola.\nDeve bluffare e indovinarla!"}
+            description="Senza parola · bluffa e prova a indovinarla"
             value={camaleonteCount}
             min={0}
             max={effectiveMaxCamaleonte}
@@ -438,7 +419,7 @@ export default function SetupScreen() {
           />
           <RoleCounter
             label="La Talpa"
-            description={"Ha una parola diversa...\nMa non lo sa!"}
+            description="Parola diversa · non sa di esserlo"
             value={talpaCount}
             min={0}
             max={effectiveMaxTalpa}
@@ -466,8 +447,8 @@ export default function SetupScreen() {
 
         {/* Info box */}
         {validNames.length >= 3 && impostorCount >= 1 && (
-          <div className="glass rounded-2xl px-4 py-3 mt-3">
-            <div className="flex flex-wrap gap-x-3 gap-y-1 text-sm">
+          <div className="glass rounded-2xl px-3 py-2 mt-2">
+            <div className="flex flex-wrap gap-x-2 gap-y-1 text-xs">
               <span className="text-indigo-400">{civilianCount} Civili</span>
               <span className="text-slate-600">·</span>
               <span className="text-teal-400">{camaleonteCount} Camaleont{camaleonteCount === 1 ? 'e' : 'i'}</span>
@@ -479,12 +460,12 @@ export default function SetupScreen() {
               )}
             </div>
             {talpaCount > 0 && (
-              <p className="text-slate-500 text-xs mt-1.5">
+              <p className="hidden">
                 La Talpa riceve una parola diversa ma non sa di esserlo!
               </p>
             )}
             {camaleonteCount > 0 && (
-              <p className="text-slate-500 text-xs mt-1">
+              <p className="hidden">
                 Il Camaleonte non ha nessuna parola e deve bluffare.
               </p>
             )}
@@ -492,10 +473,10 @@ export default function SetupScreen() {
         )}
 
         {/* Special roles button */}
-        <div className="glass rounded-2xl overflow-hidden mt-3">
+        <div className="glass rounded-2xl overflow-hidden mt-2">
           <motion.button
             onClick={() => setShowSpecialRoles(true)}
-            className="w-full px-4 py-3 flex items-center justify-between"
+            className="w-full px-3 py-2.5 flex items-center justify-between"
             {...springTap}
           >
             <div className="flex items-center gap-3">
@@ -513,7 +494,7 @@ export default function SetupScreen() {
             <span className="text-slate-500 text-sm">›</span>
           </motion.button>
           {(oracoloEnabled && validNames.length >= 4 || riccioEnabled && validNames.length >= 5 || duellantiEnabled || buffoneEnabled && validNames.length >= 5 || spettroEnabled || romeoGiuliettaEnabled && validNames.length >= 5) && (
-            <div className="flex flex-wrap gap-1.5 px-4 pb-3">
+            <div className="hidden">
               {oracoloEnabled && validNames.length >= 4 && (
                 <span className="inline-block rounded-full bg-purple-900/20 border border-purple-700/30 text-purple-400 text-xs font-bold px-2.5 py-0.5">
                   🔮 Oracolo
@@ -552,7 +533,7 @@ export default function SetupScreen() {
       <motion.button
         onClick={handleStart}
         disabled={!canStart}
-        className={`w-full py-5 rounded-2xl font-bold text-lg transition-all mt-auto ${
+        className={`w-full py-4 rounded-2xl font-bold text-lg transition-all mt-auto ${
           canStart
             ? 'glass-button'
             : 'bg-white/5 text-slate-500 cursor-not-allowed border border-white/5'
@@ -693,7 +674,7 @@ interface RoleCounterProps {
 function RoleCounter({ label, description, value, min, max, color, onChange }: RoleCounterProps) {
   const dotColor = color === 'teal' ? 'bg-teal-400' : 'bg-orange-600'
   return (
-    <div className="flex items-center justify-between glass rounded-2xl px-4 py-3">
+    <div className="flex items-center justify-between glass rounded-2xl px-3 py-2.5">
       <div className="flex items-center gap-3">
         <div className={`w-3 h-3 rounded-full ${dotColor}`} />
         <div>
