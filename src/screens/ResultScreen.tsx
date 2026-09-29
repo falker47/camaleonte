@@ -417,7 +417,7 @@ export default function ResultScreen() {
         >
           <div>
             <p className="text-slate-200 text-sm font-semibold">Dettagli manche</p>
-            <p className="text-slate-500 text-[11px]">Parole, ruoli e spiegazione dei punti</p>
+            <p className="text-slate-500 text-[11px]">Parole, ruoli e punti completi</p>
           </div>
           <motion.span
             className="text-slate-500 shrink-0"
