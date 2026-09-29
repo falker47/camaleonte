@@ -128,7 +128,7 @@ function InvalidateButton({ onRequestInvalidate }: { onRequestInvalidate: () => 
     <button
       onClick={onRequestInvalidate}
       className="absolute top-4 right-14 z-50 w-9 h-9 rounded-full glass text-slate-400 hover:text-white flex items-center justify-center text-sm transition-colors"
-      aria-label="Invalida round"
+      aria-label="Invalida manche"
     >
       ⟳
     </button>
@@ -204,8 +204,8 @@ export default function App() {
         />
         <ConfirmDialog
           open={showInvalidate}
-          title="Invalida round"
-          description="Sei sicuro? Il round verrà invalidato e ne comincerà uno nuovo."
+          title="Invalida manche"
+          description="Sei sicuro? La manche verrà invalidata e ne comincerà una nuova."
           confirmLabel="Invalida"
           variant="camaleonte"
           onConfirm={() => { setShowInvalidate(false); useGameStore.getState().invalidateRound() }}

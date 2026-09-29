@@ -38,6 +38,7 @@ function toPersistedGameState(state: ReturnType<typeof useGameStore.getState>): 
     players: state.players.map(player => ({ ...player })),
     wordPair: { ...state.wordPair },
     dealIndex: state.dealIndex,
+    manche: state.manche,
     turno: state.turno,
     eliminatedThisTurnoId: state.eliminatedThisTurno?.id ?? null,
     linkedEliminatedThisTurnoId: state.linkedEliminatedThisTurno?.id ?? null,
@@ -124,6 +125,7 @@ export async function restoreSavedGame(): Promise<boolean> {
       players,
       wordPair: { ...persisted.wordPair },
       dealIndex: persisted.dealIndex,
+      manche: persisted.manche,
       turno: persisted.turno,
       currentVotes: {},
       eliminatedThisTurno: persisted.eliminatedThisTurnoId

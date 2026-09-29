@@ -34,11 +34,13 @@ function persistedState(overrides = {}) {
     config: {
       camaleonteCount: 1,
       talpaCount: 1,
+      duration: 2,
       specialRoles: { oracolo: true },
     },
     players,
     wordPair: { wordA: 'mare', wordB: 'lago', category: 'Natura' },
     dealIndex: 2,
+    manche: 2,
     turno: 2,
     eliminatedThisTurnoId: null,
     linkedEliminatedThisTurnoId: null,
@@ -73,6 +75,7 @@ test('versioned snapshot round-trips the active game state', () => {
     savedAt: 123456,
     playerCount: 3,
     manche: 2,
+    totalManche: 6,
     turno: 2,
     screen: 'vote',
   })
@@ -81,6 +84,7 @@ test('versioned snapshot round-trips the active game state', () => {
 test('saved-game summary exposes both session manche and in-game turn', () => {
   const snapshot = createGameSnapshot(persistedState({
     screen: 'deal',
+    manche: 4,
     turno: 1,
     usedPairIndices: [153, 438, 266, 75],
   }), 15)
@@ -89,6 +93,7 @@ test('saved-game summary exposes both session manche and in-game turn', () => {
     savedAt: 15,
     playerCount: 3,
     manche: 4,
+    totalManche: 6,
     turno: 1,
     screen: 'deal',
   })
@@ -146,6 +151,48 @@ test('corrupt, unsupported or dangling snapshots are rejected', () => {
     eliminatedThisTurnoId: 'missing-player',
   }), 40)
   assert.equal(parseGameSnapshot(JSON.stringify(dangling)), null)
+})
+
+
+test('legacy snapshots without duration restore as unlimited and migrate manche once', () => {
+  const legacy = createGameSnapshot(persistedState({
+    manche: 3,
+    usedPairIndices: [4, 9, 12],
+  }), 60)
+
+  delete legacy.state.config.duration
+  delete legacy.state.manche
+
+  const parsed = parseGameSnapshot(JSON.stringify(legacy))
+
+  assert.ok(parsed)
+  assert.equal(parsed.state.config.duration, 'unlimited')
+  assert.equal(parsed.state.manche, 3)
+  assert.deepEqual(getSavedGameSummary(parsed), {
+    savedAt: 60,
+    playerCount: 3,
+    manche: 3,
+    totalManche: null,
+    turno: 2,
+    screen: 'vote',
+  })
+})
+
+test('finite duration and explicit manche progress survive snapshot restore parsing', () => {
+  const parsed = parseGameSnapshot(JSON.stringify(createGameSnapshot(persistedState({
+    manche: 5,
+    config: {
+      camaleonteCount: 1,
+      talpaCount: 1,
+      duration: 3,
+      specialRoles: { oracolo: true },
+    },
+  }), 70)))
+
+  assert.ok(parsed)
+  assert.equal(parsed.state.config.duration, 3)
+  assert.equal(parsed.state.manche, 5)
+  assert.equal(getSavedGameSummary(parsed).totalManche, 9)
 })
 
 test('a snapshot cannot resume setup or home', () => {

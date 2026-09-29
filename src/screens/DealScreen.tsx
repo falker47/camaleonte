@@ -2,10 +2,13 @@ import { useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useGameStore } from '../store/gameStore'
 import PrivacyReveal from '../components/PrivacyReveal'
+import { formatMancheProgress } from '../utils/gameDuration'
 
 export default function DealScreen() {
   const players = useGameStore(s => s.players)
   const dealIndex = useGameStore(s => s.dealIndex)
+  const manche = useGameStore(s => s.manche)
+  const config = useGameStore(s => s.config)
   const advanceDeal = useGameStore(s => s.advanceDeal)
   const privacyEpoch = useGameStore(s => s.privacyEpoch)
 
@@ -33,7 +36,9 @@ export default function DealScreen() {
 
   return (
     <div className="flex flex-col items-center flex-1 px-5 py-8 gap-6">
-      {/* Progress */}
+      <p className="text-teal-400/80 text-xs font-semibold">{formatMancheProgress(manche, players.length, config.duration)}</p>
+
+      {/* Deal progress */}
       <div className="flex items-center gap-2">
         <div className="flex gap-1.5">
           {players.map((_, i) => (

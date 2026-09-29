@@ -5,6 +5,7 @@ import { AVATAR_COLORS } from '../constants/avatarColors'
 import { springTap } from '../constants/animations'
 import { ROLE_BORDER_COLORS, ROLE_AVATAR_BG } from '../constants/roleColors'
 import { getSurvivalThreshold } from '../utils/winCondition'
+import { formatMancheProgress } from '../utils/gameDuration'
 import LastChanceOverlay from '../components/LastChanceOverlay'
 import talpaPng from '../assets/talpa.png'
 import camaleontePng from '../assets/camaleonte.png'
@@ -12,6 +13,8 @@ import camaleontePng from '../assets/camaleonte.png'
 export default function RoundScreen() {
   const players = useGameStore(s => s.players)
   const turno = useGameStore(s => s.turno)
+  const manche = useGameStore(s => s.manche)
+  const config = useGameStore(s => s.config)
   const goTo = useGameStore(s => s.goTo)
   const oracoloRevealedIds = useGameStore(s => s.oracoloRevealedIds)
 
@@ -33,6 +36,7 @@ export default function RoundScreen() {
       </AnimatePresence>
 
       <div>
+        <p className="text-teal-400/80 text-xs font-semibold mb-1">{formatMancheProgress(manche, players.length, config.duration)}</p>
         <h2 className="text-2xl font-black text-white">Turno {turno}</h2>
         <p className="text-slate-400 text-sm">Ogni giocatore dà un indizio</p>
       </div>

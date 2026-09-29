@@ -1,10 +1,12 @@
 import { useState, useRef, useEffect, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useGameStore } from '../store/gameStore'
+import type { GameDuration } from '../store/types'
 import BackButton from '../components/BackButton'
 import SpecialRolesOverlay from '../components/SpecialRolesOverlay'
 import { springTap } from '../constants/animations'
 import { MAX_PLAYERS, MAX_CAMALEONTE, MAX_TALPE } from '../constants/gameConfig'
+import { getSuggestedGameDuration, getTotalManche, resolveGameDuration } from '../utils/gameDuration'
 
 const SUGGESTED_ROLES: Record<number, [number, number]> = {
   3: [1, 0], 4: [1, 0],
@@ -13,6 +15,13 @@ const SUGGESTED_ROLES: Record<number, [number, number]> = {
   9: [1, 2], 10: [1, 2],
   11: [2, 2], 12: [2, 2],
 }
+
+const DURATION_OPTIONS: { value: GameDuration; label: string }[] = [
+  { value: 1, label: '1 giro' },
+  { value: 2, label: '2 giri' },
+  { value: 3, label: '3 giri' },
+  { value: 'unlimited', label: '∞ Senza limite' },
+]
 
 interface Slot { id: number; name: string }
 
@@ -27,7 +36,9 @@ export default function SetupScreen() {
   const [slots, setSlots] = useState<Slot[]>([{ id: 0, name: '' }, { id: 1, name: '' }, { id: 2, name: '' }])
   const [camaleonteCount, setCamaleonteCount] = useState(config.camaleonteCount)
   const [talpaCount, setTalpaCount] = useState(config.talpaCount)
-  const [manualOverride, setManualOverride] = useState(false)
+  const [rolesManualOverride, setRolesManualOverride] = useState(false)
+  const [duration, setDuration] = useState<GameDuration>(config.duration)
+  const [durationManualOverride, setDurationManualOverride] = useState(false)
 
   const inputRefs = useRef<(HTMLInputElement | null)[]>([])
   const pendingFocus = useRef<number | null>(null)
@@ -60,14 +71,20 @@ export default function SetupScreen() {
 
   // Auto-suggest roles based on player count (unless manually overridden)
   useEffect(() => {
-    if (manualOverride) return
+    if (rolesManualOverride) return
     const count = validNames.length
     const suggestion = SUGGESTED_ROLES[count]
     if (suggestion) {
       setCamaleonteCount(suggestion[0])
       setTalpaCount(suggestion[1])
     }
-  }, [validNames.length, manualOverride])
+  }, [validNames.length, rolesManualOverride])
+
+  // Auto-suggest session duration until the user explicitly overrides it.
+  useEffect(() => {
+    if (validNames.length < 3) return
+    setDuration(current => resolveGameDuration(current, durationManualOverride, validNames.length))
+  }, [validNames.length, durationManualOverride])
 
   // Clamp role counts when players are removed
   useEffect(() => {
@@ -139,13 +156,18 @@ export default function SetupScreen() {
   }, [validNames.length, specialRoleSlotsUsed])
 
   const handleCamaleonteChange = (v: number) => {
-    setManualOverride(true)
+    setRolesManualOverride(true)
     setCamaleonteCount(v)
   }
 
   const handleTalpaChange = (v: number) => {
-    setManualOverride(true)
+    setRolesManualOverride(true)
     setTalpaCount(v)
+  }
+
+  const handleDurationChange = (value: GameDuration) => {
+    setDurationManualOverride(true)
+    setDuration(value)
   }
 
   // Dynamic max: always guarantee at least 2 civilians
@@ -154,8 +176,14 @@ export default function SetupScreen() {
   const effectiveMaxTalpa = Math.min(MAX_TALPE, Math.max(0, maxTotalImpostors - camaleonteCount))
 
   const suggestion = SUGGESTED_ROLES[validNames.length]
-  const isCustomRoles = manualOverride && suggestion != null &&
+  const isCustomRoles = rolesManualOverride && suggestion != null &&
     (camaleonteCount !== suggestion[0] || talpaCount !== suggestion[1])
+  const suggestedDuration = validNames.length >= 3
+    ? getSuggestedGameDuration(validNames.length)
+    : null
+  const totalManche = validNames.length >= 3
+    ? getTotalManche(validNames.length, duration)
+    : null
 
   const impostorCount = camaleonteCount + talpaCount
   const civilianCount = Math.max(0, validNames.length - impostorCount)
@@ -242,7 +270,7 @@ export default function SetupScreen() {
   const handleStart = () => {
     const filtered = names.filter(n => n.trim().length > 0)
     setPlayerNames(filtered)
-    setConfig({ camaleonteCount, talpaCount, specialRoles: { buffone: buffoneEnabled && filtered.length >= 5, spettro: spettroEnabled, duellanti: duellantiEnabled && filtered.length >= 4, romeoGiulietta: romeoGiuliettaEnabled && filtered.length >= 5, riccio: riccioEnabled && filtered.length >= 5, oracolo: oracoloEnabled && filtered.length >= 4 } })
+    setConfig({ camaleonteCount, talpaCount, duration, specialRoles: { buffone: buffoneEnabled && filtered.length >= 5, spettro: spettroEnabled, duellanti: duellantiEnabled && filtered.length >= 4, romeoGiulietta: romeoGiuliettaEnabled && filtered.length >= 5, riccio: riccioEnabled && filtered.length >= 5, oracolo: oracoloEnabled && filtered.length >= 4 } })
     startGame()
   }
 
@@ -469,6 +497,51 @@ export default function SetupScreen() {
             </div>
           )}
         </div>
+      </div>
+
+      {/* Game duration */}
+      <div>
+        <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wide mb-3">
+          Durata partita
+        </h3>
+        <div className="grid grid-cols-2 gap-2">
+          {DURATION_OPTIONS.map(option => {
+            const selected = duration === option.value
+            const recommended = suggestedDuration === option.value
+            return (
+              <button
+                key={String(option.value)}
+                type="button"
+                aria-pressed={selected}
+                onClick={() => handleDurationChange(option.value)}
+                className={`rounded-xl border px-3 py-3 text-left transition-colors ${
+                  selected
+                    ? 'bg-teal-500/15 border-teal-400/50 text-white'
+                    : 'bg-white/[0.03] border-white/10 text-slate-400 hover:bg-white/[0.06]'
+                }`}
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-sm font-semibold">{option.label}</span>
+                  {recommended && (
+                    <span className="text-[9px] uppercase tracking-wide text-teal-300">
+                      Consigliato
+                    </span>
+                  )}
+                </div>
+              </button>
+            )
+          })}
+        </div>
+        <p className="text-teal-300 text-xs font-semibold mt-2">
+          {duration === 'unlimited'
+            ? '∞ Senza limite'
+            : validNames.length >= 3
+              ? `${duration} ${duration === 1 ? 'giro' : 'giri'} · ${totalManche} manche`
+              : `${duration} ${duration === 1 ? 'giro' : 'giri'}`}
+        </p>
+        <p className="text-slate-600 text-xs mt-1">
+          1 giro = una manche per ogni giocatore
+        </p>
       </div>
 
       <motion.button
