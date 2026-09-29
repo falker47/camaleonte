@@ -407,10 +407,10 @@ export default function SetupScreen() {
         <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wide mb-2">
           Ruoli
         </h3>
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-3">
           <RoleCounter
             label="Il Camaleonte"
-            description="Senza parola · bluffa e prova a indovinarla"
+            description={"Non ha nessuna parola.\nDeve bluffare e indovinarla!"}
             value={camaleonteCount}
             min={0}
             max={effectiveMaxCamaleonte}
@@ -419,7 +419,7 @@ export default function SetupScreen() {
           />
           <RoleCounter
             label="La Talpa"
-            description="Parola diversa · non sa di esserlo"
+            description={"Ha una parola diversa...\nMa non lo sa!"}
             value={talpaCount}
             min={0}
             max={effectiveMaxTalpa}
@@ -447,8 +447,8 @@ export default function SetupScreen() {
 
         {/* Info box */}
         {validNames.length >= 3 && impostorCount >= 1 && (
-          <div className="glass rounded-2xl px-3 py-2 mt-2">
-            <div className="flex flex-wrap gap-x-2 gap-y-1 text-xs">
+          <div className="glass rounded-2xl px-4 py-3 mt-3">
+            <div className="flex flex-wrap gap-x-3 gap-y-1 text-sm">
               <span className="text-indigo-400">{civilianCount} Civili</span>
               <span className="text-slate-600">·</span>
               <span className="text-teal-400">{camaleonteCount} Camaleont{camaleonteCount === 1 ? 'e' : 'i'}</span>
@@ -459,24 +459,14 @@ export default function SetupScreen() {
                 </>
               )}
             </div>
-            {talpaCount > 0 && (
-              <p className="hidden">
-                La Talpa riceve una parola diversa ma non sa di esserlo!
-              </p>
-            )}
-            {camaleonteCount > 0 && (
-              <p className="hidden">
-                Il Camaleonte non ha nessuna parola e deve bluffare.
-              </p>
-            )}
           </div>
         )}
 
         {/* Special roles button */}
-        <div className="glass rounded-2xl overflow-hidden mt-2">
+        <div className="glass rounded-2xl overflow-hidden mt-4">
           <motion.button
             onClick={() => setShowSpecialRoles(true)}
-            className="w-full px-3 py-2.5 flex items-center justify-between"
+            className="w-full px-4 py-3 flex items-center justify-between"
             {...springTap}
           >
             <div className="flex items-center gap-3">
@@ -494,7 +484,7 @@ export default function SetupScreen() {
             <span className="text-slate-500 text-sm">›</span>
           </motion.button>
           {(oracoloEnabled && validNames.length >= 4 || riccioEnabled && validNames.length >= 5 || duellantiEnabled || buffoneEnabled && validNames.length >= 5 || spettroEnabled || romeoGiuliettaEnabled && validNames.length >= 5) && (
-            <div className="hidden">
+            <div className="flex flex-wrap gap-1.5 px-4 pb-3">
               {oracoloEnabled && validNames.length >= 4 && (
                 <span className="inline-block rounded-full bg-purple-900/20 border border-purple-700/30 text-purple-400 text-xs font-bold px-2.5 py-0.5">
                   🔮 Oracolo
@@ -674,7 +664,7 @@ interface RoleCounterProps {
 function RoleCounter({ label, description, value, min, max, color, onChange }: RoleCounterProps) {
   const dotColor = color === 'teal' ? 'bg-teal-400' : 'bg-orange-600'
   return (
-    <div className="flex items-center justify-between glass rounded-2xl px-3 py-2.5">
+    <div className="flex items-center justify-between glass rounded-2xl px-4 py-3">
       <div className="flex items-center gap-3">
         <div className={`w-3 h-3 rounded-full ${dotColor}`} />
         <div>

@@ -92,7 +92,7 @@ export default function HomeScreen() {
       {/* Score reference button */}
       <motion.button
         onClick={() => setShowScoreRef(true)}
-        className="absolute top-5 right-5 z-10 w-9 h-9 rounded-full glass text-slate-400 hover:text-white flex items-center justify-center text-sm font-bold transition-colors"
+        className="absolute top-5 right-5 z-10 w-11 h-11 rounded-full glass-strong text-teal-100 hover:text-white flex items-center justify-center text-lg font-black ring-1 ring-teal-300/20 shadow-[0_6px_24px_rgba(45,212,191,0.16)] transition-all"
         aria-label="Punteggi"
         variants={fadeUp}
         {...springTap}
