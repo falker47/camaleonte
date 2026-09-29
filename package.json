@@ -6,15 +6,17 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "test:core": "tsc -p tsconfig.test.json && node --test tests/winCondition.test.mjs",
+    "test:core": "tsc -p tsconfig.test.json && node --test tests/*.test.mjs",
     "preview": "vite preview --host",
     "build:android": "npm run build && npx cap sync android",
     "open:android": "npx cap open android"
   },
   "dependencies": {
     "@capacitor/android": "^8.3.1",
+    "@capacitor/app": "^8.1.1",
     "@capacitor/cli": "^8.3.1",
     "@capacitor/core": "^8.3.1",
+    "@capacitor/preferences": "^8.0.1",
     "@capacitor/splash-screen": "^8.0.1",
     "@capacitor/status-bar": "^8.0.2",
     "framer-motion": "^12.38.0",
