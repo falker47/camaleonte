@@ -195,6 +195,33 @@ test('finite duration and explicit manche progress survive snapshot restore pars
   assert.equal(getSavedGameSummary(parsed).totalManche, 9)
 })
 
+
+test('pre-polish finite result snapshots migrate to the dedicated final screen', () => {
+  const parsed = parseGameSnapshot(JSON.stringify(createGameSnapshot(persistedState({
+    screen: 'result',
+    manche: 6,
+    config: {
+      camaleonteCount: 1,
+      talpaCount: 1,
+      duration: 2,
+      specialRoles: { oracolo: true },
+    },
+  }), 80)))
+
+  assert.ok(parsed)
+  assert.equal(parsed.state.screen, 'final_result')
+})
+
+test('dedicated final result snapshots remain resumable', () => {
+  const parsed = parseGameSnapshot(JSON.stringify(createGameSnapshot(persistedState({
+    screen: 'final_result',
+    manche: 6,
+  }), 90)))
+
+  assert.ok(parsed)
+  assert.equal(parsed.state.screen, 'final_result')
+})
+
 test('a snapshot cannot resume setup or home', () => {
   for (const screen of ['home', 'setup']) {
     const snapshot = createGameSnapshot(persistedState({ screen }), 50)
