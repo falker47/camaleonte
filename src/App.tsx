@@ -105,35 +105,39 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { error: string |
 const IN_GAME_SCREENS: Set<Screen> = new Set(['deal', 'round', 'vote', 'elimination', 'camaleonte_guess', 'riccio_strike', 'oracolo_reveal'])
 const INVALIDATE_SCREENS: Set<Screen> = new Set(['deal', 'round', 'vote', 'elimination', 'camaleonte_guess', 'riccio_strike', 'oracolo_reveal'])
 
-function QuitButton({ onRequestQuit }: { onRequestQuit: () => void }) {
+function InGameUtilityControls({
+  onRequestQuit,
+  onRequestInvalidate,
+}: {
+  onRequestQuit: () => void
+  onRequestInvalidate: () => void
+}) {
   const screen = useGameStore(s => s.screen)
 
   if (!IN_GAME_SCREENS.has(screen)) return null
 
-  return (
-    <button
-      onClick={onRequestQuit}
-      className="absolute top-4 right-4 z-50 w-11 h-11 rounded-full glass-strong text-rose-200 hover:text-white flex items-center justify-center text-lg font-black ring-1 ring-rose-300/20 shadow-[0_6px_24px_rgba(244,63,94,0.14)] transition-all"
-      aria-label="Esci"
-    >
-      ✕
-    </button>
-  )
-}
-
-function InvalidateButton({ onRequestInvalidate }: { onRequestInvalidate: () => void }) {
-  const screen = useGameStore(s => s.screen)
-
-  if (!INVALIDATE_SCREENS.has(screen)) return null
+  const canInvalidate = INVALIDATE_SCREENS.has(screen)
 
   return (
-    <button
-      onClick={onRequestInvalidate}
-      className="absolute top-4 right-[4.5rem] z-50 w-11 h-11 rounded-full glass-strong text-amber-200 hover:text-white flex items-center justify-center text-lg font-bold ring-1 ring-amber-300/20 shadow-[0_6px_24px_rgba(251,191,36,0.12)] transition-all"
-      aria-label="Invalida manche"
-    >
-      ⟳
-    </button>
+    <div className="absolute top-4 right-4 z-50 flex items-center overflow-hidden rounded-2xl bg-slate-950/92 border border-white/15 shadow-[0_8px_30px_rgba(0,0,0,0.35)] backdrop-blur-xl">
+      {canInvalidate && (
+        <button
+          onClick={onRequestInvalidate}
+          className="w-11 h-11 flex items-center justify-center text-lg font-bold text-amber-200 hover:text-white hover:bg-amber-300/10 active:bg-amber-300/15 transition-colors"
+          aria-label="Invalida manche"
+        >
+          ⟳
+        </button>
+      )}
+      {canInvalidate && <div className="w-px h-6 bg-white/10" />}
+      <button
+        onClick={onRequestQuit}
+        className="w-11 h-11 flex items-center justify-center text-lg font-black text-rose-200 hover:text-white hover:bg-rose-300/10 active:bg-rose-300/15 transition-colors"
+        aria-label="Esci"
+      >
+        ✕
+      </button>
+    </div>
   )
 }
 
@@ -193,8 +197,10 @@ export default function App() {
     <div className="h-full bg-slate-950 text-white flex flex-col max-w-md mx-auto overflow-hidden relative">
       <AmbientBlobs />
       <ErrorBoundary>
-        <InvalidateButton onRequestInvalidate={requestInvalidate} />
-        <QuitButton onRequestQuit={requestQuit} />
+        <InGameUtilityControls
+          onRequestInvalidate={requestInvalidate}
+          onRequestQuit={requestQuit}
+        />
         <AnimatedScreen />
         <ConfirmDialog
           open={showQuit}
