@@ -15,6 +15,7 @@ export type Screen =
   | 'riccio_strike'
   | 'oracolo_reveal'
   | 'result'
+  | 'final_result'
 
 export interface Player {
   id: string
