@@ -279,7 +279,7 @@ export default function HomeScreen() {
         </button>
         <div className="flex items-center gap-2 text-[10px] text-slate-500">
           <a
-            href="https://falker47.github.io/Nexus-portfolio/"
+            href="https://falker47.github.io/"
             target="_blank"
             rel="noopener noreferrer"
             className="hover:text-slate-300 transition-colors tracking-wide"
