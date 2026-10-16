@@ -47,7 +47,7 @@ jobs:
       - name: Compile unsigned Android release with R8
         if: github.event_name == 'pull_request'
         run: |
-          sdkmanager --install "platforms;android-36" "build-tools;36.0.0"
+          "${ANDROID_HOME:-/usr/local/lib/android/sdk}/cmdline-tools/latest/bin/sdkmanager" --install "platforms;android-36" "build-tools;36.0.0"
           # The CI runner has no release keystore. Signing is the only disabled step.
           sed -i '/^[[:space:]]*signingConfig signingConfigs.release$/d' android/app/build.gradle
           (cd android && bash ./gradlew --no-daemon :app:assembleRelease)
