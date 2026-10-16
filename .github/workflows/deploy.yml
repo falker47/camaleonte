@@ -37,6 +37,25 @@ jobs:
             test ! -e "android/app/src/main/assets/public/$asset"
           done
 
+      - name: Set up Java 21 for Android release verification
+        if: github.event_name == 'pull_request'
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Compile unsigned Android release with R8
+        if: github.event_name == 'pull_request'
+        run: |
+          sdkmanager --install "platforms;android-36" "build-tools;36.0.0"
+          # The CI runner has no release keystore. Signing is the only disabled step.
+          sed -i '/^[[:space:]]*signingConfig signingConfigs.release$/d' android/app/build.gradle
+          (cd android && bash ./gradlew --no-daemon :app:assembleRelease)
+          apk=(android/app/build/outputs/apk/release/*.apk)
+          test -s "${apk[0]}"
+          stat -c 'Unsigned release APK: %s bytes' "${apk[0]}"
+          unzip -l "${apk[0]}" 'classes*.dex'
+
       - name: Upload Pages artifact
         if: github.event_name == 'push'
         uses: actions/upload-pages-artifact@v3
