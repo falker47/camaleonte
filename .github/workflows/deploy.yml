@@ -28,6 +28,15 @@ jobs:
       - run: npm run test:core
       - run: npm run build
 
+      - name: Verify Android packaging without changing web assets
+        if: github.event_name == 'pull_request'
+        run: |
+          npm run build:android
+          for asset in preview.png camaleonte-3-2-ratio.png camaleonte-square.png; do
+            test -f "dist/$asset"
+            test ! -e "android/app/src/main/assets/public/$asset"
+          done
+
       - name: Upload Pages artifact
         if: github.event_name == 'push'
         uses: actions/upload-pages-artifact@v3
