@@ -80,7 +80,7 @@ I test core coprono le soglie dinamiche e le principali condizioni di vittoria. 
 
 ## Sviluppo locale
 
-Richiede Node.js 20+.
+Richiede Node.js 22+ (Capacitor 8).
 
 ```bash
 npm ci
