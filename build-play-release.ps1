@@ -4,10 +4,10 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
 $repoRoot = $PSScriptRoot
-$expectedBranch = 'release/camaleonte-1.1.1-play'
+$allowedBranches = @('master', 'release/camaleonte-1.1.1-play')
 $branch = (& git -C $repoRoot branch --show-current).Trim()
-if ($LASTEXITCODE -ne 0 -or $branch -ne $expectedBranch) {
-  throw "Seleziona prima il branch $expectedBranch. Branch corrente: $branch"
+if ($LASTEXITCODE -ne 0 -or $branch -notin $allowedBranches) {
+  throw "Usa il branch master aggiornato o release/camaleonte-1.1.1-play. Branch corrente: $branch"
 }
 
 $dirty = @(& git -C $repoRoot status --porcelain)
@@ -71,5 +71,5 @@ try {
   Write-Host "AAB: $($fileInfo.FullName)"
   Write-Host "Dimensione: $($fileInfo.Length) byte"
   Write-Host "SHA256: $($hash.Hash)"
-  Write-Host 'Caricare solo dopo avere verificato che Play Console non abbia release pendenti e accetti versionCode 12.'
+  Write-Host 'Caricare solo dopo avere ricontrollato Panoramica della pubblicazione in Play Console.'
 } finally { Pop-Location }
