@@ -136,6 +136,34 @@ jobs:
           if ($fallback -ne $expectedHome) { throw "JDK 21 PATH fallback failed: $fallback" }
           Write-Host "JDK 21 detection and fallback verified: $fallback"
 
+      - name: Test generated Capacitor changes are allowed only when unstaged
+        shell: pwsh
+        run: |
+          Set-StrictMode -Version Latest
+          $ErrorActionPreference = 'Stop'
+          $errors = @()
+          $ast = [System.Management.Automation.Language.Parser]::ParseFile(
+            (Join-Path $PWD 'build-play-release.ps1'), [ref]$null, [ref]$errors)
+          if ($errors.Count -ne 0) { throw 'Release script has PowerShell syntax errors' }
+          $fn = $ast.Find({
+            param($node)
+            $node -is [System.Management.Automation.Language.FunctionDefinitionAst] -and
+              $node.Name -eq 'Get-UnexpectedWorktreeChanges'
+          }, $true)
+          if (-not $fn) { throw 'Missing worktree preflight helper' }
+          . ([scriptblock]::Create($fn.Extent.Text))
+          $generated = @(' M android/app/capacitor.build.gradle', ' M android/capacitor.settings.gradle')
+          if (@(Get-UnexpectedWorktreeChanges -Changes $generated).Count -ne 0) {
+            throw 'Regenerated Capacitor files should pass preflight'
+          }
+          $unsafe = @(' M src/App.tsx', 'M  android/app/capacitor.build.gradle', ' D android/capacitor.settings.gradle', '?? scratch.txt')
+          $rejected = @(Get-UnexpectedWorktreeChanges -Changes $unsafe)
+          if ($rejected.Count -ne $unsafe.Count) {
+            throw "Unsafe local changes not rejected: $($rejected.Count) / $($unsafe.Count)"
+          }
+          Write-Host 'Worktree preflight accepts only the two unstaged generated files'
+
+
   deploy:
     if: github.event_name == 'push'
     needs: verify
