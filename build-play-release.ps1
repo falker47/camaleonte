@@ -39,6 +39,70 @@ if ($LASTEXITCODE -ne 0) { throw 'Node.js non trovato. Installa Node.js 22 o sup
 $nodeMajor = [int](($nodeVersionText.TrimStart('v') -split '\.')[0])
 if ($nodeMajor -lt 22) { throw 'Capacitor 8 richiede Node.js >= 22.' }
 
+# Android/Capacitor compiles Java 21. Resolve a local JDK 21 BEFORE the
+# expensive npm/web steps, so an older JAVA_HOME cannot fail after minutes.
+function Get-UsableJdk21 {
+  $homes = New-Object 'System.Collections.Generic.List[string]'
+  $parents = New-Object 'System.Collections.Generic.List[string]'
+
+  foreach ($candidate in @($env:JAVA_HOME, $env:JDK_HOME)) {
+    if (-not [string]::IsNullOrWhiteSpace($candidate)) { $homes.Add($candidate) }
+  }
+
+  $javacOnPath = Get-Command javac.exe -ErrorAction SilentlyContinue
+  if ($javacOnPath -and $javacOnPath.Source) {
+    $homes.Add((Split-Path -Parent (Split-Path -Parent $javacOnPath.Source)))
+  }
+
+  if ($env:ProgramFiles) {
+    $homes.Add((Join-Path $env:ProgramFiles 'Android\Android Studio\jbr'))
+    foreach ($folder in @('Eclipse Adoptium', 'Java', 'Microsoft', 'Amazon Corretto', 'Zulu', 'BellSoft', 'AdoptOpenJDK')) {
+      $parents.Add((Join-Path $env:ProgramFiles $folder))
+    }
+  }
+  if ($env:LOCALAPPDATA) {
+    $parents.Add((Join-Path $env:LOCALAPPDATA 'Programs\Eclipse Adoptium'))
+    $parents.Add((Join-Path $env:LOCALAPPDATA 'Programs\Java'))
+  }
+  if ($env:USERPROFILE) {
+    $parents.Add((Join-Path $env:USERPROFILE '.jdks'))
+  }
+
+  foreach ($parent in $parents) {
+    if (-not (Test-Path -LiteralPath $parent -PathType Container)) { continue }
+    foreach ($child in @(Get-ChildItem -LiteralPath $parent -Directory -ErrorAction SilentlyContinue)) {
+      $homes.Add($child.FullName)
+    }
+  }
+
+  foreach ($home in @($homes | Select-Object -Unique)) {
+    $home = $home.Trim().Trim('"')
+    $compiler = Join-Path $home 'bin\javac.exe'
+    $java = Join-Path $home 'bin\java.exe'
+    if (-not (Test-Path -LiteralPath $compiler -PathType Leaf) -or
+        -not (Test-Path -LiteralPath $java -PathType Leaf)) { continue }
+
+    try {
+      $version = (& $compiler -version 2>&1) -join ' '
+      if ($LASTEXITCODE -eq 0 -and $version -match '(?i)\bjavac\s+21(?:[.\s]|$)') {
+        return $home
+      }
+    } catch {
+      # Try the next local installation.
+    }
+  }
+  return $null
+}
+
+$java21Home = Get-UsableJdk21
+if (-not $java21Home) {
+  throw 'JDK 21 non trovato. Installa Eclipse Temurin 21 con: winget install --id EclipseAdoptium.Temurin.21.JDK --exact --source winget. Riapri PowerShell, aggiorna il repo e riesegui build-play-release.ps1. Se JDK 21 e gia installato in una cartella non standard, imposta JAVA_HOME a tale cartella.'
+}
+
+$env:JAVA_HOME = $java21Home
+$env:Path = "$(Join-Path $java21Home 'bin');$env:Path"
+Write-Host "JDK 21 selezionato: $java21Home" -ForegroundColor Cyan
+
 Push-Location -LiteralPath $repoRoot
 try {
   & npm.cmd ci
@@ -50,7 +114,7 @@ try {
 
   Push-Location -LiteralPath (Join-Path $repoRoot 'android')
   try {
-    & .\gradlew.bat --no-daemon :app:bundleRelease
+    & .\gradlew.bat --no-daemon "-Dorg.gradle.java.home=$java21Home" :app:bundleRelease
     if ($LASTEXITCODE -ne 0) { throw 'Gradle bundleRelease fallito.' }
   } finally { Pop-Location }
 
