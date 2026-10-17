@@ -75,17 +75,17 @@ function Get-UsableJdk21 {
     }
   }
 
-  foreach ($home in @($homes | Select-Object -Unique)) {
-    $home = $home.Trim().Trim('"')
-    $compiler = Join-Path $home 'bin\javac.exe'
-    $java = Join-Path $home 'bin\java.exe'
+  foreach ($jdkCandidate in @($homes | Select-Object -Unique)) {
+    $jdkCandidate = $home.Trim().Trim('"')
+    $compiler = Join-Path $jdkCandidate 'bin\javac.exe'
+    $java = Join-Path $jdkCandidate 'bin\java.exe'
     if (-not (Test-Path -LiteralPath $compiler -PathType Leaf) -or
         -not (Test-Path -LiteralPath $java -PathType Leaf)) { continue }
 
     try {
       $version = (& $compiler -version 2>&1) -join ' '
       if ($LASTEXITCODE -eq 0 -and $version -match '(?i)\bjavac\s+21(?:[.\s]|$)') {
-        return $home
+        return $jdkCandidate
       }
     } catch {
       # Try the next local installation.
