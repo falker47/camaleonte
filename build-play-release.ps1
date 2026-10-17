@@ -10,9 +10,25 @@ if ($LASTEXITCODE -ne 0 -or $branch -notin $allowedBranches) {
   throw "Usa il branch master aggiornato o release/camaleonte-1.1.1-play. Branch corrente: $branch"
 }
 
+# Capacitor sync regenerates these two tracked files even without a manual edit.
+# Accept ONLY unstaged modifications to these precise generated paths.
+# Keep all other staged, unstaged, deleted or untracked changes blocking.
+function Get-UnexpectedWorktreeChanges {
+  param([string[]]$Changes = @())
+  @($Changes | Where-Object {
+    $_ -ne ' M android/app/capacitor.build.gradle' -and
+    $_ -ne ' M android/capacitor.settings.gradle'
+  })
+}
+
 $dirty = @(& git -C $repoRoot status --porcelain)
-if ($LASTEXITCODE -ne 0 -or $dirty.Count -gt 0) {
-  throw 'Il repository contiene modifiche non salvate. Verificale prima della build.'
+if ($LASTEXITCODE -ne 0) { throw 'Impossibile verificare lo stato Git prima della build.' }
+$unexpected = @(Get-UnexpectedWorktreeChanges -Changes $dirty)
+if ($unexpected.Count -gt 0) {
+  throw "Il repository contiene modifiche non previste: $($unexpected -join ', '). Verificale prima della build."
+}
+if ($dirty.Count -gt 0) {
+  Write-Host 'Preflight Git: consentite soltanto modifiche non staged ai due file Gradle generati da Capacitor.' -ForegroundColor Cyan
 }
 
 $gradlePath = Join-Path $repoRoot 'android\app\build.gradle'
