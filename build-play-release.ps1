@@ -76,7 +76,7 @@ function Get-UsableJdk21 {
   }
 
   foreach ($jdkCandidate in @($homes | Select-Object -Unique)) {
-    $jdkCandidate = $home.Trim().Trim('"')
+    $jdkCandidate = $jdkCandidate.Trim().Trim('"')
     $compiler = Join-Path $jdkCandidate 'bin\javac.exe'
     $java = Join-Path $jdkCandidate 'bin\java.exe'
     if (-not (Test-Path -LiteralPath $compiler -PathType Leaf) -or
