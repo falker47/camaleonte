@@ -59,7 +59,7 @@ try {
     throw 'App Bundle non trovato dopo la compilazione.'
   }
 
-  $verification = @(& jarsigner -verify $bundle 2>&1)
+  $verification = @(& jarsigner '-J-Duser.language=en' '-J-Duser.country=US' -verify -verbose $bundle 2>&1)
   if ($LASTEXITCODE -ne 0 -or (($verification -join "`n") -notmatch 'jar verified')) {
     throw 'Firma AAB non verificata. Non caricare questo file su Google Play.'
   }
