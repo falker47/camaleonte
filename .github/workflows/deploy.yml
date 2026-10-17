@@ -50,11 +50,14 @@ jobs:
           "${ANDROID_HOME:-/usr/local/lib/android/sdk}/cmdline-tools/latest/bin/sdkmanager" --install "platforms;android-36" "build-tools;36.0.0"
           # The CI runner has no release keystore. Signing is the only disabled step.
           sed -i '/^[[:space:]]*signingConfig signingConfigs.release$/d' android/app/build.gradle
-          (cd android && bash ./gradlew --no-daemon :app:assembleRelease)
+          (cd android && bash ./gradlew --no-daemon :app:assembleRelease :app:bundleRelease)
           apk=(android/app/build/outputs/apk/release/*.apk)
           test -s "${apk[0]}"
           stat -c 'Unsigned release APK: %s bytes' "${apk[0]}"
           unzip -l "${apk[0]}" 'classes*.dex'
+          bundle=(android/app/build/outputs/bundle/release/*.aab)
+          test -s "${bundle[0]}"
+          stat -c 'Unsigned release AAB (verification only): %s bytes' "${bundle[0]}"
 
       # Use an isolated package ID and the generated Android debug key so testers
       # can install a release-optimized APK without uninstalling the Play version.
@@ -70,6 +73,17 @@ jobs:
           "${ANDROID_HOME:-/usr/local/lib/android/sdk}/build-tools/36.0.0/aapt" dump badging qa-apk/Camaleonte-QA.apk | grep -F "package: name='com.falker.camaleonte.qa'"
           "${ANDROID_HOME:-/usr/local/lib/android/sdk}/build-tools/36.0.0/aapt" dump badging qa-apk/Camaleonte-QA.apk | grep -F "application-label:'Camaleonte QA'"
           stat -c 'Installable Camaleonte QA APK: %s bytes' qa-apk/Camaleonte-QA.apk
+
+      - name: Check PowerShell Play AAB builder syntax
+        if: github.event_name == 'pull_request'
+        shell: pwsh
+        run: |
+          $parseErrors = $null
+          [System.Management.Automation.Language.Parser]::ParseFile('build-play-release.ps1', [ref]$null, [ref]$parseErrors) | Out-Null
+          if ($parseErrors.Count -gt 0) {
+            $parseErrors | ForEach-Object { Write-Error $_.Message }
+            exit 1
+          }
 
       - name: Upload installable Camaleonte QA APK
         if: github.event_name == 'pull_request'
