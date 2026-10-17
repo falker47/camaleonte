@@ -100,6 +100,42 @@ jobs:
         with:
           path: dist
 
+  verify-jdk21-windows:
+    if: github.event_name == 'pull_request'
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Test local JDK 21 discovery and fallback from invalid JAVA_HOME
+        shell: pwsh
+        run: |
+          Set-StrictMode -Version Latest
+          $ErrorActionPreference = 'Stop'
+          $parseErrors = @()
+          $ast = [System.Management.Automation.Language.Parser]::ParseFile(
+            (Join-Path $PWD 'build-play-release.ps1'), [ref]$null, [ref]$parseErrors)
+          if ($parseErrors.Count -ne 0) { throw "Play build script has parser errors" }
+          $fn = $ast.Find({
+            param($node)
+            $node -is [System.Management.Automation.Language.FunctionDefinitionAst] -and
+              $node.Name -eq 'Get-UsableJdk21'
+          }, $true)
+          if (-not $fn) { throw 'Missing Get-UsableJdk21 function' }
+          . ([scriptblock]::Create($fn.Extent.Text))
+          $expectedHome = $env:JAVA_HOME
+          if (-not $expectedHome) { throw 'CI runner did not set JAVA_HOME' }
+          $detected = Get-UsableJdk21
+          if ($detected -ne $expectedHome) { throw "Expected $expectedHome, found $detected" }
+          $env:JAVA_HOME = 'C:\does-not-exist\jdk-17'
+          $fallback = Get-UsableJdk21
+          if ($fallback -ne $expectedHome) { throw "JDK 21 PATH fallback failed: $fallback" }
+          Write-Host "JDK 21 detection and fallback verified: $fallback"
+
   deploy:
     if: github.event_name == 'push'
     needs: verify
