@@ -21,12 +21,64 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
 
       - run: npm ci
       - run: npm run test:core
       - run: npm run build
+
+      - name: Verify Android packaging without changing web assets
+        if: github.event_name == 'pull_request'
+        run: |
+          npm run build:android
+          for asset in preview.png camaleonte-3-2-ratio.png camaleonte-square.png; do
+            test -f "dist/$asset"
+            test ! -e "android/app/src/main/assets/public/$asset"
+          done
+
+      - name: Set up Java 21 for Android release verification
+        if: github.event_name == 'pull_request'
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Compile unsigned Android release with R8
+        if: github.event_name == 'pull_request'
+        run: |
+          "${ANDROID_HOME:-/usr/local/lib/android/sdk}/cmdline-tools/latest/bin/sdkmanager" --install "platforms;android-36" "build-tools;36.0.0"
+          # The CI runner has no release keystore. Signing is the only disabled step.
+          sed -i '/^[[:space:]]*signingConfig signingConfigs.release$/d' android/app/build.gradle
+          (cd android && bash ./gradlew --no-daemon :app:assembleRelease)
+          apk=(android/app/build/outputs/apk/release/*.apk)
+          test -s "${apk[0]}"
+          stat -c 'Unsigned release APK: %s bytes' "${apk[0]}"
+          unzip -l "${apk[0]}" 'classes*.dex'
+
+      # Use an isolated package ID and the generated Android debug key so testers
+      # can install a release-optimized APK without uninstalling the Play version.
+      - name: Build installable isolated QA APK (release optimizations)
+        if: github.event_name == 'pull_request'
+        run: |
+          sed -i '/^[[:space:]]*minifyEnabled true$/a\            signingConfig signingConfigs.debug\n            applicationIdSuffix ".qa"' android/app/build.gradle
+          sed -i 's/android:label="@string\/app_name"/android:label="Camaleonte QA"/; s/android:label="@string\/title_activity_main"/android:label="Camaleonte QA"/' android/app/src/main/AndroidManifest.xml
+          (cd android && bash ./gradlew --no-daemon :app:assembleRelease)
+          mkdir -p qa-apk
+          cp android/app/build/outputs/apk/release/app-release.apk qa-apk/Camaleonte-QA.apk
+          "${ANDROID_HOME:-/usr/local/lib/android/sdk}/build-tools/36.0.0/apksigner" verify --verbose qa-apk/Camaleonte-QA.apk
+          "${ANDROID_HOME:-/usr/local/lib/android/sdk}/build-tools/36.0.0/aapt" dump badging qa-apk/Camaleonte-QA.apk | grep -F "package: name='com.falker.camaleonte.qa'"
+          "${ANDROID_HOME:-/usr/local/lib/android/sdk}/build-tools/36.0.0/aapt" dump badging qa-apk/Camaleonte-QA.apk | grep -F "application-label:'Camaleonte QA'"
+          stat -c 'Installable Camaleonte QA APK: %s bytes' qa-apk/Camaleonte-QA.apk
+
+      - name: Upload installable Camaleonte QA APK
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: Camaleonte-QA-optimized-APK
+          path: qa-apk/Camaleonte-QA.apk
+          if-no-files-found: error
+          retention-days: 14
 
       - name: Upload Pages artifact
         if: github.event_name == 'push'
