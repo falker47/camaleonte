@@ -1,5 +1,5 @@
 import { Component, type ComponentType, type ReactNode, useCallback, useEffect, useRef, useState } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 import { useGameStore } from './store/gameStore'
 import type { Screen } from './store/types'
 import { useBackGuard } from './hooks/useBackGuard'
@@ -35,23 +35,15 @@ const SCREEN_ORDER: Screen[] = [
   'home', 'setup', 'deal', 'round', 'vote', 'elimination', 'camaleonte_guess', 'riccio_strike', 'oracolo_reveal', 'result', 'final_result',
 ]
 
-const FADE_SCALE_SCREENS: Set<Screen> = new Set(['elimination', 'riccio_strike', 'oracolo_reveal', 'result', 'final_result'])
+const SCALE_SCREENS: Set<Screen> = new Set(['elimination', 'riccio_strike', 'oracolo_reveal', 'result', 'final_result'])
 
-function getTransitionVariants(prev: Screen | null, current: Screen) {
-  if (FADE_SCALE_SCREENS.has(current)) {
-    return {
-      initial: { opacity: 0, scale: 0.95 },
-      animate: { opacity: 1, scale: 1 },
-      exit: { opacity: 0, scale: 0.95 },
-    }
+function getScreenEntrance(prev: Screen | null, current: Screen) {
+  if (SCALE_SCREENS.has(current)) {
+    return { scale: 0.95 }
   }
 
   if (prev === null) {
-    return {
-      initial: { opacity: 0 },
-      animate: { opacity: 1 },
-      exit: { opacity: 0 },
-    }
+    return false
   }
 
   const prevIdx = SCREEN_ORDER.indexOf(prev)
@@ -59,20 +51,12 @@ function getTransitionVariants(prev: Screen | null, current: Screen) {
 
   if ((prev === 'deal' && current === 'round') ||
       ((prev === 'elimination' || prev === 'camaleonte_guess' || prev === 'riccio_strike' || prev === 'oracolo_reveal') && current === 'round')) {
-    return {
-      initial: { opacity: 0 },
-      animate: { opacity: 1 },
-      exit: { opacity: 0 },
-    }
+    return false
   }
 
   const direction = currIdx >= prevIdx ? 1 : -1
 
-  return {
-    initial: { x: direction * 30, opacity: 0 },
-    animate: { x: 0, opacity: 1 },
-    exit: { x: direction * -30, opacity: 0 },
-  }
+  return { x: direction * 30 }
 }
 
 class ErrorBoundary extends Component<{ children: ReactNode }, { error: string | null }> {
@@ -158,29 +142,27 @@ function AmbientBlobs() {
 
 function AnimatedScreen() {
   const screen = useGameStore(s => s.screen)
+  const shouldReduceMotion = useReducedMotion()
   const prevScreen = useRef<Screen | null>(null)
   const ScreenComponent = SCREENS[screen]
 
-  const prevForVariants = prevScreen.current
-  const variants = getTransitionVariants(prevForVariants, screen)
+  const entrance = getScreenEntrance(prevScreen.current, screen)
 
   useEffect(() => {
     prevScreen.current = screen
   }, [screen])
 
+  // Replace the old screen immediately; sequential fades expose an empty background.
   return (
-    <AnimatePresence mode="wait">
-      <motion.div
-        key={screen}
-        initial={variants.initial}
-        animate={variants.animate}
-        exit={variants.exit}
-        transition={{ duration: 0.3, ease: 'easeOut' }}
-        className="flex flex-col flex-1 min-h-0"
-      >
-        <ScreenComponent />
-      </motion.div>
-    </AnimatePresence>
+    <motion.div
+      key={screen}
+      initial={shouldReduceMotion ? false : entrance}
+      animate={{ x: 0, scale: 1 }}
+      transition={{ duration: shouldReduceMotion ? 0 : 0.3, ease: 'easeOut' }}
+      className="flex flex-col flex-1 min-h-0"
+    >
+      <ScreenComponent />
+    </motion.div>
   )
 }
 

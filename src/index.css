@@ -146,56 +146,30 @@
     transform: rotateY(180deg);
   }
 
-  /* Homepage — ambient blobs */
-  .blob {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(80px);
-    opacity: 0.55;
-    animation: blob-float 8s ease-in-out infinite;
-    pointer-events: none;
-  }
-  .blob-1 {
-    width: 250px; height: 250px;
-    background: radial-gradient(circle, rgba(45,212,191,0.45), transparent 70%);
-    top: 10%; left: -20%;
-  }
-  .blob-2 {
-    width: 200px; height: 200px;
-    background: radial-gradient(circle, rgba(139,92,246,0.35), transparent 70%);
-    bottom: 20%; right: -15%;
-    animation-delay: -3s;
-  }
-  .blob-3 {
-    width: 150px; height: 150px;
-    background: radial-gradient(circle, rgba(74,222,128,0.25), transparent 70%);
-    top: 50%; left: 60%;
-    animation-delay: -5s;
-  }
+  /* The brand artwork includes its own shadows; keep the ambient light static. */
+  .home-screen { padding-top: 80px; }
+  .home-divider { margin-block: 20px; }
 
-  @keyframes blob-float {
-    0%, 100% { transform: translate(0, 0) scale(1); }
-    33% { transform: translate(15px, -20px) scale(1.05); }
-    66% { transform: translate(-10px, 15px) scale(0.95); }
-  }
-
-  /* Homepage — center glow */
-  .center-glow {
+  .home-brand-glow {
     position: absolute;
-    top: 28%;
+    top: 34%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 320px;
-    height: 320px;
-    background: radial-gradient(circle, rgba(45,212,191,0.18) 0%, rgba(74,222,128,0.1) 25%, rgba(139,92,246,0.08) 45%, transparent 65%);
-    border-radius: 50%;
-    animation: glow-pulse 4s ease-in-out infinite;
+    width: min(90%, 420px);
+    height: 360px;
+    background: radial-gradient(ellipse, rgba(45, 212, 191, 0.13), rgba(74, 222, 128, 0.05) 40%, transparent 70%);
     pointer-events: none;
   }
 
-  @keyframes glow-pulse {
-    0%, 100% { opacity: 0.6; transform: translate(-50%, -50%) scale(1); }
-    50% { opacity: 1; transform: translate(-50%, -50%) scale(1.15); }
+  .home-brand-image {
+    max-height: min(31svh, 240px);
+  }
+
+  /* Preserve room for both game actions on shorter phones. */
+  @media (max-height: 700px) {
+    .home-screen { padding-top: 64px; }
+    .home-brand-image { max-height: 24svh; }
+    .home-divider { margin-block: 12px; }
   }
 
   /* Homepage — confetti */
@@ -237,12 +211,10 @@
     100% { opacity: 0;   transform: translateY(85vh) rotate(720deg); }
   }
 
-  /* Homepage — title glow */
-  .title-glow {
-    text-shadow:
-      0 0 40px rgba(45,212,191,0.5),
-      0 0 80px rgba(139,92,246,0.3),
-      0 0 60px rgba(74,222,128,0.25);
-    letter-spacing: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .confetti {
+    animation: none;
   }
 }

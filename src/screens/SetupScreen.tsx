@@ -385,7 +385,7 @@ export default function SetupScreen() {
                   {option.unitLabel}
                 </span>
                 {recommended && (
-                  <span className="pointer-events-none absolute -top-2 left-1/2 -translate-x-1/2 rounded-full border border-teal-300/25 bg-slate-900/95 px-1.5 py-0.5 text-[7px] font-black uppercase tracking-[0.08em] leading-none text-teal-300 shadow-[0_3px_10px_rgba(0,0,0,0.35)] backdrop-blur-sm">
+                  <span className="pointer-events-none absolute -bottom-2 left-1/2 -translate-x-1/2 rounded-full border border-teal-300/25 bg-slate-900/95 px-1.5 py-0.5 text-[7px] font-black uppercase tracking-[0.08em] leading-none text-teal-300 shadow-[0_3px_10px_rgba(0,0,0,0.35)] backdrop-blur-sm">
                     Consigliato
                   </span>
                 )}
@@ -393,7 +393,7 @@ export default function SetupScreen() {
             )
           })}
         </div>
-        <p className="mt-2 text-teal-300 text-xs font-semibold">
+        <p className="mt-3 text-teal-300 text-xs font-semibold">
           {duration === 'unlimited'
             ? 'Partita senza limite'
             : validNames.length >= 3
