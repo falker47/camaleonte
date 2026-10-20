@@ -50,7 +50,8 @@
 }
 
 @layer components {
-  /* Shared portrait artwork: vivid on Home, restrained beneath game controls. */
+  /* Background is independent of the scrolling content. Its height is captured
+     once before soft-keyboard resizes; only a width/orientation change resets it. */
   .app-stage {
     isolation: isolate;
   }
@@ -59,27 +60,38 @@
   .app-stage::after {
     content: '';
     position: absolute;
-    inset: 0;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: var(--stage-scene-height, 100%);
     pointer-events: none;
     z-index: 0;
   }
 
   .app-stage::before {
-    /* Reuse the jungle without Home's separate bunting, foliage or brand foreground. */
-    inset: -8px; /* hide the soft-focus edge beyond the clipped stage */
-    background: url('./assets/brand/camaleonte-tropical-background.webp') center / cover no-repeat;
-    opacity: 0.82;
-    filter: blur(4px) saturate(0.72) contrast(0.9) brightness(0.78);
+    /* Dedicated operational foliage composition. Extra bleed covers fractional
+       WebView edges; no CSS filter, scroll transform or tiling can create a seam. */
+    top: -2px;
+    left: -2px;
+    width: calc(100% + 4px);
+    height: calc(var(--stage-scene-height, 100%) + 4px);
+    background: #071b34 url('./assets/brand/camaleonte-operational-background.svg') center top / cover no-repeat;
   }
 
   .app-stage::after {
-    background: linear-gradient(180deg, rgba(15, 10, 30, 0.50), rgba(15, 10, 30, 0.66) 48%, rgba(15, 10, 30, 0.86));
+    background: linear-gradient(180deg,
+      rgba(8, 13, 30, .46),
+      rgba(8, 13, 30, .56) 40%,
+      rgba(8, 13, 30, .66) 70%,
+      rgba(8, 13, 30, .76));
   }
 
   .app-stage[data-screen='home']::before {
-    inset: 0;
-    opacity: 1;
-    filter: none;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: var(--stage-scene-height, 100%);
+    background-image: url('./assets/brand/camaleonte-tropical-background.webp');
   }
 
   .app-stage[data-screen='home']::after {

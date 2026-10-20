@@ -1,4 +1,4 @@
-import { Component, type ComponentType, type ReactNode, useCallback, useEffect, useRef, useState } from 'react'
+import { Component, type ComponentType, type ReactNode, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { useGameStore } from './store/gameStore'
 import type { Screen } from './store/types'
@@ -184,12 +184,34 @@ export default function App() {
   const [showInvalidate, setShowInvalidate] = useState(false)
   const requestQuit = useCallback(() => setShowQuit(true), [])
   const requestInvalidate = useCallback(() => setShowInvalidate(true), [])
+  const stageRef = useRef<HTMLDivElement>(null)
+
+  useLayoutEffect(() => {
+    const stage = stageRef.current
+    if (!stage) return
+
+    // The keyboard may shrink the Android WebView vertically. Keep the artwork
+    // at its original size while the foreground content resizes and scrolls.
+    let measuredWidth = -1
+    const measureScene = () => {
+      const { width, height } = stage.getBoundingClientRect()
+      const roundedWidth = Math.round(width)
+      if (roundedWidth === measuredWidth || height <= 0) return
+      measuredWidth = roundedWidth
+      stage.style.setProperty('--stage-scene-height', `${Math.ceil(height)}px`)
+    }
+
+    measureScene()
+    window.addEventListener('resize', measureScene)
+    return () => window.removeEventListener('resize', measureScene)
+  }, [])
+
 
   useBackGuard(requestQuit)
   useAppLifecyclePrivacy()
 
   return (
-    <div className="app-stage h-full bg-slate-950 text-white flex flex-col max-w-md mx-auto overflow-hidden relative"
+    <div ref={stageRef} className="app-stage h-full bg-slate-950 text-white flex flex-col max-w-md mx-auto overflow-hidden relative"
       data-screen={screen}>
       <AmbientBlobs />
       <ErrorBoundary>
