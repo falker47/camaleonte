@@ -75,7 +75,7 @@
     left: -2px;
     width: calc(100% + 4px);
     height: calc(var(--stage-scene-height, 100%) + 4px);
-    background: #071b34 url('./assets/brand/camaleonte-operational-background.svg') center top / cover no-repeat;
+    background: #071b34 url('./assets/brand/camaleonte-operational-background.webp') center top / cover no-repeat;
   }
 
   .app-stage::after {
