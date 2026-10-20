@@ -103,9 +103,9 @@ function InGameUtilityControls({
   const canInvalidate = INVALIDATE_SCREENS.has(screen)
 
   return (
-    <div className="absolute top-2 left-1/2 z-50 -translate-x-1/2">
-      <div className="flex items-center gap-1.5 rounded-2xl border border-white/10 bg-slate-950/85 p-1 shadow-[0_10px_30px_rgba(0,0,0,0.32)] backdrop-blur-xl">
-        {canInvalidate && (
+    <div className="absolute top-2 left-1/2 z-50 flex -translate-x-1/2 items-center gap-2">
+      {canInvalidate && (
+        <div className="rounded-2xl border border-white/10 bg-slate-950/85 p-1 shadow-[0_10px_30px_rgba(0,0,0,0.32)] backdrop-blur-xl">
           <button
             onClick={onRequestInvalidate}
             className="flex min-h-11 items-center gap-2 whitespace-nowrap rounded-xl px-3 text-xs font-semibold text-slate-200 transition-colors hover:bg-amber-300/10 hover:text-white active:bg-amber-300/15"
@@ -117,7 +117,9 @@ function InGameUtilityControls({
             </svg>
             <span>Ricomincia</span>
           </button>
-        )}
+        </div>
+      )}
+      <div className="rounded-2xl border border-white/10 bg-slate-950/85 p-1 shadow-[0_10px_30px_rgba(0,0,0,0.32)] backdrop-blur-xl">
         <button
           onClick={onRequestQuit}
           className="flex min-h-11 items-center gap-2 whitespace-nowrap rounded-xl px-3 text-xs font-semibold text-slate-200 transition-colors hover:bg-rose-300/10 hover:text-white active:bg-rose-300/15"
