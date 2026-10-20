@@ -34,7 +34,7 @@ const SPECIAL_ROLES = [
   { name: '⚔️ Duellanti', color: 'text-blue-400', effect: `Il primo eliminato perde 1\u00A0pt, l'altro guadagna 1\u00A0pt. Pareggio se eliminati nello stesso turno.` },
   { name: '💕 Romeo & Giulietta', color: 'text-rose-300', effect: 'Nessun effetto sui punti. Se uno cade, cade anche l\'altro.' },
   { name: '🦔 Riccio', color: 'text-yellow-400', effect: 'Nessun bonus punti. Se eliminato, trascina un avversario con sé.' },
-  { name: '🎐 L'Eterno', color: 'text-cyan-400', effect: 'Nessun bonus punti. Vota anche se viene eliminato; in parità decide chi eliminare.' },
+  { name: "🎐 L'Eterno", color: 'text-cyan-400', effect: 'Nessun bonus punti. Vota anche se viene eliminato; in parità decide chi eliminare.' },
   { name: '🔮 Oracolo', color: 'text-purple-400', effect: 'Nessun bonus punti. Se eliminato, svela il ruolo di un giocatore.' },
 ]
 
