@@ -50,6 +50,54 @@
 }
 
 @layer components {
+  /* Shared portrait artwork: vivid on Home, restrained beneath game controls. */
+  .app-stage {
+    isolation: isolate;
+  }
+
+  .app-stage::before,
+  .app-stage::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .app-stage::before {
+    background: url('./assets/brand/camaleonte-tropical-background.webp') center / cover no-repeat;
+    opacity: 0.24;
+    filter: saturate(0.85);
+  }
+
+  .app-stage::after {
+    background: linear-gradient(180deg, rgba(15, 10, 30, 0.80), rgba(15, 10, 30, 0.91) 62%, rgba(15, 10, 30, 0.97));
+  }
+
+  .app-stage[data-screen='home']::before {
+    opacity: 1;
+    filter: none;
+  }
+
+  .app-stage[data-screen='home']::after {
+    background: linear-gradient(180deg, rgba(15, 10, 30, 0.18), rgba(15, 10, 30, 0.38) 34%, rgba(15, 10, 30, 0.75) 68%, rgba(15, 10, 30, 0.93));
+  }
+
+  .app-stage[data-screen='setup']::before,
+  .app-stage[data-screen='elimination']::before,
+  .app-stage[data-screen='result']::before,
+  .app-stage[data-screen='final_result']::before {
+    opacity: 0.33;
+  }
+
+  .app-stage[data-screen='home'] .home-brand-image {
+    filter: drop-shadow(0 12px 22px rgba(0, 0, 0, 0.45));
+  }
+
+  .app-stage[data-screen='home'] .home-tagline {
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+  }
+
   .glass {
     background: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(16px);

@@ -121,7 +121,7 @@ export default function HomeScreen() {
 
         {/* Tagline */}
         <motion.p
-          className="text-teal-200 tracking-[2px] text-base z-10 mt-2"
+          className="home-tagline text-teal-100 tracking-[2px] text-base z-10 mt-2"
           style={{ fontFamily: "'Permanent Marker', cursive" }}
         >
           Chi si mimetizza fra voi?

@@ -72,7 +72,7 @@ const PERSISTED_SCREENS: ReadonlySet<string> = new Set([
 ])
 
 const ROLES = new Set(['civile', 'talpa', 'camaleonte'])
-const SPECIAL_ROLES = new Set(['buffone', 'spettro', 'duellante', 'romeo', 'giulietta', 'riccio', 'oracolo'])
+const SPECIAL_ROLES = new Set(['buffone', 'eterno', 'duellante', 'romeo', 'giulietta', 'riccio', 'oracolo'])
 const GUESS_PHASES = new Set(['privacy', 'input', 'result'])
 
 export function createInitialVoteSession(): VoteSession {
@@ -149,13 +149,34 @@ export function migrateGameSnapshot(input: unknown): GameSnapshotV1 | null {
       ? 'final_result'
       : input.state.screen
 
+  // Version 1 also covers older saves: normalize legacy role identifiers on read.
+  const normalizedConfig = {
+    ...input.state.config,
+    duration: normalizedDuration,
+  }
+  if (isRecord(normalizedConfig.specialRoles) && 'spettro' in normalizedConfig.specialRoles) {
+    const { spettro, ...currentRoles } = normalizedConfig.specialRoles
+    normalizedConfig.specialRoles = {
+      ...currentRoles,
+      eterno: Object.prototype.hasOwnProperty.call(currentRoles, 'eterno')
+        ? currentRoles.eterno
+        : spettro,
+    }
+  }
+
+  const normalizedPlayers = Array.isArray(input.state.players)
+    ? input.state.players.map(player =>
+        isRecord(player) && player.specialRole === 'spettro'
+          ? { ...player, specialRole: 'eterno' }
+          : player
+      )
+    : input.state.players
+
   const normalizedState: Record<string, unknown> = {
     ...input.state,
     screen: normalizedScreen,
-    config: {
-      ...input.state.config,
-      duration: normalizedDuration,
-    },
+    players: normalizedPlayers,
+    config: normalizedConfig,
     manche: normalizedManche,
   }
 

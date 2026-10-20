@@ -16,7 +16,7 @@ export default function VoteScreen() {
   const setVoteSession = useGameStore(s => s.setVoteSession)
 
   const active = players.filter(p => !p.eliminated)
-  const eterno = players.find(p => p.specialRole === 'spettro') ?? null
+  const eterno = players.find(p => p.specialRole === 'eterno') ?? null
   const eliminatedEterno = eterno?.eliminated ? eterno : null
 
   const {

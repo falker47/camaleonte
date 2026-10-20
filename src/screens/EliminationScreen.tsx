@@ -23,7 +23,7 @@ export default function EliminationScreen() {
   const { name, role } = eliminatedThisTurno
   const isCamaleonte = role === 'camaleonte'
   const isBuffoneBonus = eliminatedThisTurno.specialRole === 'buffone' && turno === 1
-  const isSpettro = eliminatedThisTurno.specialRole === 'spettro'
+  const isEterno = eliminatedThisTurno.specialRole === 'eterno'
   const isRiccio = eliminatedThisTurno.specialRole === 'riccio'
   const isOracolo = eliminatedThisTurno.specialRole === 'oracolo'
   const isRomeoGiulietta = eliminatedThisTurno.specialRole === 'romeo' || eliminatedThisTurno.specialRole === 'giulietta'
@@ -55,7 +55,7 @@ export default function EliminationScreen() {
           animate={{ scale: 1 }}
           transition={{ type: 'spring', stiffness: 300, damping: 15 }}
         >
-          {isCamaleonte ? <img src={camaleontePng} alt="Il Camaleonte" className="w-12 h-12" /> : role === 'talpa' ? <img src={talpaPng} alt="La Talpa" className="w-12 h-12" /> : isBuffoneBonus ? '🃏' : isSpettro ? '🎐' : isRiccio ? '🦔' : isOracolo ? '🔮' : '😇'}
+          {isCamaleonte ? <img src={camaleontePng} alt="Il Camaleonte" className="w-12 h-12" /> : role === 'talpa' ? <img src={talpaPng} alt="La Talpa" className="w-12 h-12" /> : isBuffoneBonus ? '🃏' : isEterno ? '🎐' : isRiccio ? '🦔' : isOracolo ? '🔮' : '😇'}
         </motion.div>
         <p className="text-slate-400 text-sm uppercase tracking-widest">
           {postRiccioStrike ? '🦔 Eliminato dal Riccio' : 'Eliminato'}
@@ -80,9 +80,9 @@ export default function EliminationScreen() {
               🃏 Buffone
             </span>
           )}
-          {isSpettro && (
+          {isEterno && (
             <span className="inline-block rounded-full bg-cyan-500/20 border border-cyan-400/30 text-cyan-400 text-sm font-bold px-3 py-1">
-              🎐 Eterno
+              🎐 L'Eterno
             </span>
           )}
           {isRiccio && (
@@ -166,7 +166,7 @@ export default function EliminationScreen() {
         </motion.div>
       )}
 
-      {isSpettro && (
+      {isEterno && (
         <motion.div
           className="glass rounded-2xl px-6 py-4 text-center max-w-xs relative z-10"
           style={{ borderColor: 'rgba(6, 182, 212, 0.3)' }}

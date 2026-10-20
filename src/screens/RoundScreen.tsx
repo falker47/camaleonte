@@ -24,8 +24,8 @@ export default function RoundScreen() {
 
   const active = players.filter(p => !p.eliminated)
   const eliminated = players.filter(p => p.eliminated)
-  const eliminatedSpettro = players.find(p => p.eliminated && p.specialRole === 'spettro')
-  const voterCount = active.length + (eliminatedSpettro ? 1 : 0)
+  const eliminatedEterno = players.find(p => p.eliminated && p.specialRole === 'eterno')
+  const voterCount = active.length + (eliminatedEterno ? 1 : 0)
   const { votes, voteHistory } = voteSession
   const totalVotesCast = Object.values(votes).reduce((sum, count) => sum + count, 0)
   const votersLeft = voterCount - totalVotesCast
@@ -47,22 +47,6 @@ export default function RoundScreen() {
       votes: { ...session.votes, [targetId]: (session.votes[targetId] ?? 0) + 1 },
       voteHistory: [...session.voteHistory, targetId],
     }))
-  }
-
-  const handleUndoVote = () => {
-    if (voteHistory.length === 0) return
-    const lastId = voteHistory[voteHistory.length - 1]
-    setVoteSession(session => {
-      const nextVotes = { ...session.votes }
-      nextVotes[lastId] = (nextVotes[lastId] ?? 1) - 1
-      if (nextVotes[lastId] <= 0) delete nextVotes[lastId]
-
-      return {
-        ...session,
-        votes: nextVotes,
-        voteHistory: session.voteHistory.slice(0, -1),
-      }
-    })
   }
 
   const resolveVotes = () => {
@@ -164,8 +148,8 @@ export default function RoundScreen() {
         <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
           Giocatori in gioco
         </p>
-        <div className="mt-2 mb-3 flex items-center gap-2">
-          <span className={`inline-flex min-h-8 items-center rounded-full border px-3 text-xs font-bold ${
+        <div className="mt-3 mb-3 flex flex-wrap items-center justify-center gap-2.5">
+          <span className={`inline-flex min-h-11 items-center justify-center rounded-full border px-4 py-2 text-sm font-bold ${
             allVoted
               ? 'border-rose-400/30 bg-rose-500/10 text-rose-200'
               : 'border-white/10 bg-white/[0.035] text-slate-300'
@@ -174,11 +158,12 @@ export default function RoundScreen() {
           </span>
           {voteHistory.length > 0 && (
             <button
-              onClick={handleUndoVote}
-              className="inline-flex min-h-8 items-center gap-1.5 rounded-full border border-amber-300/20 bg-amber-300/[0.06] px-3 text-xs font-semibold text-amber-200 transition-colors hover:bg-amber-300/10"
+              onClick={() => setVoteSession({ votes: {}, voteHistory: [] })}
+              aria-label="Azzera votazione corrente"
+              className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-full border border-amber-300/20 bg-amber-300/[0.06] px-4 py-2 text-sm font-semibold text-amber-200 transition-colors hover:bg-amber-300/10"
             >
               <span aria-hidden="true">↶</span>
-              Annulla ultimo
+              Azzera
             </button>
           )}
         </div>
@@ -233,12 +218,12 @@ export default function RoundScreen() {
           <span className="text-slate-600">·</span>
           {eliminated.map((player, i) => (
             <span key={player.id} className={`flex items-center gap-1 text-sm ${
-              player.specialRole === 'spettro' ? 'text-cyan-400' : 'text-slate-500'
+              player.specialRole === 'eterno' ? 'text-cyan-400' : 'text-slate-500'
             }`}>
-              {player.specialRole !== 'spettro' && <span className="text-xs">✕</span>}
-              {player.specialRole === 'spettro' && <span className="text-xs">🎐</span>}
-              <span className={player.specialRole === 'spettro' ? '' : 'line-through'}>{player.name}</span>
-              {player.specialRole === 'spettro' && <span className="text-[10px] text-cyan-400/70">vota ancora</span>}
+              {player.specialRole !== 'eterno' && <span className="text-xs">✕</span>}
+              {player.specialRole === 'eterno' && <span className="text-xs">🎐</span>}
+              <span className={player.specialRole === 'eterno' ? '' : 'line-through'}>{player.name}</span>
+              {player.specialRole === 'eterno' && <span className="text-[10px] text-cyan-400/70">vota ancora</span>}
               {i < eliminated.length - 1 && <span className="text-slate-700">,</span>}
             </span>
           ))}

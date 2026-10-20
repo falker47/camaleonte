@@ -44,13 +44,13 @@ export function assignRoles(
     }
   }
 
-  if (config.specialRoles?.spettro) {
+  if (config.specialRoles?.eterno) {
     const eligible = result
       .map((p, i) => ({ p, i }))
       .filter(({ p }) => !p.specialRole)
     if (eligible.length > 0) {
       const chosen = shuffle(eligible)[0]
-      result[chosen.i] = { ...result[chosen.i], specialRole: 'spettro' }
+      result[chosen.i] = { ...result[chosen.i], specialRole: 'eterno' }
     }
   }
 

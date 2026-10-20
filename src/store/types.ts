@@ -1,6 +1,6 @@
 export type Role = 'civile' | 'talpa' | 'camaleonte'
 
-export type SpecialRole = 'buffone' | 'spettro' | 'duellante' | 'romeo' | 'giulietta' | 'riccio' | 'oracolo'
+export type SpecialRole = 'buffone' | 'eterno' | 'duellante' | 'romeo' | 'giulietta' | 'riccio' | 'oracolo'
 
 export type GameDuration = 1 | 2 | 3 | 'unlimited'
 
@@ -39,5 +39,5 @@ export interface GameConfig {
   camaleonteCount: number
   talpaCount: number
   duration: GameDuration
-  specialRoles?: { buffone?: boolean; spettro?: boolean; duellanti?: boolean; romeoGiulietta?: boolean; riccio?: boolean; oracolo?: boolean }
+  specialRoles?: { buffone?: boolean; eterno?: boolean; duellanti?: boolean; romeoGiulietta?: boolean; riccio?: boolean; oracolo?: boolean }
 }

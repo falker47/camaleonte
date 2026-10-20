@@ -122,13 +122,13 @@ export default function PrivacyReveal({ playerName, word, role, specialRole, spe
                 <img src={camaleontePng} alt="Il Camaleonte" className="w-12 h-12" />
                 <p className={`text-2xl font-black ${textColor}`}>Sei Il Camaleonte</p>
                 <p className={`text-sm text-center ${textColor} opacity-80`}>Non hai nessuna parola. Bluffa!</p>
-                {specialRole === 'spettro' && (
+                {specialRole === 'eterno' && (
                   <div className="flex flex-col items-center justify-center gap-1">
                     <span className="inline-block rounded-full bg-cyan-800/30 border border-cyan-600/30 text-cyan-200 text-sm font-bold px-4 py-1">
                       🎐 L'Eterno
                     </span>
-                    <p className={`text-xs text-center ${textColor} opacity-60`}>
-                      Voti anche eliminato; in parità decidi chi eliminare.
+                    <p className={`text-[13px] leading-snug text-center ${textColor} opacity-80`}>
+                      Vota anche se viene eliminato; in parità decide chi eliminare.
                     </p>
                   </div>
                 )}
@@ -199,13 +199,13 @@ export default function PrivacyReveal({ playerName, word, role, specialRole, spe
                     </p>
                   </div>
                 )}
-                {specialRole === 'spettro' && (
+                {specialRole === 'eterno' && (
                   <div className="flex flex-col items-center justify-center gap-1.5">
                     <span className="inline-block rounded-full bg-cyan-500/20 border border-cyan-400/30 text-cyan-400 text-sm font-bold px-4 py-1">
                       🎐 L'Eterno
                     </span>
-                    <p className={`text-sm text-center ${textColor} opacity-60`}>
-                      Voti anche eliminato; in parità decidi chi eliminare.
+                    <p className={`text-[13px] leading-snug text-center ${textColor} opacity-80`}>
+                      Vota anche se viene eliminato; in parità decide chi eliminare.
                     </p>
                   </div>
                 )}

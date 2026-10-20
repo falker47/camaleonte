@@ -171,7 +171,7 @@ function AnimatedScreen() {
       initial={shouldReduceMotion ? false : entrance}
       animate={{ x: 0, scale: 1 }}
       transition={{ duration: shouldReduceMotion ? 0 : 0.3, ease: 'easeOut' }}
-      className={`flex flex-col flex-1 min-h-0 ${IN_GAME_SCREENS.has(screen) ? 'pt-[60px] overflow-y-auto' : ''}`}
+      className={`relative z-10 flex flex-col flex-1 min-h-0 ${IN_GAME_SCREENS.has(screen) ? 'pt-[60px] overflow-y-auto' : ''}`}
     >
       <ScreenComponent />
     </motion.div>
@@ -179,6 +179,7 @@ function AnimatedScreen() {
 }
 
 export default function App() {
+  const screen = useGameStore(s => s.screen)
   const [showQuit, setShowQuit] = useState(false)
   const [showInvalidate, setShowInvalidate] = useState(false)
   const requestQuit = useCallback(() => setShowQuit(true), [])
@@ -188,7 +189,8 @@ export default function App() {
   useAppLifecyclePrivacy()
 
   return (
-    <div className="h-full bg-slate-950 text-white flex flex-col max-w-md mx-auto overflow-hidden relative">
+    <div className="app-stage h-full bg-slate-950 text-white flex flex-col max-w-md mx-auto overflow-hidden relative"
+      data-screen={screen}>
       <AmbientBlobs />
       <ErrorBoundary>
         <InGameUtilityControls

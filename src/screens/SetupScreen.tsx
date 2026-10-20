@@ -46,7 +46,7 @@ export default function SetupScreen() {
   const [ctaValue, setCtaValue] = useState('')
   const [ctaError, setCtaError] = useState('')
   const [buffoneEnabled, setBuffoneEnabled] = useState(false)
-  const [spettroEnabled, setSpettroEnabled] = useState(false)
+  const [eternoEnabled, setEternoEnabled] = useState(false)
   const [duellantiEnabled, setDuellantiEnabled] = useState(false)
   const [romeoGiuliettaEnabled, setRomeoGiuliettaEnabled] = useState(false)
   const [riccioEnabled, setRiccioEnabled] = useState(false)
@@ -123,13 +123,13 @@ export default function SetupScreen() {
   const specialRoleSlotsUsed = useMemo(() => {
     let slots = 0
     if (buffoneEnabled && validNames.length >= 5) slots += 1
-    if (spettroEnabled) slots += 1
+    if (eternoEnabled) slots += 1
     if (duellantiEnabled && validNames.length >= 4) slots += 2
     if (romeoGiuliettaEnabled && validNames.length >= 5) slots += 2
     if (riccioEnabled && validNames.length >= 5) slots += 1
     if (oracoloEnabled && validNames.length >= 4) slots += 1
     return slots
-  }, [buffoneEnabled, spettroEnabled, duellantiEnabled, romeoGiuliettaEnabled, riccioEnabled, oracoloEnabled, validNames.length])
+  }, [buffoneEnabled, eternoEnabled, duellantiEnabled, romeoGiuliettaEnabled, riccioEnabled, oracoloEnabled, validNames.length])
 
   const slotsRemaining = validNames.length - specialRoleSlotsUsed
 
@@ -142,7 +142,7 @@ export default function SetupScreen() {
       { enabled: riccioEnabled, cost: 1, disable: () => setRiccioEnabled(false) },
       { enabled: romeoGiuliettaEnabled, cost: 2, disable: () => setRomeoGiuliettaEnabled(false) },
       { enabled: duellantiEnabled, cost: 2, disable: () => setDuellantiEnabled(false) },
-      { enabled: spettroEnabled, cost: 1, disable: () => setSpettroEnabled(false) },
+      { enabled: eternoEnabled, cost: 1, disable: () => setEternoEnabled(false) },
       { enabled: buffoneEnabled, cost: 1, disable: () => setBuffoneEnabled(false) },
     ]
     let excess = specialRoleSlotsUsed - validNames.length
@@ -270,7 +270,7 @@ export default function SetupScreen() {
   const handleStart = () => {
     const filtered = names.filter(n => n.trim().length > 0)
     setPlayerNames(filtered)
-    setConfig({ camaleonteCount, talpaCount, duration, specialRoles: { buffone: buffoneEnabled && filtered.length >= 5, spettro: spettroEnabled, duellanti: duellantiEnabled && filtered.length >= 4, romeoGiulietta: romeoGiuliettaEnabled && filtered.length >= 5, riccio: riccioEnabled && filtered.length >= 5, oracolo: oracoloEnabled && filtered.length >= 4 } })
+    setConfig({ camaleonteCount, talpaCount, duration, specialRoles: { buffone: buffoneEnabled && filtered.length >= 5, eterno: eternoEnabled, duellanti: duellantiEnabled && filtered.length >= 4, romeoGiulietta: romeoGiuliettaEnabled && filtered.length >= 5, riccio: riccioEnabled && filtered.length >= 5, oracolo: oracoloEnabled && filtered.length >= 4 } })
     startGame()
   }
 
@@ -474,7 +474,7 @@ export default function SetupScreen() {
               <div className="text-left">
                 <p className="text-white text-sm font-semibold">Ruoli Speciali</p>
                 {(() => {
-                  const active = [oracoloEnabled && validNames.length >= 4, riccioEnabled && validNames.length >= 5, duellantiEnabled, buffoneEnabled && validNames.length >= 5, spettroEnabled, romeoGiuliettaEnabled && validNames.length >= 5].filter(Boolean).length
+                  const active = [oracoloEnabled && validNames.length >= 4, riccioEnabled && validNames.length >= 5, duellantiEnabled, buffoneEnabled && validNames.length >= 5, eternoEnabled, romeoGiuliettaEnabled && validNames.length >= 5].filter(Boolean).length
                   return active > 0
                     ? <p className="text-teal-400 text-xs">{active} attiv{active === 1 ? 'o' : 'i'}</p>
                     : <p className="text-slate-500 text-xs">Nessuno attivo</p>
@@ -483,7 +483,7 @@ export default function SetupScreen() {
             </div>
             <span className="text-slate-500 text-sm">›</span>
           </motion.button>
-          {(oracoloEnabled && validNames.length >= 4 || riccioEnabled && validNames.length >= 5 || duellantiEnabled || buffoneEnabled && validNames.length >= 5 || spettroEnabled || romeoGiuliettaEnabled && validNames.length >= 5) && (
+          {(oracoloEnabled && validNames.length >= 4 || riccioEnabled && validNames.length >= 5 || duellantiEnabled || buffoneEnabled && validNames.length >= 5 || eternoEnabled || romeoGiuliettaEnabled && validNames.length >= 5) && (
             <div className="flex flex-wrap gap-1.5 px-4 pb-3">
               {oracoloEnabled && validNames.length >= 4 && (
                 <span className="inline-block rounded-full bg-purple-900/20 border border-purple-700/30 text-purple-400 text-xs font-bold px-2.5 py-0.5">
@@ -505,9 +505,9 @@ export default function SetupScreen() {
                   🃏 Buffone
                 </span>
               )}
-              {spettroEnabled && (
+              {eternoEnabled && (
                 <span className="inline-block rounded-full bg-cyan-500/20 border border-cyan-400/30 text-cyan-400 text-xs font-bold px-2.5 py-0.5">
-                  🎐 Eterno
+                  🎐 L'Eterno
                 </span>
               )}
               {romeoGiuliettaEnabled && validNames.length >= 5 && (
@@ -596,16 +596,16 @@ export default function SetupScreen() {
                 slotCost: 1,
               },
               {
-                id: 'spettro',
+                id: 'eterno',
                 label: 'L\'Eterno',
                 emoji: '🎐',
-                description: 'Può votare anche fuori dal gioco e, in caso di parità, decide chi eliminare.',
+                description: 'Vota anche se viene eliminato; in parità decide chi eliminare.',
                 bgBase: 'bg-cyan-500/10',
                 bgActive: 'bg-cyan-500/25',
                 borderBase: 'border-cyan-400/20',
                 borderActive: 'border-cyan-400/50',
                 toggleColor: 'bg-cyan-500',
-                enabled: spettroEnabled,
+                enabled: eternoEnabled,
                 minPlayers: 3,
                 slotCost: 1,
               },
@@ -629,7 +629,7 @@ export default function SetupScreen() {
             onToggle={(id) => {
               const roleMap: Record<string, { enabled: boolean; set: (v: boolean | ((prev: boolean) => boolean)) => void; cost: number }> = {
                 buffone: { enabled: buffoneEnabled, set: setBuffoneEnabled, cost: 1 },
-                spettro: { enabled: spettroEnabled, set: setSpettroEnabled, cost: 1 },
+                eterno: { enabled: eternoEnabled, set: setEternoEnabled, cost: 1 },
                 duellanti: { enabled: duellantiEnabled, set: setDuellantiEnabled, cost: 2 },
                 romeoGiulietta: { enabled: romeoGiuliettaEnabled, set: setRomeoGiuliettaEnabled, cost: 2 },
                 riccio: { enabled: riccioEnabled, set: setRiccioEnabled, cost: 1 },
