@@ -79,18 +79,17 @@
       url('./assets/brand/camaleonte-tropical-background.webp');
   }
 
-  /* Only the operational layer is softened: enough detail remains to retain
-     the festive jungle, without drawing the eye away from inputs and cards.
-     12px overscan conceals the blurred edges and keeps the stage seam-free. */
+  /* The operational WebP already contains a modest Gaussian blur.
+     No full-screen runtime filter is needed during navigation or scrolling.
+     A small 2px bleed hides fractional WebView edges. */
   .app-stage::after {
-    top: -12px;
-    left: -12px;
-    width: calc(100% + 24px);
-    height: calc(var(--stage-scene-height, 100%) + 24px);
+    top: -2px;
+    left: -2px;
+    width: calc(100% + 4px);
+    height: calc(var(--stage-scene-height, 100%) + 4px);
     background-image:
       linear-gradient(180deg, rgba(8, 13, 30, .46), rgba(8, 13, 30, .56) 40%, rgba(8, 13, 30, .66) 70%, rgba(8, 13, 30, .76)),
       url('./assets/brand/camaleonte-operational-background.webp');
-    filter: blur(3px);
     opacity: 1;
   }
 
