@@ -615,8 +615,8 @@ export default function ResultScreen() {
                 )}
                 {players.some(p => p.specialRole === 'spettro') && (
                   <div>
-                    <div className="text-cyan-400 font-semibold">Lo Spettro — vota dopo eliminazione</div>
-                    <div className="text-slate-500 mt-0.5">Continua a votare anche dopo essere stato eliminato</div>
+                    <div className="text-cyan-400 font-semibold">L'Eterno — vota oltre l'eliminazione</div>
+                    <div className="text-slate-500 mt-0.5">Vota anche eliminato e decide chi eliminare al primo pareggio</div>
                   </div>
                 )}
                 {players.some(p => p.specialRole === 'duellante') && (

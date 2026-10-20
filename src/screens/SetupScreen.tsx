@@ -507,7 +507,7 @@ export default function SetupScreen() {
               )}
               {spettroEnabled && (
                 <span className="inline-block rounded-full bg-cyan-500/20 border border-cyan-400/30 text-cyan-400 text-xs font-bold px-2.5 py-0.5">
-                  🎐 Spettro
+                  🎐 Eterno
                 </span>
               )}
               {romeoGiuliettaEnabled && validNames.length >= 5 && (
@@ -597,9 +597,9 @@ export default function SetupScreen() {
               },
               {
                 id: 'spettro',
-                label: 'Lo Spettro',
+                label: 'L\'Eterno',
                 emoji: '🎐',
-                description: 'Anche dopo essere stato eliminato, continua a votare.',
+                description: 'Può votare anche fuori dal gioco e, in caso di parità, decide chi eliminare.',
                 bgBase: 'bg-cyan-500/10',
                 bgActive: 'bg-cyan-500/25',
                 borderBase: 'border-cyan-400/20',

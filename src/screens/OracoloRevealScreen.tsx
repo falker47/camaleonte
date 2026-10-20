@@ -10,7 +10,7 @@ import camaleontePng from '../assets/camaleonte.png'
 
 const SPECIAL_ROLE_BADGES: Record<string, { emoji: string; label: string; classes: string }> = {
   buffone: { emoji: '🃏', label: 'Buffone', classes: 'bg-red-500/20 border-red-400/30 text-red-400' },
-  spettro: { emoji: '🎐', label: 'Spettro', classes: 'bg-cyan-500/20 border-cyan-400/30 text-cyan-400' },
+  spettro: { emoji: '🎐', label: 'Eterno', classes: 'bg-cyan-500/20 border-cyan-400/30 text-cyan-400' },
   duellante: { emoji: '⚔️', label: 'Duellante', classes: 'bg-blue-900/20 border-blue-700/30 text-blue-400' },
   romeo: { emoji: '💕', label: 'Romeo', classes: 'bg-rose-400/20 border-rose-300/30 text-rose-300' },
   giulietta: { emoji: '💕', label: 'Giulietta', classes: 'bg-rose-400/20 border-rose-300/30 text-rose-300' },

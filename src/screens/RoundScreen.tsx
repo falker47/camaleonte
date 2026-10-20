@@ -116,12 +116,26 @@ export default function RoundScreen() {
       )}
 
       {isLastChance && (
-        <div className="flex items-center gap-2.5 rounded-xl px-3.5 py-2.5"
-          style={{ background: 'rgba(220,38,38,0.1)', border: '1px solid rgba(220,38,38,0.3)' }}>
-          <span className="text-lg">⚠</span>
-          <div>
-            <p className="text-red-500 font-bold text-[13px]">Ultima possibilità</p>
-            <p className="text-red-400/70 text-[11px]">Un errore e gli impostori vincono</p>
+        <div
+          className="relative overflow-hidden rounded-2xl px-4 py-3.5"
+          style={{
+            background: 'linear-gradient(135deg, rgba(127,29,29,0.18), rgba(76,5,25,0.12))',
+            border: '1px solid rgba(251,113,133,0.28)',
+            boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.035)',
+          }}
+        >
+          <div className="relative z-10 flex items-center gap-3">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-rose-300/25 bg-rose-400/10">
+              <svg className="h-5 w-5 text-rose-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="9" />
+                <path d="M12 7v6" />
+                <path d="M12 17h.01" />
+              </svg>
+            </div>
+            <div>
+              <p className="text-rose-300 font-bold text-[13px]">Ultima possibilità</p>
+              <p className="text-rose-200/65 text-[11px]">Un voto sbagliato e vincono gli impostori</p>
+            </div>
           </div>
         </div>
       )}
@@ -147,23 +161,26 @@ export default function RoundScreen() {
 
       {/* Active players — the first vote now happens directly here. */}
       <div>
-        <div className="flex items-center justify-between gap-3 mb-2">
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
-            Giocatori in gioco
-          </p>
-          <div className="flex items-center gap-2">
-            {voteHistory.length > 0 && (
-              <button
-                onClick={handleUndoVote}
-                className="text-amber-400/80 hover:text-amber-300 text-[11px] font-semibold transition-colors"
-              >
-                ↩ Annulla
-              </button>
-            )}
-            <span className={`text-[11px] font-semibold ${allVoted ? 'text-rose-300' : 'text-slate-500'}`}>
-              {totalVotesCast}/{voterCount} voti
-            </span>
-          </div>
+        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
+          Giocatori in gioco
+        </p>
+        <div className="mt-2 mb-3 flex items-center gap-2">
+          <span className={`inline-flex min-h-8 items-center rounded-full border px-3 text-xs font-bold ${
+            allVoted
+              ? 'border-rose-400/30 bg-rose-500/10 text-rose-200'
+              : 'border-white/10 bg-white/[0.035] text-slate-300'
+          }`}>
+            {totalVotesCast} / {voterCount} voti
+          </span>
+          {voteHistory.length > 0 && (
+            <button
+              onClick={handleUndoVote}
+              className="inline-flex min-h-8 items-center gap-1.5 rounded-full border border-amber-300/20 bg-amber-300/[0.06] px-3 text-xs font-semibold text-amber-200 transition-colors hover:bg-amber-300/10"
+            >
+              <span aria-hidden="true">↶</span>
+              Annulla ultimo
+            </button>
+          )}
         </div>
         <div className="grid grid-cols-2 gap-2">
           {active.map((player) => {

@@ -82,7 +82,7 @@ export default function EliminationScreen() {
           )}
           {isSpettro && (
             <span className="inline-block rounded-full bg-cyan-500/20 border border-cyan-400/30 text-cyan-400 text-sm font-bold px-3 py-1">
-              🎐 Spettro
+              🎐 Eterno
             </span>
           )}
           {isRiccio && (
@@ -174,9 +174,9 @@ export default function EliminationScreen() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
         >
-          <p className="text-cyan-400 font-bold text-lg">Lo Spettro non svanisce!</p>
+          <p className="text-cyan-400 font-bold text-lg">L'Eterno resta presente!</p>
           <p className="text-slate-300 text-sm mt-2">
-            Continuerà a <span className="text-cyan-400 font-bold">votare</span> anche dall'aldilà.
+            Continuerà a <span className="text-cyan-400 font-bold">votare</span> e potrà decidere le parità.
           </p>
           <p className="text-slate-500 text-xs mt-2">Non darà indizi e non potrà essere votato.</p>
         </motion.div>

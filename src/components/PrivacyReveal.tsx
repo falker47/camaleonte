@@ -125,10 +125,10 @@ export default function PrivacyReveal({ playerName, word, role, specialRole, spe
                 {specialRole === 'spettro' && (
                   <div className="flex flex-col items-center justify-center gap-1">
                     <span className="inline-block rounded-full bg-cyan-800/30 border border-cyan-600/30 text-cyan-200 text-sm font-bold px-4 py-1">
-                      🎐 Lo Spettro
+                      🎐 L'Eterno
                     </span>
                     <p className={`text-xs text-center ${textColor} opacity-60`}>
-                      Se eliminato, continui a votare!
+                      Voti anche eliminato; in parità decidi chi eliminare.
                     </p>
                   </div>
                 )}
@@ -202,10 +202,10 @@ export default function PrivacyReveal({ playerName, word, role, specialRole, spe
                 {specialRole === 'spettro' && (
                   <div className="flex flex-col items-center justify-center gap-1.5">
                     <span className="inline-block rounded-full bg-cyan-500/20 border border-cyan-400/30 text-cyan-400 text-sm font-bold px-4 py-1">
-                      🎐 Lo Spettro
+                      🎐 L'Eterno
                     </span>
                     <p className={`text-sm text-center ${textColor} opacity-60`}>
-                      Anche se verrai eliminato, potrai continuare a votare!
+                      Voti anche eliminato; in parità decidi chi eliminare.
                     </p>
                   </div>
                 )}

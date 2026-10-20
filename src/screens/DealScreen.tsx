@@ -35,7 +35,7 @@ export default function DealScreen() {
   if (!current) return null
 
   return (
-    <div className="flex flex-col items-center flex-1 px-5 py-8 gap-6">
+    <div className="flex flex-col items-center flex-1 px-5 pt-14 pb-8 gap-6">
       <p className="text-teal-400/80 text-xs font-semibold">{formatMancheProgress(manche, players.length, config.duration)}</p>
 
       {/* Deal progress */}

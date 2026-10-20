@@ -35,7 +35,7 @@ Sono opzionali e aggiungono interazioni senza cambiare il modello single-device.
 | Ruolo | Min. giocatori | Effetto |
 |---|---:|---|
 | **Buffone** | 5 | Ottiene un bonus se viene eliminato al primo turno |
-| **Spettro** | 3 | Continua a votare dopo l'eliminazione |
+| **Eterno** | 3 | Vota anche dopo l'eliminazione e decide chi eliminare al primo pareggio |
 | **Duellanti** | 4 | Due rivali: chi cade per primo trasferisce punti all'altro |
 | **Romeo & Giulietta** | 5 | Se uno viene eliminato, cade anche l'altro |
 | **Riccio** | 5 | Quando viene eliminato trascina con sé un altro giocatore |
