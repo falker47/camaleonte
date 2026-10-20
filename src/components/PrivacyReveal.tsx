@@ -20,9 +20,9 @@ type Phase = 'waiting' | 'revealed' | 'hidden'
 
 // La Talpa usa stessi colori del civile — non deve sapere di esserlo
 const ROLE_COLORS: Record<Role, string> = {
-  civile: 'from-indigo-700 to-indigo-900',
-  talpa: 'from-indigo-700 to-indigo-900',
-  camaleonte: 'from-teal-700 to-teal-900',
+  civile: 'from-indigo-500/75 via-indigo-800/90 to-slate-950',
+  talpa: 'from-indigo-500/75 via-indigo-800/90 to-slate-950',
+  camaleonte: 'from-teal-400/70 via-teal-800/90 to-slate-950',
 }
 
 const ROLE_TEXT_COLORS: Record<Role, string> = {
@@ -77,7 +77,7 @@ export default function PrivacyReveal({ playerName, word, role, specialRole, spe
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ duration: 0.25 }}
-      className="flex flex-col items-center gap-6 w-full"
+      className="flex flex-col items-center gap-5 w-full"
     >
       {/* Card */}
       <div
@@ -90,37 +90,60 @@ export default function PrivacyReveal({ playerName, word, role, specialRole, spe
         >
           {/* Back — privacy */}
           <motion.div
-            className="absolute inset-0 backface-hidden rounded-3xl glass flex flex-col items-center justify-center gap-3 shadow-2xl"
-            style={{ borderColor: 'rgba(255,255,255,0.15)' }}
-            animate={phase === 'waiting' ? {
-              borderColor: [
-                'rgba(255,255,255,0.12)',
-                'rgba(99,102,241,0.6)',
-                'rgba(255,255,255,0.12)',
-              ],
-            } : {}}
-            transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+            className="absolute inset-0 backface-hidden overflow-hidden rounded-[28px] border border-white/15 bg-slate-900/95 shadow-[0_20px_55px_rgba(0,0,0,0.38),inset_0_1px_0_rgba(255,255,255,0.08)]"
+            style={{
+              background: 'radial-gradient(circle at 50% 0%, rgba(45,212,191,0.12), transparent 42%), linear-gradient(145deg, rgba(30,41,59,0.98), rgba(15,23,42,0.98))',
+            }}
           >
+            <div
+              className="absolute inset-0 pointer-events-none opacity-70"
+              style={{ background: 'linear-gradient(120deg, transparent 22%, rgba(255,255,255,0.035) 48%, transparent 74%)' }}
+            />
+            <img
+              src={camaleontePng}
+              alt=""
+              aria-hidden="true"
+              className="pointer-events-none absolute left-1/2 top-1/2 w-32 -translate-x-1/2 -translate-y-1/2 opacity-[0.055] grayscale"
+            />
+            <div className="pointer-events-none absolute inset-3 rounded-[22px] border border-white/[0.06]" />
+
             {phase === 'hidden' ? (
-              <>
-                <div className="text-5xl">✓</div>
-                <p className="text-slate-300 text-sm">Parola vista</p>
-              </>
+              <div className="relative z-10 flex h-full flex-col items-center justify-center gap-2">
+                <div className="mb-1 flex h-16 w-16 items-center justify-center rounded-2xl border border-teal-300/20 bg-teal-300/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
+                  <svg className="h-8 w-8 text-teal-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M5 12.5l4 4L19 6.5" />
+                  </svg>
+                </div>
+                <p className="text-base font-bold text-white">Parola vista</p>
+                <p className="text-xs text-slate-400">Ora è nascosta</p>
+              </div>
             ) : (
-              <>
-                <div className="text-5xl">👁️</div>
-                <p className="text-slate-300 text-sm">Tocca per rivelare</p>
-              </>
+              <div className="relative z-10 flex h-full flex-col items-center justify-center gap-2">
+                <div className="mb-1 flex h-16 w-16 items-center justify-center rounded-2xl border border-indigo-300/20 bg-indigo-300/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
+                  <svg className="h-8 w-8 text-indigo-100" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" />
+                    <circle cx="12" cy="12" r="2.5" />
+                  </svg>
+                </div>
+                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-teal-200/70">Carta privata</p>
+                <p className="text-base font-bold text-white">Tocca per rivelare</p>
+              </div>
             )}
           </motion.div>
           {/* Front — word */}
           <div
-            className={`absolute inset-0 backface-hidden rotate-y-180 rounded-3xl bg-gradient-to-br ${roleColor} border border-white/10 flex flex-col items-center justify-center gap-3 shadow-2xl px-6`}
+            className={`absolute inset-0 backface-hidden rotate-y-180 overflow-hidden rounded-[28px] bg-gradient-to-br ${roleColor} border border-white/15 shadow-[0_20px_55px_rgba(0,0,0,0.38),inset_0_1px_0_rgba(255,255,255,0.1)] px-6`}
           >
+            <div className="pointer-events-none absolute -right-10 -top-12 h-36 w-36 rounded-full bg-white/[0.08] blur-2xl" />
+            <div className="pointer-events-none absolute -bottom-14 -left-10 h-32 w-32 rounded-full bg-black/25 blur-2xl" />
+            <div className="pointer-events-none absolute inset-3 rounded-[22px] border border-white/[0.08]" />
+            <div className="relative z-10 flex h-full w-full flex-col items-center justify-center gap-3">
             {role === 'camaleonte' ? (
               <>
-                <img src={camaleontePng} alt="Il Camaleonte" className="w-12 h-12" />
-                <p className={`text-2xl font-black ${textColor}`}>Sei Il Camaleonte</p>
+                <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-white/15 bg-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.12)]">
+                  <img src={camaleontePng} alt="Il Camaleonte" className="h-11 w-11 drop-shadow-[0_5px_10px_rgba(0,0,0,0.25)]" />
+                </div>
+                <p className={`text-2xl font-black tracking-tight ${textColor}`}>Sei il Camaleonte</p>
                 <p className={`text-sm text-center ${textColor} opacity-80`}>Non hai nessuna parola. Bluffa!</p>
                 {specialRole === 'spettro' && (
                   <div className="mt-2 flex flex-col items-center gap-1">
@@ -185,10 +208,10 @@ export default function PrivacyReveal({ playerName, word, role, specialRole, spe
               </>
             ) : (
               <>
-                <p className={`text-xs uppercase tracking-widest ${textColor} opacity-70`}>
+                <p className={`text-[10px] font-bold uppercase tracking-[0.2em] ${textColor} opacity-65`}>
                   La tua parola
                 </p>
-                <p className={`text-3xl font-black text-center ${textColor}`}>{word}</p>
+                <p className={`text-4xl font-black tracking-tight text-center ${textColor}`}>{word}</p>
                 {specialRole === 'buffone' && (
                   <div className="mt-3 flex flex-col items-center gap-1.5">
                     <span className="inline-block rounded-full bg-red-500/20 border border-red-400/30 text-red-400 text-sm font-bold px-4 py-1">
@@ -261,6 +284,7 @@ export default function PrivacyReveal({ playerName, word, role, specialRole, spe
                 )}
               </>
             )}
+            </div>
           </div>
         </div>
 
@@ -289,7 +313,7 @@ export default function PrivacyReveal({ playerName, word, role, specialRole, spe
 
       {/* Buttons */}
       {phase === 'waiting' && (
-        <p className="text-slate-400 text-sm">Tocca la carta per vedere la tua parola</p>
+        <p className="text-slate-400 text-sm">Solo {playerName} deve guardare</p>
       )}
 
       {phase === 'revealed' && showHide && (

@@ -103,24 +103,34 @@ function InGameUtilityControls({
   const canInvalidate = INVALIDATE_SCREENS.has(screen)
 
   return (
-    <div className="absolute top-4 right-4 z-50 flex items-center overflow-hidden rounded-2xl bg-slate-950/95 border border-white/15 shadow-[0_8px_30px_rgba(0,0,0,0.35)] backdrop-blur-xl">
-      {canInvalidate && (
+    <div className="absolute top-2 left-1/2 z-50 -translate-x-1/2">
+      <div className="flex items-center gap-1.5 rounded-2xl border border-white/10 bg-slate-950/85 p-1 shadow-[0_10px_30px_rgba(0,0,0,0.32)] backdrop-blur-xl">
+        {canInvalidate && (
+          <button
+            onClick={onRequestInvalidate}
+            className="flex min-h-11 items-center gap-2 whitespace-nowrap rounded-xl px-3 text-xs font-semibold text-slate-200 transition-colors hover:bg-amber-300/10 hover:text-white active:bg-amber-300/15"
+            aria-label="Ricomincia manche"
+          >
+            <svg className="h-4 w-4 text-amber-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M3 12a9 9 0 1 0 3-6.7" />
+              <path d="M3 4v6h6" />
+            </svg>
+            <span>Ricomincia</span>
+          </button>
+        )}
         <button
-          onClick={onRequestInvalidate}
-          className="w-11 h-11 flex items-center justify-center text-lg font-bold text-amber-200 hover:text-white hover:bg-amber-300/10 active:bg-amber-300/15 transition-colors"
-          aria-label="Invalida manche"
+          onClick={onRequestQuit}
+          className="flex min-h-11 items-center gap-2 whitespace-nowrap rounded-xl px-3 text-xs font-semibold text-slate-200 transition-colors hover:bg-rose-300/10 hover:text-white active:bg-rose-300/15"
+          aria-label="Esci dalla partita"
         >
-          ⟳
+          <svg className="h-4 w-4 text-rose-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M10 17l5-5-5-5" />
+            <path d="M15 12H3" />
+            <path d="M14 3h5a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-5" />
+          </svg>
+          <span>Esci</span>
         </button>
-      )}
-      {canInvalidate && <div className="w-px h-6 bg-white/10" />}
-      <button
-        onClick={onRequestQuit}
-        className="w-11 h-11 flex items-center justify-center text-lg font-black text-rose-200 hover:text-white hover:bg-rose-300/10 active:bg-rose-300/15 transition-colors"
-        aria-label="Esci"
-      >
-        ✕
-      </button>
+      </div>
     </div>
   )
 }
@@ -159,7 +169,7 @@ function AnimatedScreen() {
       initial={shouldReduceMotion ? false : entrance}
       animate={{ x: 0, scale: 1 }}
       transition={{ duration: shouldReduceMotion ? 0 : 0.3, ease: 'easeOut' }}
-      className="flex flex-col flex-1 min-h-0"
+      className={`flex flex-col flex-1 min-h-0 ${IN_GAME_SCREENS.has(screen) ? 'pt-[60px] overflow-y-auto' : ''}`}
     >
       <ScreenComponent />
     </motion.div>
@@ -194,9 +204,9 @@ export default function App() {
         />
         <ConfirmDialog
           open={showInvalidate}
-          title="Invalida manche"
-          description="Sei sicuro? La manche verrà invalidata e ne comincerà una nuova."
-          confirmLabel="Invalida"
+          title="Ricominciare la manche?"
+          description="La manche attuale verrà annullata e ne inizierà una nuova."
+          confirmLabel="Ricomincia"
           variant="camaleonte"
           onConfirm={() => { setShowInvalidate(false); useGameStore.getState().invalidateRound() }}
           onCancel={() => setShowInvalidate(false)}
