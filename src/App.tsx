@@ -42,7 +42,11 @@ function getScreenEntrance(prev: Screen | null, current: Screen) {
     return { scale: 0.95 }
   }
 
-  if (prev === null) {
+  if (prev === null ||
+      (prev === 'home' && current === 'setup') ||
+      (prev === 'setup' && current === 'home')) {
+    // Setup contains glass surfaces and text inputs: animating the entire
+    // subtree produces extra compositing/repaints during a backdrop change.
     return false
   }
 

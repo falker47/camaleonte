@@ -50,8 +50,8 @@
 }
 
 @layer components {
-  /* Background is independent of the scrolling content. Its height is captured
-     once before soft-keyboard resizes; only a width/orientation change resets it. */
+  /* Both backdrops are mounted from launch so Home -> Setup never swaps
+     background-image on a single layer. Foreground content scrolls independently. */
   .app-stage {
     isolation: isolate;
   }
@@ -66,36 +66,39 @@
     height: var(--stage-scene-height, 100%);
     pointer-events: none;
     z-index: 0;
+    background-repeat: no-repeat;
+    background-position: center top, center top;
+    background-size: cover, cover;
+    background-color: #0f0a1e;
   }
 
+  /* The approved Home art is unchanged, including its original dark overlay. */
   .app-stage::before {
-    /* Dedicated operational foliage composition. Extra bleed covers fractional
-       WebView edges; no CSS filter, scroll transform or tiling can create a seam. */
-    top: -2px;
-    left: -2px;
-    width: calc(100% + 4px);
-    height: calc(var(--stage-scene-height, 100%) + 4px);
-    background: #071b34 url('./assets/brand/camaleonte-operational-background.webp') center top / cover no-repeat;
+    background-image:
+      linear-gradient(180deg, rgba(15, 10, 30, .18), rgba(15, 10, 30, .38) 34%, rgba(15, 10, 30, .75) 68%, rgba(15, 10, 30, .93)),
+      url('./assets/brand/camaleonte-tropical-background.webp');
   }
 
+  /* Only the operational layer is softened: enough detail remains to retain
+     the festive jungle, without drawing the eye away from inputs and cards.
+     12px overscan conceals the blurred edges and keeps the stage seam-free. */
   .app-stage::after {
-    background: linear-gradient(180deg,
-      rgba(8, 13, 30, .46),
-      rgba(8, 13, 30, .56) 40%,
-      rgba(8, 13, 30, .66) 70%,
-      rgba(8, 13, 30, .76));
+    top: -12px;
+    left: -12px;
+    width: calc(100% + 24px);
+    height: calc(var(--stage-scene-height, 100%) + 24px);
+    background-image:
+      linear-gradient(180deg, rgba(8, 13, 30, .46), rgba(8, 13, 30, .56) 40%, rgba(8, 13, 30, .66) 70%, rgba(8, 13, 30, .76)),
+      url('./assets/brand/camaleonte-operational-background.webp');
+    filter: blur(3px);
+    opacity: 1;
   }
 
-  .app-stage[data-screen='home']::before {
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: var(--stage-scene-height, 100%);
-    background-image: url('./assets/brand/camaleonte-tropical-background.webp');
-  }
-
+  /* Keep both bitmaps allocated; change only visibility, never their sizing.
+     No crossfade here: opacity animation of a fullscreen filtered layer is
+     needlessly expensive on Android WebView. */
   .app-stage[data-screen='home']::after {
-    background: linear-gradient(180deg, rgba(15, 10, 30, 0.18), rgba(15, 10, 30, 0.38) 34%, rgba(15, 10, 30, 0.75) 68%, rgba(15, 10, 30, 0.93));
+    opacity: 0;
   }
 
   .app-stage[data-screen='home'] .home-brand-image {

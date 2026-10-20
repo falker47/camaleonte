@@ -53,11 +53,6 @@ export default function SetupScreen() {
   const [oracoloEnabled, setOracoloEnabled] = useState(false)
   const [showSpecialRoles, setShowSpecialRoles] = useState(false)
 
-  // Auto-focus CTA input on mount
-  useEffect(() => {
-    ctaInputRef.current?.focus()
-  }, [])
-
   // Auto-focus new field after adding
   useEffect(() => {
     if (pendingFocus.current !== null) {
