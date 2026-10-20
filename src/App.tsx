@@ -103,12 +103,12 @@ function InGameUtilityControls({
   const canInvalidate = INVALIDATE_SCREENS.has(screen)
 
   return (
-    <div className="absolute top-2 left-1/2 z-50 flex -translate-x-1/2 items-center gap-2">
+    <div className="absolute top-3 left-1/2 z-50 flex -translate-x-1/2 items-center gap-2">
       {canInvalidate && (
-        <div className="rounded-2xl border border-white/10 bg-slate-950/85 p-1 shadow-[0_10px_30px_rgba(0,0,0,0.32)] backdrop-blur-xl">
+        <div className="rounded-2xl border border-white/10 bg-slate-950/85 p-0.5 shadow-[0_10px_30px_rgba(0,0,0,0.32)] backdrop-blur-xl">
           <button
             onClick={onRequestInvalidate}
-            className="flex min-h-11 items-center gap-2 whitespace-nowrap rounded-xl px-3 text-xs font-semibold text-slate-200 transition-colors hover:bg-amber-300/10 hover:text-white active:bg-amber-300/15"
+            className="flex min-h-10 items-center gap-2 whitespace-nowrap rounded-xl px-3 text-xs font-semibold text-slate-200 transition-colors hover:bg-amber-300/10 hover:text-white active:bg-amber-300/15"
             aria-label="Ricomincia manche"
           >
             <svg className="h-4 w-4 text-amber-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -119,10 +119,10 @@ function InGameUtilityControls({
           </button>
         </div>
       )}
-      <div className="rounded-2xl border border-white/10 bg-slate-950/85 p-1 shadow-[0_10px_30px_rgba(0,0,0,0.32)] backdrop-blur-xl">
+      <div className="rounded-2xl border border-white/10 bg-slate-950/85 p-0.5 shadow-[0_10px_30px_rgba(0,0,0,0.32)] backdrop-blur-xl">
         <button
           onClick={onRequestQuit}
-          className="flex min-h-11 items-center gap-2 whitespace-nowrap rounded-xl px-3 text-xs font-semibold text-slate-200 transition-colors hover:bg-rose-300/10 hover:text-white active:bg-rose-300/15"
+          className="flex min-h-10 items-center gap-2 whitespace-nowrap rounded-xl px-3 text-xs font-semibold text-slate-200 transition-colors hover:bg-rose-300/10 hover:text-white active:bg-rose-300/15"
           aria-label="Esci dalla partita"
         >
           <svg className="h-4 w-4 text-rose-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">

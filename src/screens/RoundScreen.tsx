@@ -6,6 +6,7 @@ import { springTap } from '../constants/animations'
 import { ROLE_BORDER_COLORS, ROLE_AVATAR_BG } from '../constants/roleColors'
 import { getSurvivalThreshold } from '../utils/winCondition'
 import { formatMancheProgress } from '../utils/gameDuration'
+import { vibrate } from '../utils/vibrate'
 import LastChanceOverlay from '../components/LastChanceOverlay'
 import talpaPng from '../assets/talpa.png'
 import camaleontePng from '../assets/camaleonte.png'
@@ -16,10 +17,19 @@ export default function RoundScreen() {
   const manche = useGameStore(s => s.manche)
   const config = useGameStore(s => s.config)
   const goTo = useGameStore(s => s.goTo)
+  const castVote = useGameStore(s => s.castVote)
+  const voteSession = useGameStore(s => s.voteSession)
+  const setVoteSession = useGameStore(s => s.setVoteSession)
   const oracoloRevealedIds = useGameStore(s => s.oracoloRevealedIds)
 
   const active = players.filter(p => !p.eliminated)
   const eliminated = players.filter(p => p.eliminated)
+  const eliminatedSpettro = players.find(p => p.eliminated && p.specialRole === 'spettro')
+  const voterCount = active.length + (eliminatedSpettro ? 1 : 0)
+  const { votes, voteHistory } = voteSession
+  const totalVotesCast = Object.values(votes).reduce((sum, count) => sum + count, 0)
+  const votersLeft = voterCount - totalVotesCast
+  const allVoted = totalVotesCast >= voterCount
 
   const isLastChance = active.length === getSurvivalThreshold(players.length) + 1
   const [showOverlay, setShowOverlay] = useState(isLastChance)
@@ -28,6 +38,56 @@ export default function RoundScreen() {
   const civili = active.filter(p => p.role === 'civile').length
   const camaleonti = active.filter(p => p.role === 'camaleonte').length
   const talpe = active.filter(p => p.role === 'talpa').length
+
+  const handleVote = (targetId: string) => {
+    if (votersLeft <= 0) return
+    vibrate()
+    setVoteSession(session => ({
+      ...session,
+      votes: { ...session.votes, [targetId]: (session.votes[targetId] ?? 0) + 1 },
+      voteHistory: [...session.voteHistory, targetId],
+    }))
+  }
+
+  const handleUndoVote = () => {
+    if (voteHistory.length === 0) return
+    const lastId = voteHistory[voteHistory.length - 1]
+    setVoteSession(session => {
+      const nextVotes = { ...session.votes }
+      nextVotes[lastId] = (nextVotes[lastId] ?? 1) - 1
+      if (nextVotes[lastId] <= 0) delete nextVotes[lastId]
+
+      return {
+        ...session,
+        votes: nextVotes,
+        voteHistory: session.voteHistory.slice(0, -1),
+      }
+    })
+  }
+
+  const resolveVotes = () => {
+    if (!allVoted) return
+
+    const maxVotes = Math.max(0, ...Object.values(votes))
+    const tied = Object.entries(votes)
+      .filter(([, count]) => count === maxVotes)
+      .map(([id]) => id)
+
+    if (tied.length <= 1) {
+      castVote(votes)
+      return
+    }
+
+    // The normal vote stays on this screen; only a tie needs the dedicated re-vote flow.
+    goTo('vote')
+    setVoteSession({
+      tieBreakIds: tied,
+      pendingDrawIds: null,
+      randomPickId: null,
+      votes: {},
+      voteHistory: [],
+    })
+  }
 
   return (
     <div className="flex flex-col flex-1 min-h-0 px-5 py-6 gap-5 overflow-y-auto">
@@ -85,19 +145,40 @@ export default function RoundScreen() {
         )}
       </div>
 
-      {/* Active players */}
+      {/* Active players — the first vote now happens directly here. */}
       <div>
-        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">
-          Giocatori in gioco
-        </p>
+        <div className="flex items-center justify-between gap-3 mb-2">
+          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
+            Giocatori in gioco
+          </p>
+          <div className="flex items-center gap-2">
+            {voteHistory.length > 0 && (
+              <button
+                onClick={handleUndoVote}
+                className="text-amber-400/80 hover:text-amber-300 text-[11px] font-semibold transition-colors"
+              >
+                ↩ Annulla
+              </button>
+            )}
+            <span className={`text-[11px] font-semibold ${allVoted ? 'text-rose-300' : 'text-slate-500'}`}>
+              {totalVotesCast}/{voterCount} voti
+            </span>
+          </div>
+        </div>
         <div className="grid grid-cols-2 gap-2">
           {active.map((player) => {
             const originalIndex = players.indexOf(player)
             const isRevealed = oracoloRevealedIds.includes(player.id)
+            const voteCount = votes[player.id] ?? 0
             return (
-              <div
+              <motion.button
                 key={player.id}
-                className={`flex items-center gap-3 glass rounded-2xl px-4 py-3 ${isRevealed ? ROLE_BORDER_COLORS[player.role] : ''}`}
+                type="button"
+                onClick={() => handleVote(player.id)}
+                disabled={allVoted}
+                aria-label={`Vota ${player.name}`}
+                className={`flex items-center gap-3 glass rounded-2xl px-4 py-3 text-left transition-all ${isRevealed ? ROLE_BORDER_COLORS[player.role] : ''} ${voteCount > 0 ? 'ring-1 ring-rose-400/50 bg-rose-500/[0.06]' : 'hover:border-white/15'}`}
+                {...(!allVoted ? springTap : {})}
               >
                 {isRevealed ? (
                   <div className={`w-8 h-8 rounded-full bg-gradient-to-br ${ROLE_AVATAR_BG[player.role]} flex items-center justify-center shrink-0`}>
@@ -114,8 +195,13 @@ export default function RoundScreen() {
                     {originalIndex + 1}
                   </div>
                 )}
-                <span className="text-white font-medium">{player.name}</span>
-              </div>
+                <span className="text-white font-medium flex-1">{player.name}</span>
+                {voteCount > 0 && (
+                  <span className="w-6 h-6 rounded-full bg-rose-500 text-white text-xs font-black flex items-center justify-center shrink-0">
+                    {voteCount}
+                  </span>
+                )}
+              </motion.button>
             )
           })}
         </div>
@@ -144,16 +230,23 @@ export default function RoundScreen() {
 
       <div className="mt-auto">
         <p className={`text-sm text-center mb-4 ${isLastChance ? 'text-red-400/70' : 'text-slate-400'}`}>
-          {isLastChance
-            ? 'Scegliete bene — non ci saranno altre occasioni'
-            : 'Dopo che tutti hanno dato il loro indizio, passate al voto'}
+          {allVoted
+            ? 'Votazione completa — conferma per continuare'
+            : isLastChance
+              ? 'Scegliete bene — toccate un giocatore per votarlo'
+              : 'Dopo gli indizi, toccate un giocatore per assegnare ciascun voto'}
         </p>
         <motion.button
-          onClick={() => goTo('vote')}
-          className="w-full bg-rose-600 hover:bg-rose-500 active:bg-rose-700 text-white font-bold py-5 rounded-2xl text-lg transition-colors shadow-[0_8px_32px_rgba(244,63,94,0.3)]"
-          {...springTap}
+          onClick={resolveVotes}
+          disabled={!allVoted}
+          className={`w-full font-bold py-5 rounded-2xl text-lg transition-all ${
+            allVoted
+              ? 'bg-rose-600 hover:bg-rose-500 active:bg-rose-700 text-white shadow-[0_8px_32px_rgba(244,63,94,0.3)]'
+              : 'bg-white/5 text-slate-500 cursor-not-allowed border border-white/5'
+          }`}
+          {...(allVoted ? springTap : {})}
         >
-          Vota l'impostore →
+          Conferma votazione
         </motion.button>
       </div>
     </div>
