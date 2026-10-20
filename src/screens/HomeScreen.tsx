@@ -87,24 +87,6 @@ export default function HomeScreen() {
       {/* A static glow keeps the illustration separate from the background. */}
       <div className="home-brand-glow" aria-hidden="true" />
 
-      {/* Confetti — mostly on the sides */}
-      <div className="confetti confetti-1" />
-      <div className="confetti confetti-2" />
-      <div className="confetti confetti-3" />
-      <div className="confetti confetti-4" />
-      <div className="confetti confetti-5" />
-      <div className="confetti confetti-6" />
-      <div className="confetti confetti-7" />
-      <div className="confetti confetti-8" />
-      <div className="confetti confetti-9" />
-      <div className="confetti confetti-10" />
-      <div className="confetti confetti-11" />
-      <div className="confetti confetti-12" />
-      <div className="confetti confetti-13" />
-      <div className="confetti confetti-14" />
-      <div className="confetti confetti-15" />
-      <div className="confetti confetti-16" />
-
       <div className="home-content z-10 flex flex-col items-center w-full shrink-0 my-auto">
         {/* The same transparent brand artwork is used by the launch screen. */}
         <h1 className="z-10 w-full max-w-[400px] shrink-0">

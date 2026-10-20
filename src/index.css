@@ -65,29 +65,25 @@
   }
 
   .app-stage::before {
+    /* Reuse the jungle without Home's separate bunting, foliage or brand foreground. */
+    inset: -8px; /* hide the soft-focus edge beyond the clipped stage */
     background: url('./assets/brand/camaleonte-tropical-background.webp') center / cover no-repeat;
-    opacity: 0.24;
-    filter: saturate(0.85);
+    opacity: 0.82;
+    filter: blur(4px) saturate(0.72) contrast(0.9) brightness(0.78);
   }
 
   .app-stage::after {
-    background: linear-gradient(180deg, rgba(15, 10, 30, 0.80), rgba(15, 10, 30, 0.91) 62%, rgba(15, 10, 30, 0.97));
+    background: linear-gradient(180deg, rgba(15, 10, 30, 0.50), rgba(15, 10, 30, 0.66) 48%, rgba(15, 10, 30, 0.86));
   }
 
   .app-stage[data-screen='home']::before {
+    inset: 0;
     opacity: 1;
     filter: none;
   }
 
   .app-stage[data-screen='home']::after {
     background: linear-gradient(180deg, rgba(15, 10, 30, 0.18), rgba(15, 10, 30, 0.38) 34%, rgba(15, 10, 30, 0.75) 68%, rgba(15, 10, 30, 0.93));
-  }
-
-  .app-stage[data-screen='setup']::before,
-  .app-stage[data-screen='elimination']::before,
-  .app-stage[data-screen='result']::before,
-  .app-stage[data-screen='final_result']::before {
-    opacity: 0.33;
   }
 
   .app-stage[data-screen='home'] .home-brand-image {
@@ -220,49 +216,6 @@
     .home-divider { margin-block: 12px; }
   }
 
-  /* Homepage — confetti */
-  .confetti {
-    position: absolute;
-    opacity: 0;
-    pointer-events: none;
-    animation: confetti-fall 7s ease-in-out infinite;
-  }
-
-  /* Top-left confetti */
-  .confetti-1  { width: 5px; height: 12px; border-radius: 2px; background: rgba(74,222,128,0.85);  top: 1%;  left: 6%;  animation-delay: 0s; }
-  .confetti-2  { width: 4px; height: 10px; border-radius: 2px; background: rgba(167,139,250,0.8);  top: 3%;  left: 18%; animation-delay: -1.5s; }
-  .confetti-3  { width: 7px; height: 7px;  border-radius: 50%; background: rgba(251,191,36,0.85);  top: 6%;  left: 3%;  animation-delay: -3s; }
-  .confetti-4  { width: 6px; height: 6px;  border-radius: 50%; background: rgba(244,114,182,0.8);  top: 2%;  left: 12%; animation-delay: -5s; }
-
-  /* Top-right confetti */
-  .confetti-5  { width: 5px; height: 12px; border-radius: 2px; background: rgba(34,211,238,0.85);  top: 1%;  right: 7%;  animation-delay: -2.5s; }
-  .confetti-6  { width: 4px; height: 10px; border-radius: 2px; background: rgba(45,212,191,0.85);  top: 4%;  right: 16%; animation-delay: -4s; }
-  .confetti-7  { width: 7px; height: 7px;  border-radius: 50%; background: rgba(251,113,133,0.8);  top: 2%;  right: 3%;  animation-delay: -1s; }
-  .confetti-8  { width: 6px; height: 6px;  border-radius: 50%; background: rgba(139,92,246,0.8);   top: 5%;  right: 12%; animation-delay: -3.5s; }
-
-  /* Left-side mid confetti */
-  .confetti-9  { width: 5px; height: 11px; border-radius: 2px; background: rgba(74,222,128,0.8);   top: 15%; left: 4%;  animation-delay: -6s; }
-  .confetti-10 { width: 4px; height: 10px; border-radius: 2px; background: rgba(251,191,36,0.8);   top: 28%; left: 6%;  animation-delay: -2s; }
-  .confetti-11 { width: 6px; height: 6px;  border-radius: 50%; background: rgba(244,114,182,0.8);  top: 40%; left: 3%;  animation-delay: -0.5s; }
-  .confetti-12 { width: 5px; height: 12px; border-radius: 2px; background: rgba(167,139,250,0.8);  top: 55%; left: 8%;  animation-delay: -4.5s; }
-
-  /* Right-side mid confetti */
-  .confetti-13 { width: 5px; height: 11px; border-radius: 2px; background: rgba(34,211,238,0.8);   top: 18%; right: 5%; animation-delay: -2.8s; }
-  .confetti-14 { width: 4px; height: 10px; border-radius: 2px; background: rgba(45,212,191,0.8);   top: 30%; right: 7%; animation-delay: -5.5s; }
-  .confetti-15 { width: 7px; height: 7px;  border-radius: 50%; background: rgba(251,191,36,0.8);   top: 42%; right: 4%; animation-delay: -1.8s; }
-  .confetti-16 { width: 5px; height: 12px; border-radius: 2px; background: rgba(139,92,246,0.8);   top: 58%; right: 9%; animation-delay: -3.8s; }
-
-  @keyframes confetti-fall {
-    0%   { opacity: 0;   transform: translateY(0)    rotate(0deg); }
-    10%  { opacity: 0.9; }
-    90%  { opacity: 0.9; }
-    100% { opacity: 0;   transform: translateY(85vh) rotate(720deg); }
-  }
 
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .confetti {
-    animation: none;
-  }
-}
