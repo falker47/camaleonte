@@ -150,7 +150,7 @@ export function migrateGameSnapshot(input: unknown): GameSnapshotV1 | null {
       : input.state.screen
 
   // Version 1 also covers older saves: normalize legacy role identifiers on read.
-  const normalizedConfig = {
+  const normalizedConfig: Record<string, unknown> = {
     ...input.state.config,
     duration: normalizedDuration,
   }
