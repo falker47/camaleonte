@@ -122,33 +122,24 @@ export default function SpecialRolesOverlay({ roles, playerCount, slotsRemaining
                 aria-pressed={active}
                 aria-disabled={disabled}
                 onClick={() => handleRolePress(role)}
-                className={`relative isolate flex w-full items-center gap-3 overflow-hidden rounded-2xl border px-3.5 py-3 text-left transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-300 ${disabled
-                  ? 'border-white/20 bg-slate-800/85'
+                className={`relative isolate flex w-full items-center gap-3 overflow-hidden rounded-2xl border px-3.5 py-2.5 text-left transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-300 ${disabled
+                  ? 'border-white/10 bg-slate-900/65'
                   : active
                     ? `${role.borderActive} bg-slate-700/85 shadow-[inset_0_1px_0_rgba(255,255,255,0.10)]`
                     : `${role.borderBase} bg-slate-800/85 hover:border-teal-200/40 hover:bg-slate-700/85`
                   }`}
               >
-                <span aria-hidden="true" className={`pointer-events-none absolute inset-0 ${role.bgActive} ${disabled ? 'opacity-35' : active ? 'opacity-80' : 'opacity-60'}`} />
-                <span aria-hidden="true" className={`pointer-events-none absolute inset-y-3 left-0 w-[3px] rounded-full ${role.toggleColor} ${disabled ? 'opacity-40' : active ? 'opacity-100' : 'opacity-65'}`} />
-                <span aria-hidden="true" className={`relative z-10 shrink-0 text-3xl ${disabled ? 'saturate-75' : ''}`}>{role.emoji}</span>
+                <span aria-hidden="true" className={`pointer-events-none absolute inset-0 ${role.bgActive} ${disabled ? 'opacity-20' : active ? 'opacity-80' : 'opacity-60'}`} />
+                <span aria-hidden="true" className={`pointer-events-none absolute inset-y-3 left-0 w-[3px] rounded-full ${role.toggleColor} ${disabled ? 'opacity-30' : active ? 'opacity-100' : 'opacity-65'}`} />
+                <span aria-hidden="true" className={`relative z-10 shrink-0 text-3xl ${disabled ? 'saturate-75 opacity-75' : ''}`}>{role.emoji}</span>
                 <div className="relative z-10 min-w-0 flex-1">
-                  <p className="text-base font-bold leading-tight text-white">{role.label}</p>
-                  <span className={`mt-1 inline-flex max-w-full items-center gap-1 rounded-md px-2 py-1 text-[11px] font-semibold leading-tight ${disabled
-                    ? 'bg-amber-300/15 text-amber-100 ring-1 ring-amber-300/30'
-                    : 'bg-slate-500/20 text-slate-300'
-                    }`}>
-                    {disabled && (
-                      <svg aria-hidden="true" className="h-3 w-3 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <rect x="5" y="11" width="14" height="10" rx="2" />
-                        <path d="M8 11V7a4 4 0 0 1 8 0v4" />
-                      </svg>
-                    )}
+                  <p className={`text-base font-bold leading-tight ${disabled ? 'text-slate-200' : 'text-white'}`}>{role.label}</p>
+                  <p className={`mt-0.5 text-[11px] font-medium leading-tight ${disabled ? 'text-amber-200/75' : 'text-slate-400'}`}>
                     {locked ? `Minimo ${role.minPlayers} giocatori` : noSlots ? 'Slot insufficienti' : `Min. ${role.minPlayers} giocatori`}
-                  </span>
-                  <p className={`mt-1.5 text-[13px] leading-snug ${disabled ? 'text-slate-300' : 'text-slate-200'}`}>{role.description}</p>
+                  </p>
+                  <p className={`mt-1 text-[13px] leading-snug ${disabled ? 'text-slate-400' : 'text-slate-200'}`}>{role.description}</p>
                 </div>
-                <div aria-hidden="true" className={`relative z-10 flex h-7 w-12 shrink-0 items-center rounded-full transition-colors ${active ? role.toggleColor : 'bg-slate-400/25'}`}>
+                <div aria-hidden="true" className={`relative z-10 flex h-7 w-12 shrink-0 items-center rounded-full transition-colors ${active ? role.toggleColor : disabled ? 'bg-slate-500/15 opacity-65' : 'bg-slate-400/25'}`}>
                   <motion.div
                     className="h-5 w-5 rounded-full bg-white shadow-md"
                     animate={{ x: active ? 22 : 3 }}
