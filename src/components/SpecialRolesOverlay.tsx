@@ -90,7 +90,7 @@ export default function SpecialRolesOverlay({ roles, playerCount, slotsRemaining
                   <span className="text-slate-500 text-[10px] -mt-0.5 block">
                     {noSlots ? 'Slot insufficienti' : `Min. ${role.minPlayers} giocatori`}
                   </span>
-                  <p className="text-slate-400 text-xs mt-0.5">{role.description}</p>
+                  <p className="text-slate-300 text-[13px] leading-snug mt-1">{role.description}</p>
                 </div>
                 <div className={`w-12 h-7 rounded-full transition-colors shrink-0 flex items-center ${active ? role.toggleColor : 'bg-white/10'
                   }`}>

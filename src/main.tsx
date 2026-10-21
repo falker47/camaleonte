@@ -1,33 +1,47 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
 import { Capacitor } from '@capacitor/core'
-import './index.css'
-import App from './App'
-import { startGamePersistence } from './store/gamePersistence'
+import { prepareLaunch, showLaunchError } from './lib/launch'
+
+prepareLaunch()
 
 if (Capacitor.isNativePlatform()) {
-  import('@capacitor/status-bar').then(({ StatusBar, Style }) => {
-    StatusBar.setBackgroundColor({ color: '#0f0a1e' })
-    StatusBar.setStyle({ style: Style.Dark })
+  void import('@capacitor/status-bar').then(({ StatusBar, Style }) => {
+    return Promise.all([
+      StatusBar.setBackgroundColor({ color: '#0f0a1e' }),
+      StatusBar.setStyle({ style: Style.Dark }),
+    ])
+  }).catch(error => {
+    console.warn('Unable to configure status bar', error)
   })
 }
 
 if (!Capacitor.isNativePlatform()) {
-  import('virtual:pwa-register').then(({ registerSW }) => {
+  void import('virtual:pwa-register').then(({ registerSW }) => {
     registerSW({
       onRegisteredSW(_swUrl, registration) {
         if (registration) {
-          setInterval(() => { registration.update() }, 60 * 1000)
+          setInterval(() => { void registration.update().catch(() => {}) }, 60 * 1000)
         }
       },
     })
+  }).catch(error => {
+    console.warn('Unable to register service worker', error)
   })
 }
 
-startGamePersistence()
+// Keep the shell/native handoff available while React and the game load.
+void Promise.all([
+  import('react'),
+  import('react-dom/client'),
+  import('./App'),
+  import('./components/AppReady'),
+  import('./store/gamePersistence'),
+  import('./index.css'),
+]).then(([{ StrictMode, createElement }, { createRoot }, { default: App }, { default: AppReady }, { startGamePersistence }]) => {
+  startGamePersistence()
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
-)
+  createRoot(document.getElementById('root')!, {
+    onUncaughtError: showLaunchError,
+  }).render(
+    createElement(StrictMode, null, createElement(App), createElement(AppReady)),
+  )
+}).catch(showLaunchError)

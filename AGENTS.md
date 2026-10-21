@@ -63,7 +63,7 @@ Non modificare `package-lock.json` salvo aggiornamenti reali di dipendenze.
 ## Regole Di Gioco Da Preservare
 
 - Ruoli base: `civile`, `talpa`, `camaleonte`.
-- Ruoli speciali: `buffone`, `spettro`, `duellante`, `romeo`, `giulietta`,
+- Ruoli speciali: `buffone`, `eterno`, `duellante`, `romeo`, `giulietta`,
   `riccio`, `oracolo`.
 - La Talpa riceve una parola diversa ma non sa di essere impostore.
 - Il Camaleonte non riceve una parola; se eliminato puo' indovinare la parola

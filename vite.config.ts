@@ -17,7 +17,7 @@ export default defineConfig({
         name: 'Camaleonte — Gioco di Deduzione',
         short_name: 'Camaleonte',
         description: 'Il gioco di deduzione sociale per feste',
-        theme_color: '#0f766e',
+        theme_color: '#0f0a1e',
         background_color: '#0f0a1e',
         display: 'standalone',
         orientation: 'portrait',
@@ -49,7 +49,7 @@ export default defineConfig({
         ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+        globPatterns: ['**/*.{js,css,html,ico,png,webp,svg,woff2}'],
         maximumFileSizeToCacheInBytes: 10 * 1024 * 1024,
         clientsClaim: true,
         skipWaiting: true,

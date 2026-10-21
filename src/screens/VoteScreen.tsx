@@ -16,8 +16,8 @@ export default function VoteScreen() {
   const setVoteSession = useGameStore(s => s.setVoteSession)
 
   const active = players.filter(p => !p.eliminated)
-  const eliminatedSpettro = players.find(p => p.eliminated && p.specialRole === 'spettro')
-  const voterCount = active.length + (eliminatedSpettro ? 1 : 0)
+  const eterno = players.find(p => p.specialRole === 'eterno') ?? null
+  const eliminatedEterno = eterno?.eliminated ? eterno : null
 
   const {
     votes,
@@ -26,6 +26,9 @@ export default function VoteScreen() {
     pendingDrawIds,
     randomPickId,
   } = voteSession
+
+  const isEternoDecision = tieBreak !== null && eterno !== null
+  const voterCount = isEternoDecision ? 1 : active.length + (eliminatedEterno ? 1 : 0)
 
   const pendingDraw = pendingDrawIds
     ? pendingDrawIds
@@ -125,7 +128,7 @@ export default function VoteScreen() {
         <BackButton onClick={() => goTo('round')} />
         <div className="flex-1">
           <h2 className="text-2xl font-black text-white">
-            {tieBreak ? 'Pareggio! Ri-voto' : 'Chi eliminare?'}
+            {isEternoDecision ? "L'Eterno decide" : tieBreak ? 'Pareggio! Ri-voto' : 'Chi eliminare?'}
           </h2>
         </div>
       </div>
@@ -184,7 +187,9 @@ export default function VoteScreen() {
             <div className="flex items-baseline gap-1">
               <span className="text-white font-black text-lg">{totalVotesCast}/{voterCount}</span>
               <span className="text-slate-500 text-xs">
-                {allVoted ? 'hanno votato tutti!' : 'voti'}
+                {isEternoDecision
+                  ? (allVoted ? 'scelta pronta' : 'scelta')
+                  : (allVoted ? 'hanno votato tutti!' : 'voti')}
               </span>
             </div>
             <div className="flex gap-2">
@@ -209,23 +214,34 @@ export default function VoteScreen() {
         </div>
 
         {/* Tie info */}
-        {tieBreak && (
+        {tieBreak && isEternoDecision ? (
+          <div
+            className="flex items-center gap-3 rounded-2xl px-4 py-3"
+            style={{ background: 'rgba(6,182,212,0.1)', border: '1px solid rgba(34,211,238,0.28)' }}
+          >
+            <span className="text-xl" aria-hidden="true">🎐</span>
+            <div>
+              <p className="text-cyan-300 font-bold text-[13px]">L'Eterno spezza la parità</p>
+              <p className="text-cyan-100/55 text-[11px]">Passate il telefono all'Eterno: sceglie chi eliminare.</p>
+            </div>
+          </div>
+        ) : tieBreak ? (
           <p className="text-amber-400 text-sm glass rounded-xl px-4 py-2" style={{ borderColor: 'rgba(251, 191, 36, 0.2)' }}>
             Pareggio tra {tiePlayers!.map(p => p.name).join(' e ')}. Votate di nuovo.
           </p>
-        )}
+        ) : null}
 
-        {/* Spettro banner */}
-        {eliminatedSpettro && (
+        {/* Eterno eliminated: still casts one vote in ordinary voting. */}
+        {eliminatedEterno && !isEternoDecision && (
           <div className="flex items-center gap-2.5 rounded-xl px-3.5 py-2.5"
             style={{ background: 'rgba(6,182,212,0.1)', border: '1px solid rgba(6,182,212,0.3)' }}>
             <span className="text-lg">🎐</span>
             <div>
               <p className="text-cyan-400 font-bold text-[13px]">
-                {eliminatedSpettro.name} vota dall'aldilà
+                {eliminatedEterno.name} vota ancora
               </p>
               <p className="text-cyan-400/60 text-[11px]">
-                Lo Spettro ha ancora 1 voto
+                L'Eterno conserva 1 voto
               </p>
             </div>
           </div>
@@ -261,7 +277,7 @@ export default function VoteScreen() {
           whileHover={allVoted ? { scale: 1.02 } : {}}
           whileTap={allVoted ? { scale: 0.97 } : {}}
         >
-          {tieBreak ? 'Conferma eliminazione' : 'Elimina il pi\u00f9 votato'}
+          {isEternoDecision ? 'Conferma scelta' : tieBreak ? 'Conferma eliminazione' : 'Elimina il pi\u00f9 votato'}
         </motion.button>
       </>)}
     </div>

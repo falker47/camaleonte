@@ -50,6 +50,64 @@
 }
 
 @layer components {
+  /* Both backdrops are mounted from launch so Home -> Setup never swaps
+     background-image on a single layer. Foreground content scrolls independently. */
+  .app-stage {
+    isolation: isolate;
+  }
+
+  .app-stage::before,
+  .app-stage::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: var(--stage-scene-height, 100%);
+    pointer-events: none;
+    z-index: 0;
+    background-repeat: no-repeat;
+    background-position: center top, center top;
+    background-size: cover, cover;
+    background-color: #0f0a1e;
+  }
+
+  /* The approved Home art is unchanged, including its original dark overlay. */
+  .app-stage::before {
+    background-image:
+      linear-gradient(180deg, rgba(15, 10, 30, .18), rgba(15, 10, 30, .38) 34%, rgba(15, 10, 30, .75) 68%, rgba(15, 10, 30, .93)),
+      url('./assets/brand/camaleonte-tropical-background.webp');
+  }
+
+  /* The operational WebP already contains a modest Gaussian blur.
+     No full-screen runtime filter is needed during navigation or scrolling.
+     A small 2px bleed hides fractional WebView edges. */
+  .app-stage::after {
+    top: -2px;
+    left: -2px;
+    width: calc(100% + 4px);
+    height: calc(var(--stage-scene-height, 100%) + 4px);
+    background-image:
+      linear-gradient(180deg, rgba(8, 13, 30, .46), rgba(8, 13, 30, .56) 40%, rgba(8, 13, 30, .66) 70%, rgba(8, 13, 30, .76)),
+      url('./assets/brand/camaleonte-operational-background.webp');
+    opacity: 1;
+  }
+
+  /* Keep both bitmaps allocated; change only visibility, never their sizing.
+     No crossfade here: opacity animation of a fullscreen filtered layer is
+     needlessly expensive on Android WebView. */
+  .app-stage[data-screen='home']::after {
+    opacity: 0;
+  }
+
+  .app-stage[data-screen='home'] .home-brand-image {
+    filter: drop-shadow(0 12px 22px rgba(0, 0, 0, 0.45));
+  }
+
+  .app-stage[data-screen='home'] .home-tagline {
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+  }
+
   .glass {
     background: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(16px);
@@ -146,103 +204,32 @@
     transform: rotateY(180deg);
   }
 
-  /* Homepage — ambient blobs */
-  .blob {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(80px);
-    opacity: 0.55;
-    animation: blob-float 8s ease-in-out infinite;
-    pointer-events: none;
-  }
-  .blob-1 {
-    width: 250px; height: 250px;
-    background: radial-gradient(circle, rgba(45,212,191,0.45), transparent 70%);
-    top: 10%; left: -20%;
-  }
-  .blob-2 {
-    width: 200px; height: 200px;
-    background: radial-gradient(circle, rgba(139,92,246,0.35), transparent 70%);
-    bottom: 20%; right: -15%;
-    animation-delay: -3s;
-  }
-  .blob-3 {
-    width: 150px; height: 150px;
-    background: radial-gradient(circle, rgba(74,222,128,0.25), transparent 70%);
-    top: 50%; left: 60%;
-    animation-delay: -5s;
-  }
+  /* The brand artwork includes its own shadows; keep the ambient light static. */
+  .home-screen { padding-top: 80px; }
+  .home-divider { margin-block: 20px; }
 
-  @keyframes blob-float {
-    0%, 100% { transform: translate(0, 0) scale(1); }
-    33% { transform: translate(15px, -20px) scale(1.05); }
-    66% { transform: translate(-10px, 15px) scale(0.95); }
-  }
-
-  /* Homepage — center glow */
-  .center-glow {
+  .home-brand-glow {
     position: absolute;
-    top: 28%;
+    top: 34%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 320px;
-    height: 320px;
-    background: radial-gradient(circle, rgba(45,212,191,0.18) 0%, rgba(74,222,128,0.1) 25%, rgba(139,92,246,0.08) 45%, transparent 65%);
-    border-radius: 50%;
-    animation: glow-pulse 4s ease-in-out infinite;
+    width: min(90%, 420px);
+    height: 360px;
+    background: radial-gradient(ellipse, rgba(45, 212, 191, 0.13), rgba(74, 222, 128, 0.05) 40%, transparent 70%);
     pointer-events: none;
   }
 
-  @keyframes glow-pulse {
-    0%, 100% { opacity: 0.6; transform: translate(-50%, -50%) scale(1); }
-    50% { opacity: 1; transform: translate(-50%, -50%) scale(1.15); }
+  .home-brand-image {
+    max-height: min(31svh, 240px);
   }
 
-  /* Homepage — confetti */
-  .confetti {
-    position: absolute;
-    opacity: 0;
-    pointer-events: none;
-    animation: confetti-fall 7s ease-in-out infinite;
+  /* Preserve room for both game actions on shorter phones. */
+  @media (max-height: 700px) {
+    .home-screen { padding-top: 64px; }
+    .home-brand-image { max-height: 24svh; }
+    .home-divider { margin-block: 12px; }
   }
 
-  /* Top-left confetti */
-  .confetti-1  { width: 5px; height: 12px; border-radius: 2px; background: rgba(74,222,128,0.85);  top: 1%;  left: 6%;  animation-delay: 0s; }
-  .confetti-2  { width: 4px; height: 10px; border-radius: 2px; background: rgba(167,139,250,0.8);  top: 3%;  left: 18%; animation-delay: -1.5s; }
-  .confetti-3  { width: 7px; height: 7px;  border-radius: 50%; background: rgba(251,191,36,0.85);  top: 6%;  left: 3%;  animation-delay: -3s; }
-  .confetti-4  { width: 6px; height: 6px;  border-radius: 50%; background: rgba(244,114,182,0.8);  top: 2%;  left: 12%; animation-delay: -5s; }
 
-  /* Top-right confetti */
-  .confetti-5  { width: 5px; height: 12px; border-radius: 2px; background: rgba(34,211,238,0.85);  top: 1%;  right: 7%;  animation-delay: -2.5s; }
-  .confetti-6  { width: 4px; height: 10px; border-radius: 2px; background: rgba(45,212,191,0.85);  top: 4%;  right: 16%; animation-delay: -4s; }
-  .confetti-7  { width: 7px; height: 7px;  border-radius: 50%; background: rgba(251,113,133,0.8);  top: 2%;  right: 3%;  animation-delay: -1s; }
-  .confetti-8  { width: 6px; height: 6px;  border-radius: 50%; background: rgba(139,92,246,0.8);   top: 5%;  right: 12%; animation-delay: -3.5s; }
-
-  /* Left-side mid confetti */
-  .confetti-9  { width: 5px; height: 11px; border-radius: 2px; background: rgba(74,222,128,0.8);   top: 15%; left: 4%;  animation-delay: -6s; }
-  .confetti-10 { width: 4px; height: 10px; border-radius: 2px; background: rgba(251,191,36,0.8);   top: 28%; left: 6%;  animation-delay: -2s; }
-  .confetti-11 { width: 6px; height: 6px;  border-radius: 50%; background: rgba(244,114,182,0.8);  top: 40%; left: 3%;  animation-delay: -0.5s; }
-  .confetti-12 { width: 5px; height: 12px; border-radius: 2px; background: rgba(167,139,250,0.8);  top: 55%; left: 8%;  animation-delay: -4.5s; }
-
-  /* Right-side mid confetti */
-  .confetti-13 { width: 5px; height: 11px; border-radius: 2px; background: rgba(34,211,238,0.8);   top: 18%; right: 5%; animation-delay: -2.8s; }
-  .confetti-14 { width: 4px; height: 10px; border-radius: 2px; background: rgba(45,212,191,0.8);   top: 30%; right: 7%; animation-delay: -5.5s; }
-  .confetti-15 { width: 7px; height: 7px;  border-radius: 50%; background: rgba(251,191,36,0.8);   top: 42%; right: 4%; animation-delay: -1.8s; }
-  .confetti-16 { width: 5px; height: 12px; border-radius: 2px; background: rgba(139,92,246,0.8);   top: 58%; right: 9%; animation-delay: -3.8s; }
-
-  @keyframes confetti-fall {
-    0%   { opacity: 0;   transform: translateY(0)    rotate(0deg); }
-    10%  { opacity: 0.9; }
-    90%  { opacity: 0.9; }
-    100% { opacity: 0;   transform: translateY(85vh) rotate(720deg); }
-  }
-
-  /* Homepage — title glow */
-  .title-glow {
-    text-shadow:
-      0 0 40px rgba(45,212,191,0.5),
-      0 0 80px rgba(139,92,246,0.3),
-      0 0 60px rgba(74,222,128,0.25);
-    letter-spacing: 4px;
-  }
 }
+

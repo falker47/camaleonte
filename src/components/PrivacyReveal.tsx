@@ -122,18 +122,18 @@ export default function PrivacyReveal({ playerName, word, role, specialRole, spe
                 <img src={camaleontePng} alt="Il Camaleonte" className="w-12 h-12" />
                 <p className={`text-2xl font-black ${textColor}`}>Sei Il Camaleonte</p>
                 <p className={`text-sm text-center ${textColor} opacity-80`}>Non hai nessuna parola. Bluffa!</p>
-                {specialRole === 'spettro' && (
-                  <div className="mt-2 flex flex-col items-center gap-1">
+                {specialRole === 'eterno' && (
+                  <div className="flex flex-col items-center justify-center gap-1">
                     <span className="inline-block rounded-full bg-cyan-800/30 border border-cyan-600/30 text-cyan-200 text-sm font-bold px-4 py-1">
-                      🎐 Lo Spettro
+                      🎐 L'Eterno
                     </span>
-                    <p className={`text-xs text-center ${textColor} opacity-60`}>
-                      Se eliminato, continui a votare!
+                    <p className={`text-[13px] leading-snug text-center ${textColor} opacity-80`}>
+                      Vota anche se viene eliminato; in parità decide chi eliminare.
                     </p>
                   </div>
                 )}
                 {specialRole === 'duellante' && (
-                  <div className="mt-2 flex flex-col items-center gap-1">
+                  <div className="flex flex-col items-center justify-center gap-1">
                     <span className="inline-block rounded-full bg-blue-800/30 border border-blue-600/30 text-blue-200 text-sm font-bold px-4 py-1">
                       ⚔️ Il Duellante
                     </span>
@@ -143,7 +143,7 @@ export default function PrivacyReveal({ playerName, word, role, specialRole, spe
                   </div>
                 )}
                 {specialRole === 'romeo' && (
-                  <div className="mt-2 flex flex-col items-center gap-1">
+                  <div className="flex flex-col items-center justify-center gap-1">
                     <span className="inline-block rounded-full bg-rose-600/30 border border-rose-400/30 text-rose-200 text-sm font-bold px-4 py-1">
                       💕 Romeo
                     </span>
@@ -153,7 +153,7 @@ export default function PrivacyReveal({ playerName, word, role, specialRole, spe
                   </div>
                 )}
                 {specialRole === 'giulietta' && (
-                  <div className="mt-2 flex flex-col items-center gap-1">
+                  <div className="flex flex-col items-center justify-center gap-1">
                     <span className="inline-block rounded-full bg-rose-600/30 border border-rose-400/30 text-rose-200 text-sm font-bold px-4 py-1">
                       💕 Giulietta
                     </span>
@@ -163,7 +163,7 @@ export default function PrivacyReveal({ playerName, word, role, specialRole, spe
                   </div>
                 )}
                 {specialRole === 'riccio' && (
-                  <div className="mt-2 flex flex-col items-center gap-1">
+                  <div className="flex flex-col items-center justify-center gap-1">
                     <span className="inline-block rounded-full bg-yellow-800/30 border border-yellow-600/30 text-yellow-200 text-sm font-bold px-4 py-1">
                       🦔 Il Riccio
                     </span>
@@ -173,7 +173,7 @@ export default function PrivacyReveal({ playerName, word, role, specialRole, spe
                   </div>
                 )}
                 {specialRole === 'oracolo' && (
-                  <div className="mt-2 flex flex-col items-center gap-1">
+                  <div className="flex flex-col items-center justify-center gap-1">
                     <span className="inline-block rounded-full bg-purple-950/40 border border-purple-700/30 text-purple-300 text-sm font-bold px-4 py-1">
                       🔮 L'Oracolo
                     </span>
@@ -190,7 +190,7 @@ export default function PrivacyReveal({ playerName, word, role, specialRole, spe
                 </p>
                 <p className={`text-3xl font-black text-center ${textColor}`}>{word}</p>
                 {specialRole === 'buffone' && (
-                  <div className="mt-3 flex flex-col items-center gap-1.5">
+                  <div className="flex flex-col items-center justify-center gap-1.5">
                     <span className="inline-block rounded-full bg-red-500/20 border border-red-400/30 text-red-400 text-sm font-bold px-4 py-1">
                       🃏 Il Buffone
                     </span>
@@ -199,18 +199,18 @@ export default function PrivacyReveal({ playerName, word, role, specialRole, spe
                     </p>
                   </div>
                 )}
-                {specialRole === 'spettro' && (
-                  <div className="mt-3 flex flex-col items-center gap-1.5">
+                {specialRole === 'eterno' && (
+                  <div className="flex flex-col items-center justify-center gap-1.5">
                     <span className="inline-block rounded-full bg-cyan-500/20 border border-cyan-400/30 text-cyan-400 text-sm font-bold px-4 py-1">
-                      🎐 Lo Spettro
+                      🎐 L'Eterno
                     </span>
-                    <p className={`text-sm text-center ${textColor} opacity-60`}>
-                      Anche se verrai eliminato, potrai continuare a votare!
+                    <p className={`text-[13px] leading-snug text-center ${textColor} opacity-80`}>
+                      Vota anche se viene eliminato; in parità decide chi eliminare.
                     </p>
                   </div>
                 )}
                 {specialRole === 'duellante' && (
-                  <div className="mt-3 flex flex-col items-center gap-1.5">
+                  <div className="flex flex-col items-center justify-center gap-1.5">
                     <span className="inline-block rounded-full bg-blue-900/20 border border-blue-700/30 text-blue-400 text-sm font-bold px-4 py-1">
                       ⚔️ Il Duellante
                     </span>
@@ -220,7 +220,7 @@ export default function PrivacyReveal({ playerName, word, role, specialRole, spe
                   </div>
                 )}
                 {specialRole === 'romeo' && (
-                  <div className="mt-3 flex flex-col items-center gap-1.5">
+                  <div className="flex flex-col items-center justify-center gap-1.5">
                     <span className="inline-block rounded-full bg-rose-400/20 border border-rose-300/30 text-rose-300 text-sm font-bold px-4 py-1">
                       💕 Romeo
                     </span>
@@ -230,7 +230,7 @@ export default function PrivacyReveal({ playerName, word, role, specialRole, spe
                   </div>
                 )}
                 {specialRole === 'giulietta' && (
-                  <div className="mt-3 flex flex-col items-center gap-1.5">
+                  <div className="flex flex-col items-center justify-center gap-1.5">
                     <span className="inline-block rounded-full bg-rose-400/20 border border-rose-300/30 text-rose-300 text-sm font-bold px-4 py-1">
                       💕 Giulietta
                     </span>
@@ -240,7 +240,7 @@ export default function PrivacyReveal({ playerName, word, role, specialRole, spe
                   </div>
                 )}
                 {specialRole === 'riccio' && (
-                  <div className="mt-3 flex flex-col items-center gap-1.5">
+                  <div className="flex flex-col items-center justify-center gap-1.5">
                     <span className="inline-block rounded-full bg-yellow-500/20 border border-yellow-400/30 text-yellow-400 text-sm font-bold px-4 py-1">
                       🦔 Il Riccio
                     </span>
@@ -250,7 +250,7 @@ export default function PrivacyReveal({ playerName, word, role, specialRole, spe
                   </div>
                 )}
                 {specialRole === 'oracolo' && (
-                  <div className="mt-3 flex flex-col items-center gap-1.5">
+                  <div className="flex flex-col items-center justify-center gap-1.5">
                     <span className="inline-block rounded-full bg-purple-900/20 border border-purple-700/30 text-purple-400 text-sm font-bold px-4 py-1">
                       🔮 L'Oracolo
                     </span>

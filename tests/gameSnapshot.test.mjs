@@ -228,3 +228,35 @@ test('a snapshot cannot resume setup or home', () => {
     assert.equal(parseGameSnapshot(JSON.stringify(snapshot)), null)
   }
 })
+
+test('legacy Spettro saves restore as Eterno with voting history and elimination intact', () => {
+  const state = persistedState()
+  state.config.specialRoles = { oracolo: true, spettro: true }
+  state.players[0].specialRole = 'spettro'
+  state.players[0].eliminated = true
+  state.players[0].eliminatedInTurno = 1
+
+  const parsed = parseGameSnapshot(JSON.stringify(createGameSnapshot(state, 110)))
+
+  assert.ok(parsed)
+  assert.equal(parsed.state.config.specialRoles.eterno, true)
+  assert.equal(Object.hasOwn(parsed.state.config.specialRoles, 'spettro'), false)
+  assert.equal(parsed.state.players[0].specialRole, 'eterno')
+  assert.equal(parsed.state.players[0].eliminated, true)
+  assert.equal(parsed.state.players[0].eliminatedInTurno, 1)
+  assert.deepEqual(parsed.state.voteSession, state.voteSession)
+  assert.equal(serializeGameSnapshot(parsed).includes('"spettro"'), false)
+})
+
+test('current Eterno settings win over a conflicting legacy key', () => {
+  const state = persistedState()
+  state.config.specialRoles = { spettro: true, eterno: false }
+  state.players[1].specialRole = 'eterno'
+
+  const parsed = parseGameSnapshot(JSON.stringify(createGameSnapshot(state, 120)))
+
+  assert.ok(parsed)
+  assert.deepEqual(parsed.state.config.specialRoles, { eterno: false })
+  assert.equal(parsed.state.players[1].specialRole, 'eterno')
+  assert.equal(serializeGameSnapshot(parsed).includes('"spettro"'), false)
+})

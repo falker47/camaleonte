@@ -1,3 +1,4 @@
+/// <reference types="@capacitor/splash-screen" />
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
@@ -9,8 +10,11 @@ const config: CapacitorConfig = {
   },
   plugins: {
     SplashScreen: {
+      // hide() yields to the HTML launch shell as soon as its artwork is ready.
+      // This short ceiling still releases the native window if JS/plugin fails.
       launchAutoHide: true,
-      autoHideDelay: 1500,
+      launchShowDuration: 500,
+      launchFadeOutDuration: 0,
       backgroundColor: '#0f0a1e',
       showSpinner: false,
     },
