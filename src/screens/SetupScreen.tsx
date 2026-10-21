@@ -199,13 +199,13 @@ export default function SetupScreen() {
       }
     })
   }
-  const hasEmptySlots = slots.some(s => s.name.trim().length === 0)
+  // Unused extra fields are placeholders: handleStart already filters them.
+  // The number of valid participants and all other checks remain enforced.
   const canStart =
     validNames.length >= 3 &&
     impostorCount >= 1 &&
     impostorCount < validNames.length - 1 &&
-    !hasDuplicates &&
-    !hasEmptySlots
+    !hasDuplicates
 
   const addPlayer = () => {
     if (slots.length < MAX_PLAYERS) setSlots([...slots, { id: nextSlotId.current++, name: '' }])
