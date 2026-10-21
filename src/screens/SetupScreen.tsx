@@ -199,7 +199,11 @@ export default function SetupScreen() {
       }
     })
   }
-  const hasEmptySlots = slots.some(s => s.name.trim().length === 0)
+  // Once enough players have been entered, make incomplete extra slots explicit.
+  // Initial blank fields stay neutral while fewer than 3 names are available.
+  const emptySlotCount = slots.filter(slot => slot.name.trim().length === 0).length
+  const hasEmptySlots = emptySlotCount > 0
+  const showEmptySlotErrors = validNames.length >= 3 && hasEmptySlots
   const canStart =
     validNames.length >= 3 &&
     impostorCount >= 1 &&
@@ -336,13 +340,17 @@ export default function SetupScreen() {
                     onChange={e => updateName(i, e.target.value)}
                     onKeyDown={e => handleKeyDown(i, e)}
                     placeholder={`Gioc. ${i + 1}`}
-                    className={`w-full glass-input rounded-lg pl-6 pr-2.5 py-2 text-sm ${duplicateIndices.has(i) ? 'border-rose-500/60' : ''}`}
+                    aria-invalid={duplicateIndices.has(i) || (showEmptySlotErrors && slot.name.trim().length === 0)}
+                    className={`w-full glass-input rounded-lg pl-6 pr-2.5 py-2 text-sm ${duplicateIndices.has(i) || (showEmptySlotErrors && slot.name.trim().length === 0) ? 'border-rose-500/60' : ''}`}
                     style={{ userSelect: 'text', touchAction: 'auto' }}
                     maxLength={20}
                   />
                 </div>
                 {duplicateIndices.has(i) && (
                   <p className="text-rose-400 text-[10px] mt-0.5 ml-1">Duplicato</p>
+                )}
+                {showEmptySlotErrors && slot.name.trim().length === 0 && (
+                  <p className="text-rose-400 text-[10px] mt-0.5 ml-1">Nome mancante</p>
                 )}
               </motion.div>
             ))}
@@ -438,6 +446,11 @@ export default function SetupScreen() {
         )}
         {hasDuplicates && (
           <p className="text-rose-400 text-xs mt-2">Ci sono nomi duplicati</p>
+        )}
+        {showEmptySlotErrors && (
+          <p className="text-rose-400 text-xs mt-2">
+            {emptySlotCount === 1 ? 'Completa o rimuovi lo slot vuoto' : 'Completa o rimuovi gli slot vuoti'}
+          </p>
         )}
 
         {/* Info box */}

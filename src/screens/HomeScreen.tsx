@@ -133,40 +133,72 @@ export default function HomeScreen() {
           </div>
         </motion.div>
 
-        {/* CTA */}
+        {/* Recovery card: show useful progress without growing the Home layout. */}
         {savedGame && (
-          <>
-            <motion.button
-              onClick={() => { void handleContinueSavedGame() }}
-              disabled={resumingSavedGame}
-              className="z-10 mt-7 font-bold py-4 px-12 rounded-2xl text-lg transition-colors text-white disabled:opacity-60"
-              style={{
-                background: 'linear-gradient(135deg, rgba(20,184,166,0.85), rgba(16,185,129,0.9))',
-                border: '1px solid rgba(45,212,191,0.5)',
-                boxShadow: '0 8px 32px rgba(20,184,166,0.35), 0 0 60px rgba(139,92,246,0.15), inset 0 1px 0 rgba(255,255,255,0.15)',
-              }}
-              {...springTap}
-            >
-              {resumingSavedGame ? 'Ripristino…' : 'Continua partita'}
-            </motion.button>
-
-            <motion.div
-              className="z-10 mt-2 flex items-center gap-3 text-xs text-slate-400"
-            >
-              <span>{savedGame.playerCount} giocatori · manche {savedGame.manche}{savedGame.totalManche !== null ? `/${savedGame.totalManche}` : ''} · turno {savedGame.turno}</span>
+          <div className="relative z-10 mt-5 w-full max-w-sm overflow-hidden rounded-2xl border border-teal-300/30 bg-slate-950/80 p-3.5 shadow-[0_12px_32px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.08)]">
+            <div className="flex items-center gap-2.5">
+              <div aria-hidden="true" className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-teal-300/25 bg-teal-400/15 text-teal-200">
+                <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 3a9 9 0 1 1-9 9" />
+                  <path d="M3 3v6h6" />
+                  <path d="m10 8 6 4-6 4V8Z" />
+                </svg>
+              </div>
+              <p className="min-w-0 flex-1 text-sm font-bold text-white">Partita salvata</p>
               <button
+                type="button"
                 onClick={() => setShowDiscardSaved(true)}
-                className="text-rose-400 hover:text-rose-300 transition-colors"
+                className="shrink-0 rounded-lg px-2 py-2 text-xs font-semibold text-rose-300 transition-colors hover:bg-rose-400/10 hover:text-rose-200 focus-visible:outline-2 focus-visible:outline-rose-300"
+                aria-label="Abbandona partita salvata"
               >
                 Abbandona
               </button>
-            </motion.div>
-          </>
+            </div>
+
+            <div className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-slate-300">
+              <span>{savedGame.playerCount} giocatori</span>
+              <span aria-hidden="true" className="text-slate-500">·</span>
+              <span className="font-semibold text-teal-200">Manche {savedGame.manche}{savedGame.totalManche !== null ? `/${savedGame.totalManche}` : ''}</span>
+              <span aria-hidden="true" className="text-slate-500">·</span>
+              <span>Turno {savedGame.turno}</span>
+            </div>
+
+            {savedGame.totalManche !== null && savedGame.totalManche > 0 && (
+              <div
+                role="progressbar"
+                aria-label="Avanzamento delle manche"
+                aria-valuemin={0}
+                aria-valuemax={savedGame.totalManche}
+                aria-valuenow={Math.min(savedGame.manche, savedGame.totalManche)}
+                className="mt-2 h-1 w-full overflow-hidden rounded-full bg-white/10"
+              >
+                <div
+                  className="h-full rounded-full bg-teal-400/80"
+                  style={{ width: `${Math.min(100, Math.max(0, savedGame.manche / savedGame.totalManche * 100))}%` }}
+                />
+              </div>
+            )}
+
+            <motion.button
+              type="button"
+              onClick={() => { void handleContinueSavedGame() }}
+              disabled={resumingSavedGame}
+              className="mt-3 flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-teal-200/35 bg-gradient-to-r from-teal-600 to-emerald-600 px-4 py-2.5 text-base font-bold text-white shadow-[0_6px_18px_rgba(13,148,136,0.18)] transition-colors hover:from-teal-500 hover:to-emerald-500 disabled:cursor-wait disabled:opacity-60"
+              {...springTap}
+            >
+              {resumingSavedGame ? 'Ripristino…' : 'Continua partita'}
+              {!resumingSavedGame && (
+                <svg aria-hidden="true" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="m9 18 6-6-6-6" />
+                </svg>
+              )}
+            </motion.button>
+          </div>
         )}
 
         <motion.button
           onClick={() => goTo('setup')}
-          className={`z-10 ${savedGame ? 'mt-3' : 'mt-7'} font-bold py-4 px-14 rounded-2xl text-lg transition-colors text-white`}
+          className={`z-10 ${savedGame ? 'mt-3 w-full max-w-sm py-3.5 px-10 text-base' : 'mt-7 py-4 px-14 text-lg'} rounded-2xl font-bold transition-colors text-white`}
           style={savedGame ? {
             background: 'rgba(255,255,255,0.06)',
             border: '1px solid rgba(255,255,255,0.12)',
