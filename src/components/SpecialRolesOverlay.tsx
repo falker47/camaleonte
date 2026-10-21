@@ -123,7 +123,7 @@ export default function SpecialRolesOverlay({ roles, playerCount, slotsRemaining
                 aria-disabled={disabled}
                 onClick={() => handleRolePress(role)}
                 className={`relative isolate flex w-full items-center gap-3 overflow-hidden rounded-2xl border px-3.5 py-2.5 text-left transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-300 ${disabled
-                  ? 'border-white/10 bg-slate-900/65'
+                  ? 'border-white/10 bg-slate-900/65 opacity-95'
                   : active
                     ? `${role.borderActive} bg-slate-700/85 shadow-[inset_0_1px_0_rgba(255,255,255,0.10)]`
                     : `${role.borderBase} bg-slate-800/85 hover:border-teal-200/40 hover:bg-slate-700/85`
