@@ -2,7 +2,7 @@
 
 Gioco di deduzione sociale **offline e single-device** per 3–12 giocatori. Il telefono passa di mano in mano: ognuno scopre in privato il proprio ruolo e la propria parola, poi il gruppo discute, vota ed elimina i sospetti.
 
-**[Gioca ora](https://camaleonte.netlify.app/)** · installabile come PWA · build Android tramite Capacitor
+**[Gioca ora](https://falker47.github.io/camaleonte/)** · installabile come PWA · build Android tramite Capacitor
 
 ![Anteprima di Camaleonte](public/preview.png)
 
