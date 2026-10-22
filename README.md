@@ -62,7 +62,7 @@ Il flusso principale comprende:
 - **Tailwind CSS v4** e **Framer Motion** per interfaccia mobile-first e animazioni;
 - **Vite 5 + vite-plugin-pwa** per build e funzionamento offline;
 - **Capacitor 8** per il wrapper Android;
-- **Netlify** per la versione web pubblica canonica.
+- **GitHub Pages** per la versione web pubblica canonica.
 
 La logica di dominio è separata in utility dedicate (`src/utils`), mentre `src/store/gameStore.ts` orchestra stato, eliminazioni, abilità speciali e scoring.
 
@@ -76,7 +76,7 @@ npm run test:core
 npm run build
 ```
 
-I test core coprono le soglie dinamiche e le principali condizioni di vittoria. La pipeline GitHub Actions esegue test e build su `master` e mantiene anche un deploy GitHub Pages come mirror tecnico; il link pubblico canonico resta Netlify.
+I test core coprono le soglie dinamiche e le principali condizioni di vittoria. A ogni push su `master`, la pipeline GitHub Actions esegue test e build e, se superati, pubblica automaticamente la versione web su GitHub Pages.
 
 ## Sviluppo locale
 
