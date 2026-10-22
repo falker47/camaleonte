@@ -10,7 +10,7 @@ import ConfirmDialog from '../components/ConfirmDialog'
 import { discardSavedGame, getSavedGame, restoreSavedGame } from '../store/gamePersistence'
 import type { SavedGameSummary } from '../store/gameSnapshot'
 import camaleonteBrand from '../assets/brand/camaleonte-foreground.webp'
-import { Bunting, TropicalFoliage } from '../components/HomeDecorations'
+import { TropicalFoliage } from '../components/HomeDecorations'
 
 const springTap = {
   whileHover: { scale: 1.02 },
@@ -72,7 +72,6 @@ export default function HomeScreen() {
 
   return (
     <div className="home-screen relative flex flex-col items-center flex-1 min-h-0 px-6 pb-4 overflow-y-auto overflow-x-hidden">
-      <Bunting />
 
       {/* Score reference button */}
       <motion.button
