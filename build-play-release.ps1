@@ -4,7 +4,7 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
 $repoRoot = $PSScriptRoot
-$allowedBranches = @('master', 'release/camaleonte-1.1.2-play')
+$allowedBranches = @('master', 'release/camaleonte-1.1.3-play')
 $branch = (& git -C $repoRoot branch --show-current).Trim()
 if ($LASTEXITCODE -ne 0 -or $branch -notin $allowedBranches) {
   throw "Usa il branch master aggiornato o release/camaleonte-1.1.2-play. Branch corrente: $branch"
@@ -33,9 +33,9 @@ if ($dirty.Count -gt 0) {
 
 $gradlePath = Join-Path $repoRoot 'android\app\build.gradle'
 $gradle = Get-Content -LiteralPath $gradlePath -Raw
-if ($gradle -notmatch '(?m)^\s*versionCode\s+13\s*$' -or
-    $gradle -notmatch '(?m)^\s*versionName\s+"1\.1\.2"\s*$') {
-  throw 'Versione Android inattesa: questa candidata deve essere 1.1.2 (13).'
+if ($gradle -notmatch '(?m)^\s*versionCode\s+14\s*$' -or
+    $gradle -notmatch '(?m)^\s*versionName\s+"1\.1\.3"\s*$') {
+  throw 'Versione Android inattesa: questa candidata deve essere 1.1.3 (14).'
 }
 
 $signingProps = Join-Path $repoRoot 'android\app\signing.properties'
@@ -147,7 +147,7 @@ try {
   $fileInfo = Get-Item -LiteralPath $bundle
   $hash = Get-FileHash -LiteralPath $bundle -Algorithm SHA256
   Write-Host ''
-  Write-Host 'BUILD PLAY 1.1.2 (13): FIRMATA E VERIFICATA' -ForegroundColor Green
+  Write-Host 'BUILD PLAY 1.1.3 (14): FIRMATA E VERIFICATA' -ForegroundColor Green
   Write-Host "AAB: $($fileInfo.FullName)"
   Write-Host "Dimensione: $($fileInfo.Length) byte"
   Write-Host "SHA256: $($hash.Hash)"
