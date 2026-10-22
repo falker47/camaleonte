@@ -138,10 +138,9 @@ export default function HomeScreen() {
           <div className="relative z-10 mt-5 w-full max-w-sm overflow-hidden rounded-2xl border border-teal-300/30 bg-slate-950/80 p-3.5 shadow-[0_12px_32px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.08)]">
             <div className="flex items-center gap-2.5">
               <div aria-hidden="true" className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-teal-300/25 bg-teal-400/15 text-teal-200">
-                <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M12 3a9 9 0 1 1-9 9" />
-                  <path d="M3 3v6h6" />
-                  <path d="m10 8 6 4-6 4V8Z" />
+                <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="9" />
+                  <path d="m10 8 6 4-6 4V8Z" fill="currentColor" stroke="none" />
                 </svg>
               </div>
               <p className="min-w-0 flex-1 text-sm font-bold text-white">Partita salvata</p>
