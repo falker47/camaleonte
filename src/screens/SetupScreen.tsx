@@ -450,8 +450,12 @@ export default function SetupScreen() {
           <div className="glass rounded-2xl px-4 py-3 mt-3">
             <div className="flex flex-wrap gap-x-3 gap-y-1 text-sm">
               <span className="text-indigo-400">{civilianCount} Civili</span>
-              <span className="text-slate-600">·</span>
-              <span className="text-teal-400">{camaleonteCount} Camaleont{camaleonteCount === 1 ? 'e' : 'i'}</span>
+              {camaleonteCount > 0 && (
+                <>
+                  <span className="text-slate-600">·</span>
+                  <span className="text-teal-400">{camaleonteCount} Camaleont{camaleonteCount === 1 ? 'e' : 'i'}</span>
+                </>
+              )}
               {talpaCount > 0 && (
                 <>
                   <span className="text-slate-600">·</span>
