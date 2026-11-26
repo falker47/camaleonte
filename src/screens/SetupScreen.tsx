@@ -5,16 +5,8 @@ import type { GameDuration } from '../store/types'
 import BackButton from '../components/BackButton'
 import SpecialRolesOverlay from '../components/SpecialRolesOverlay'
 import { springTap } from '../constants/animations'
-import { MAX_PLAYERS, MAX_CAMALEONTE, MAX_TALPE } from '../constants/gameConfig'
+import { MAX_PLAYERS, MAX_CAMALEONTE, MAX_TALPE, SUGGESTED_ROLES } from '../constants/gameConfig'
 import { getSuggestedGameDuration, getTotalManche, resolveGameDuration } from '../utils/gameDuration'
-
-const SUGGESTED_ROLES: Record<number, [number, number]> = {
-  3: [1, 0], 4: [1, 0],
-  5: [1, 0], 6: [1, 1],
-  7: [1, 1], 8: [1, 2],
-  9: [1, 2], 10: [1, 2],
-  11: [2, 2], 12: [2, 2],
-}
 
 const DURATION_OPTIONS: { value: GameDuration; valueLabel: string; unitLabel: string }[] = [
   { value: 1, valueLabel: '1', unitLabel: 'giro' },
@@ -458,8 +450,12 @@ export default function SetupScreen() {
           <div className="glass rounded-2xl px-4 py-3 mt-3">
             <div className="flex flex-wrap gap-x-3 gap-y-1 text-sm">
               <span className="text-indigo-400">{civilianCount} Civili</span>
-              <span className="text-slate-600">·</span>
-              <span className="text-teal-400">{camaleonteCount} Camaleont{camaleonteCount === 1 ? 'e' : 'i'}</span>
+              {camaleonteCount > 0 && (
+                <>
+                  <span className="text-slate-600">·</span>
+                  <span className="text-teal-400">{camaleonteCount} Camaleont{camaleonteCount === 1 ? 'e' : 'i'}</span>
+                </>
+              )}
               {talpaCount > 0 && (
                 <>
                   <span className="text-slate-600">·</span>

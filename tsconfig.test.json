@@ -13,6 +13,7 @@
     "src/utils/winCondition.ts",
     "src/store/types.ts",
     "src/store/gameSnapshot.ts",
-    "src/utils/gameDuration.ts"
+    "src/utils/gameDuration.ts",
+    "src/constants/gameConfig.ts"
   ]
 }

@@ -4,6 +4,16 @@ export const MAX_CAMALEONTE = 2
 export const MAX_TALPE = 2
 export const MAX_PARTICLES = 20
 
+// --- Suggested roles: [camaleonti, talpe] per player count ---
+
+export const SUGGESTED_ROLES: Record<number, [number, number]> = {
+  3: [0, 1], 4: [0, 1],
+  5: [1, 0], 6: [1, 1],
+  7: [1, 1], 8: [1, 2],
+  9: [1, 2], 10: [1, 2],
+  11: [2, 2], 12: [2, 2],
+}
+
 // --- Scoring ---
 
 export const CIVILE_WIN_POINTS = 2
