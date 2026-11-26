@@ -7,7 +7,7 @@ export const MAX_PARTICLES = 20
 // --- Suggested roles: [camaleonti, talpe] per player count ---
 
 export const SUGGESTED_ROLES: Record<number, [number, number]> = {
-  3: [1, 0], 4: [1, 0],
+  3: [0, 1], 4: [0, 1],
   5: [1, 0], 6: [1, 1],
   7: [1, 1], 8: [1, 2],
   9: [1, 2], 10: [1, 2],
