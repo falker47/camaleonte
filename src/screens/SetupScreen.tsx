@@ -5,16 +5,8 @@ import type { GameDuration } from '../store/types'
 import BackButton from '../components/BackButton'
 import SpecialRolesOverlay from '../components/SpecialRolesOverlay'
 import { springTap } from '../constants/animations'
-import { MAX_PLAYERS, MAX_CAMALEONTE, MAX_TALPE } from '../constants/gameConfig'
+import { MAX_PLAYERS, MAX_CAMALEONTE, MAX_TALPE, SUGGESTED_ROLES } from '../constants/gameConfig'
 import { getSuggestedGameDuration, getTotalManche, resolveGameDuration } from '../utils/gameDuration'
-
-const SUGGESTED_ROLES: Record<number, [number, number]> = {
-  3: [1, 0], 4: [1, 0],
-  5: [1, 0], 6: [1, 1],
-  7: [1, 1], 8: [1, 2],
-  9: [1, 2], 10: [1, 2],
-  11: [2, 2], 12: [2, 2],
-}
 
 const DURATION_OPTIONS: { value: GameDuration; valueLabel: string; unitLabel: string }[] = [
   { value: 1, valueLabel: '1', unitLabel: 'giro' },
