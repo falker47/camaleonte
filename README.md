@@ -10,7 +10,7 @@ Ogni partecipante riceve un'informazione segreta. Alcuni conoscono la stessa par
 
 ## Come si gioca
 
-1. **Prepara la partita.** Inserisci i nomi dei giocatori, scegli quanti Camaleonti e Talpe inserire e, se vuoi, attiva i ruoli speciali.
+1. **Prepara la partita.** Inserisci i nomi dei giocatori e scegli quanti Camaleonti e Talpe inserire: il gioco propone solo la Talpa con 3 o 4 giocatori, solo il Camaleonte con 5 ed entrambi da 6 in su. Se vuoi, attiva i ruoli speciali.
 2. **Scopri il tuo segreto.** Ogni giocatore prende il telefono, rivela privatamente la propria carta e lo passa al successivo.
 3. **Dai un indizio.** A turno, ciascuno pronuncia una parola o una frase breve legata alla propria parola segreta, cercando di non renderla troppo evidente.
 4. **Discutete e votate.** Il gruppo decide chi eliminare. In caso di parità si procede a una nuova votazione e, se necessario, a uno spareggio.

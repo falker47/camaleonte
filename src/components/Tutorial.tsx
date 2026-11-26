@@ -4,7 +4,7 @@ import camaleontePng from '../assets/camaleonte.png'
 import ScoreReference from './ScoreReference'
 
 const STEPS: { emoji?: string; image?: string; title: string; text: string }[] = [
-  { emoji: '🎭', title: 'I tre ruoli', text: 'Ogni partita ha Civili, Talpa e Camaleonte. I Civili ricevono una parola, la Talpa una simile ma diversa, e il Camaleonte non riceve nulla!' },
+  { emoji: '🎭', title: 'I tre ruoli', text: 'I ruoli sono Civili, Talpa e Camaleonte. I Civili ricevono una parola, la Talpa una simile ma diversa, e il Camaleonte non riceve nulla! Con 3 o 4 giocatori il setup propone solo la Talpa, con 5 solo il Camaleonte, da 6 in su entrambi.' },
   { emoji: '🔤', title: 'Le parole', text: 'Civili e Talpa ricevono parole della stessa categoria (es. Pizza e Focaccia), ma non sanno quale delle due hanno. Il Camaleonte deve bluffare senza parola.' },
   { emoji: '💬', title: 'Dai un indizio', text: 'A turno, ognuno dice una parola o frase breve per descrivere la propria parola. Attenti a non rivelare troppo... e a non tradirvi!' },
   { emoji: '🗳️', title: 'Votate', text: 'Dopo il giro di indizi, votate chi eliminare. In caso di parità si rivota o si procede con eliminazione casuale.' },
